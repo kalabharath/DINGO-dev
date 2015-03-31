@@ -144,3 +144,26 @@ def genSSCombinations(ss_seq):
 						if arr:
 							ss_combi.setdefault(k, []).append(arr)
 	return exn_ss, ss_combi
+
+def getSmotif(ss1, ss2):
+	#ss_element = ['strand', 8, 5, 6, 13],
+	s1_start, s1_end = ss1[3],ss1[4]
+	s2_start, s2_end = ss2[3], ss2[4]
+	return [[s1_start, s1_end], [s2_start, s2_end]]
+
+def rankSS_contacts(ss_def, contacts_def):
+	rank_seq={}
+	contacts_true = contacts_def.keys()
+	for i in range(1, len(ss_def)):
+		smotif =getSmotif(ss_def[i-1], ss_def[i])
+		print smotif
+		no_of_contacts = 0
+		for j in range(smotif[0][0], smotif[0][1]+1):
+			if j in contacts_true:
+				contacts = contacts_def[j]
+				for contact in contacts:
+					if contact in range(smotif[1][0], smotif[1][1]+1):
+						no_of_contacts +=1
+						print j,contact
+		rank_seq[i-1]=no_of_contacts
+	print rank_seq
