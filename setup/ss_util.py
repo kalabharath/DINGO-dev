@@ -151,6 +151,23 @@ def getSmotif(ss1, ss2):
 	s2_start, s2_end = ss2[3], ss2[4]
 	return [[s1_start, s1_end], [s2_start, s2_end]]
 
+def getTopSmotif(rank_seq):
+	keys = rank_seq.keys()
+	number_of_contacts = 0
+	top_rank = 0
+	for key in keys:
+		if rank_seq[key] > number_of_contacts:
+			number_of_contacts = rank_seq[key]
+			top_rank = key
+	return top_rank
+
+def recursiveRanking(rank_order, ss_def, contacts_def):
+	if len(rank_order) == 1:
+		for i in range(-1,+2, 2):
+			next_ss = rank_order[0]+i
+	else:
+		return rank_order
+
 def rankSS_contacts(ss_def, contacts_def):
 	rank_seq={}
 	contacts_true = contacts_def.keys()
@@ -164,6 +181,9 @@ def rankSS_contacts(ss_def, contacts_def):
 				for contact in contacts:
 					if contact in range(smotif[1][0], smotif[1][1]+1):
 						no_of_contacts +=1
-						print j,contact
-		rank_seq[i-1]=no_of_contacts
+						print j,contact, no_of_contacts
+		rank_seq[i-1] = no_of_contacts
+	top_rank = getTopSmotif(rank_seq)
 	print rank_seq
+	print top_rank
+	
