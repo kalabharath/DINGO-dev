@@ -78,7 +78,7 @@ def nextSS(map_route, ss_def, contacts_def):
 			next_sse_index = map_index[0] + i
 		else:
 			next_sse_index = map_index[-1] + i
-		print next_sse_index
+		print next_sse_index, ss_def[next_sse_index]
 		tnum = total_data(map_index, next_sse_index, ss_def, contacts_def)
 		temp_numcontacts.append(tnum)
 	print temp_numcontacts
