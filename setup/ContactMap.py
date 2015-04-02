@@ -8,6 +8,12 @@ Date: 1/04/15 , Time:12:54 PM
 
 
 def getSmotif(ss1, ss2):
+	"""
+	returns end residues of pairs of SSE
+	:param ss1:
+	:param ss2:
+	:return:
+	"""
 	# ss_element = ['strand', 8, 5, 6, 13],
 	s1_start, s1_end = ss1[3], ss1[4]
 	s2_start, s2_end = ss2[3], ss2[4]
@@ -15,6 +21,11 @@ def getSmotif(ss1, ss2):
 
 
 def getTopSmotif(rank_seq):
+	"""
+	sorts the Smotif indices based on number of contacts
+	:param rank_seq:
+	:return: top Smotif index
+	"""
 	keys = rank_seq.keys()
 	number_of_contacts = 0
 	top_rank = 0
@@ -26,6 +37,12 @@ def getTopSmotif(rank_seq):
 
 
 def getTopRank(ss_def, contacts_def):
+	"""
+	Identifies pairs of SSEs which have largest intra contacts between them
+	:param ss_def:
+	:param contacts_def:
+	:return:  SSE indices
+	"""
 	rank_seq = {}
 	contacts_true = contacts_def.keys()
 	for i in range(1, len(ss_def)):
@@ -47,6 +64,14 @@ def getTopRank(ss_def, contacts_def):
 
 
 def total_data(map_index, next_sse_index, ss_def, contacts_def):
+	"""
+	Count the total number of contacts that the prospective SSE makes with the rest of selected SSEs
+	:param map_index:
+	:param next_sse_index:
+	:param ss_def:
+	:param contacts_def:
+	:return: total number of contacts
+	"""
 	no_of_contacts = 0
 	contacts_true = contacts_def.keys()
 	start, end = ss_def[next_sse_index][3], ss_def[next_sse_index][4]
@@ -62,6 +87,13 @@ def total_data(map_index, next_sse_index, ss_def, contacts_def):
 
 
 def nextSS(map_route, ss_def, contacts_def):
+	"""
+	Identifies the next SSE to be in the  map or not
+	:param map_route:
+	:param ss_def:
+	:param contacts_def:
+	:return: Smotif SSE indices and direction
+	"""
 	map_index = []
 	for i in range(0, len(map_route)):
 		for j in range(0, 2):
@@ -104,7 +136,12 @@ def nextSS(map_route, ss_def, contacts_def):
 
 
 def getContactRoute(ss_def, contacts_def):
-	# print ss_array
+	"""
+	Determine the sequnce of SSEs to be assembled using contact information.
+	:param ss_def:
+	:param contacts_def:
+	:return: map_route
+	"""
 	control = 0
 	i = 0
 	j = 0
@@ -135,4 +172,3 @@ def getContactRoute(ss_def, contacts_def):
 				map_route.append([ti, tj, new_direction])
 	return map_route
 
-	# checking checkin
