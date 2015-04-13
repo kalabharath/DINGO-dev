@@ -8,10 +8,10 @@ Date: 31/03/15 , Time:10:56 AM
 Prepare all the relavant files for stage1 & 2
 """
 
-import setup.io_util as io
-import  setup.ss_util as ss
-import  setup.PCSmap as PCSmap
-import  setup.ContactMap as contact
+import utility.io_util as io
+import  utility.ss_util as ss
+import  utility.PCSmap as PCSmap
+import  utility.ContactMap as contact
 
 
 fasta_file = './2m47.fasta'
@@ -23,6 +23,7 @@ ss_seq = io.readPsiPred(psipred_file)
 print ss_seq
 ss_def, ss_combi = ss.genSSCombinations(ss_seq)
 
+io.dumpPickle("ss_profiles.pickle", ss_combi)
 
 # Read in contacts at a given confidence level
 contacts, contacts_seq = io.readContacts(contactsfile, probability=0.7)
@@ -42,4 +43,3 @@ print map_route
 
 io.dumpPickle("pcs_route.pickle", map_route)
 io.dumpPickle("contact_route.pickle", rank_ss)
-

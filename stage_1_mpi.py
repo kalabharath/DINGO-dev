@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Project_Name: main, File_name: stage_1.py
+Project_Name: main, File_name: stage_1_mpi.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 13/04/15 , Time:10:05 AM
 
@@ -40,9 +40,10 @@ status = MPI.Status()
 # on the master process
 if rank == 0:
     tasks = range(2*size )#TODO supply the total number of operations to be performed
-    task_index =0 # 0 specifies the first task
+
+    task_index =0 # control the number of processes with this index number
     num_workers = size -1 # 1 processor is reserved for master.
-    closed_workers = 0 # workers with no more work that can be assigned
+    closed_workers = 0 # control the workers with no more work that can be assigned
 
     print ("Master starting with {} workers".format(num_workers))
     while closed_workers < num_workers:
@@ -72,7 +73,6 @@ if rank == 0:
 
 # On the worker processes
 else:
-
     print ("I am a worker with rank {} on {}".format(rank, name))
     while True: # initiaite infinite loop
         comm.send(None, dest = 0, tag = tags.READY)
