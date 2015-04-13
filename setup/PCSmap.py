@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Project_Name: main, File_name: PCSmap.py 
+Project_Name: main, File_name: PCSmap.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 1/04/15 , Time:10:53 AM
 """
@@ -27,7 +27,6 @@ def getNspcs(sstart, send, pcs_data):
 
 def SearchPcs(ss_array, pcs_data):
 	pcs_array = []
-	print ss_array
 	for i in xrange(0, len(ss_array)):
 		nspcs = getNspcs(ss_array[i][3], ss_array[i][4], pcs_data)
 		nspcs.sort()
@@ -60,21 +59,14 @@ def get_ij(pcs_array):
 	return ti, tj
 
 
-def genRoute(ss_array, pcsdata):
-	return SearchPcs(ss_array, pcsdata)
-
-
 def getRoute(ss_seq, pcsdata):
 	"""
-	*** def Call ***
-
 	returns Smotif search route based PCSs/SS
 	"""
 	import ss_util as ssutil
 	ss_array, lloop = ssutil.genSSDef(ss_seq)
 
-	pcs_array = genRoute(ss_array, pcsdata)
-	# print ss_array
+	pcs_array = SearchPcs(ss_array, pcsdata)
 	control = 0
 	i = 0
 	j = 0
@@ -85,7 +77,7 @@ def getRoute(ss_seq, pcsdata):
 		if control == 0:
 			control += 1
 			i, j = get_ij(pcs_array)  # get the largest PCS smotif
-			map_route.append([i, j])
+			map_route.append([i, j, 'start'])
 		else:
 			if i == 0:
 				ti = j
