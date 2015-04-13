@@ -9,9 +9,9 @@ Perform stage 1 in perfect parallel
 """
 #TODO write detailed comments
 
-from mpi4py import  MPI
+from   mpi4py import  MPI
 import sys, os, time
-
+import utility.stage1_util as util
 
 def the_parallel_function_def():
 
@@ -37,8 +37,12 @@ rank = comm.Get_rank()
 name = MPI.Get_processor_name()
 status = MPI.Status()
 
+
 # on the master process
 if rank == 0:
+    run_seq = util.getRunSeq()
+    print run_seq, len(run_seq) # this will be the new tasks
+
     tasks = range(2*size )#TODO supply the total number of operations to be performed
 
     task_index =0 # control the number of processes with this index number

@@ -8,9 +8,9 @@ Date: 31/03/15 , Time:10:56 AM
 Prepare all the relavant files for stage1 & 2
 """
 
-import utility.io_util as io
-import  utility.ss_util as ss
-import  utility.PCSmap as PCSmap
+import  utility.io_util    as io
+import  utility.ss_util    as ss
+import  utility.PCSmap     as PCSmap
 import  utility.ContactMap as contact
 
 
