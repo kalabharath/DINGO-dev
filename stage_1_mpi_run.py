@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Project_Name: main, File_name: stage_1_mpi.py
+Project_Name: main, File_name: stage_1_mpi_run.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 13/04/15 , Time:10:05 AM
 
@@ -12,10 +12,7 @@ Perform stage 1 in perfect parallel
 from   mpi4py import  MPI
 import sys, os, time
 import utility.stage1_util as util
-
-def the_parallel_function_def():
-
-    return True
+import stage_1_search as S1search
 
 
 def enum(*sequential, **named):
@@ -40,10 +37,14 @@ status = MPI.Status()
 
 # on the master process
 if rank == 0:
-    run_seq = util.getRunSeq()
-    print run_seq, len(run_seq) # this will be the new tasks
 
-    tasks = range(2*size )#TODO supply the total number of operations to be performed
+    tasks = util.getRunSeq()
+    tasks = [[0,0]]
+    print tasks, len(tasks) # this will be the new tasks
+
+    #tasks = range(2*size )#TODO supply the total number of operations to be performed
+    print tasks
+    # tasks = len(run_seq)
 
     task_index =0 # control the number of processes with this index number
     num_workers = size -1 # 1 processor is reserved for master.
@@ -86,8 +87,9 @@ else:
         tag = status.Get_tag()
 
         if tag == tags.START:
-            result = task**2
             #TODO this is where you actually do something
+            result = S1search.SmotifSearch(task)
+
             comm.send( result, dest=0, tag = tags.DONE)
 
         elif tag ==tags.EXIT:

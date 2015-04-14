@@ -31,5 +31,11 @@ def getRunSeq():
             run_seq.append([i, j])
     return run_seq
 
+def getSSlist():
+    ss_profiles = io.readPickle("ss_profiles.pickle")
+    map_route = io.readPickle("contact_route.pickle")
+    s1, s2 = map_route[0][0], map_route[0][1]
+    s1_list, s2_list = getPairSSProfiles(s1, s2, ss_profiles)
+    return  s1_list, s2_list
 
 #getRunSeq()
