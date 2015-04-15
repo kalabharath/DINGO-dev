@@ -10,7 +10,7 @@ Perform stage 1 in perfect parallel
 
 import utility.stage1_util as uts1
 import utility.smotif_util as sm
-#import filters.contacts.
+import filters.sequence.sequence_similarity as filter
 
 
 def getSSdef(index_array):
@@ -42,15 +42,15 @@ def SmotifSearch(index_array):
 
     #for smotif in smotif_data:
     for i in range(0,10):
-        print smotif_data[i][0][0]
+        #print smotif_data[i][0][0]
         smotif = smotif_data[i]
-        print smotif
+
 
         # Apply various filters. Nested filters may be a bad idea
         # TODO explore the idea of using nested filters
-        sequence_similarity = filter.SequenceSimilarity(s1_def, s2_def, smotif, threshold = 0.3)
-        contacts_predicition = filter.ContactPredicition(s1_def, s2_def, smotif,threshold = 0.7)
-        pcs_axrh_fit_filters = filter.PCSAxRhFit(s1_def, s2_def, threshold = 0.05)
+        sequence_similarity = filter.SequenceSimilarity(s1_def, s2_def, smotif, threshold = 30)
+        #contacts_predicition = filter.ContactPredicition(s1_def, s2_def, smotif,threshold = 0.7)
+        #pcs_axrh_fit_filters = filter.PCSAxRhFit(s1_def, s2_def, threshold = 0.05)
 
 
 
