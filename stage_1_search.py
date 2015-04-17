@@ -10,8 +10,8 @@ Perform stage 1 in perfect parallel
 
 import utility.stage1_util as uts1
 import utility.smotif_util as sm
-import filters.sequence.sequence_similarity as filter
-
+import filters.sequence.sequence_similarity as Sfilter
+import filters.contacts.contacts_filter  as Cfilter
 
 def getSSdef(index_array):
     """
@@ -35,33 +35,23 @@ def SmotifSearch(index_array):
     print index_array
     print s1_def
     print s2_def
-    smotif = sm.getSmotif(s1_def, s2_def)
-    print smotif
-    smotif_data = sm.readSmotifDatabase(smotif)
-    print len(smotif_data)
+    smotif_def = sm.getSmotif(s1_def, s2_def)
+
+    smotif_data = sm.readSmotifDatabase(smotif_def)
+    print smotif_def, len(smotif_data)
 
     for i in range(0,len(smotif_data)):
-    #for i in range(0,10):
+    #for i in range(0,1):
         #print smotif_data[i][0][0]
         smotif = smotif_data[i]
-
-
         # Apply various filters. Nested filters may be a bad idea
         # TODO explore the idea of using nested filters
 
-        seq_id, seq_similar_score, bool_sequence_similarity = filter.SequenceSimilarity(s1_def, s2_def, smotif, threshold = 50)
-
-        #contacts_predicition = filter.ContactPredicition(s1_def, s2_def, smotif,threshold = 0.7)
+        seq_id, seq_similar_score, bool_sequence_similarity = Sfilter.SequenceSimilarity(s1_def, s2_def, smotif, threshold = 30)
+        contacts_predicition = Cfilter.ContactPredicition(s1_def, s2_def, smotif,threshold = 0.7)
         #pcs_axrh_fit_filters = filter.PCSAxRhFit(s1_def, s2_def, threshold = 0.05)
-        if bool_sequence_similarity:
-            print smotif[0][0], 'score', seq_similar_score, "seq_id", seq_id, "i=", i, "/", len(smotif_data)
-
-
-
-
-
-
-
+        if bool_sequence_similarity and contacts_predicition > 50.0 :
+            print smotif[0][0], 'score', seq_similar_score, "seq_id", seq_id, "i=", i, "/", len(smotif_data), contacts_predicition
 
     return  True
 
