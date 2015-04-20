@@ -32,13 +32,11 @@ def SmotifSearch(index_array):
     """
 
     s1_def, s2_def = getSSdef(index_array)
-    print index_array
-    print s1_def
-    print s2_def
+
     smotif_def = sm.getSmotif(s1_def, s2_def)
 
     smotif_data = sm.readSmotifDatabase(smotif_def)
-    print smotif_def, len(smotif_data)
+
 
     for i in range(0,len(smotif_data)):
     #for i in range(0,1):
@@ -47,10 +45,12 @@ def SmotifSearch(index_array):
         # Apply various filters. Nested filters may be a bad idea
         # TODO explore the idea of using nested filters
 
-        seq_id, seq_similar_score, bool_sequence_similarity = Sfilter.SequenceSimilarity(s1_def, s2_def, smotif, threshold = 30)
-        contacts_predicition = Cfilter.ContactPredicition(s1_def, s2_def, smotif,threshold = 0.7)
+        seq_id, seq_similar_score, bool_sequence_similarity = Sfilter.SequenceSimilarity(s1_def, s2_def, smotif, threshold = 41)
+        contacts_predicition = Cfilter.ContactPredicition(s1_def, s2_def, smotif,threshold = 0.8)
         #pcs_axrh_fit_filters = filter.PCSAxRhFit(s1_def, s2_def, threshold = 0.05)
-        if bool_sequence_similarity and contacts_predicition > 50.0 :
+        if bool_sequence_similarity and contacts_predicition > 80.0 :
+            print index_array, s1_def, s2_def
+            print smotif_def, len(smotif_data)
             print smotif[0][0], 'score', seq_similar_score, "seq_id", seq_id, "i=", i, "/", len(smotif_data), contacts_predicition
 
     return  True
