@@ -60,7 +60,7 @@ if rank == 0:
             # worker is ready, send her something to do
             if task_index < len(tasks):
                 comm.send(tasks[task_index], dest = source, tag = tags.START)
-                print ("Sending task {} to worker {}".format(task_index, source))
+                #print ("Sending task {} to worker {}".format(task_index, source))
                 task_index +=1 # increment its
             else:
                 #everything is done, lets grant freedom to all
@@ -68,9 +68,9 @@ if rank == 0:
         elif tag == tags.DONE:
             # take the result from the worker
             results = data
-            print ("Got data from  worker {}".format(source))
+            #print ("Got data from  worker {}".format(source))
         elif tag == tags.EXIT:
-            print ("Worker {} exited".format(source))
+            #print ("Worker {} exited".format(source))
             closed_workers += 1
     print "All Done, Master exiting"
     sys.exit()
@@ -78,7 +78,7 @@ if rank == 0:
 
 # On the worker processes
 else:
-    print ("I am a worker with rank {} on {}".format(rank, name))
+    #print ("I am a worker with rank {} on {}".format(rank, name))
     while True: # initiaite infinite loop
         comm.send(None, dest = 0, tag = tags.READY)
         #tell the master that you are ready and waiting for new assignment
