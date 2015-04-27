@@ -39,7 +39,7 @@ status = MPI.Status()
 if rank == 0:
 
     tasks = util.getRunSeq()
-    #tasks = [[0,0]]
+    tasks = [[0,0]]
     print tasks, len(tasks) # this will be the new tasks
 
     #tasks = range(2*size )#TODO supply the total number of operations to be performed

@@ -23,7 +23,17 @@ def get_distance(coo1, coo2):
 
 
 def ContactPredicition(s1_def, s2_def, smotif, threshold):
+
+    """
+
+    :param s1_def:
+    :param s2_def:
+    :param smotif:
+    :param threshold:
+    :return:
+    """
     #     print s1_def, s2_def ['strand', 9, 4, 4, 89, 97] ['strand', 9, 4, 4, 102, 110]
+
     ss1_list = range(s1_def[4], s1_def[5]+1)
     ss2_list = range(s2_def[4], s2_def[5]+1)
 
@@ -33,6 +43,7 @@ def ContactPredicition(s1_def, s2_def, smotif, threshold):
     # print ss1_list, ss2_list
     # print smotif_ss1, smotif_ss2
     # print smotif[0][0]
+
     contacts_list = io.auto_readContacts(threshold)
 
     residue_list = []
