@@ -13,6 +13,13 @@ import  utility.ss_util    as ss
 import  utility.PCSmap     as PCSmap
 import  utility.ContactMap as contact
 
+data = io.readInputDataFiles('input_data.txt', ['fasta_file'])
+
+print data
+
+
+#TODO refactor of reading input files to readInputDataFiles
+
 
 fasta_file = './2m47.fasta'
 psipred_file = './2m47.psipass2'

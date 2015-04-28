@@ -10,6 +10,21 @@ Utility file for frequently used functions
 """
 
 
+def readInputDataFiles(filename, input_data_types):
+    lines = readFile(filename)
+    data_dict = {}
+    for line in lines:
+        if line[0] != '#' and line !='\n':
+            data_type, data_file = line.split('=')
+            #print data_type.strip(), data_file.strip()
+            data_dict[data_type.strip()] = data_file.strip()
+    if len(input_data_types) == 1:
+        return  data_dict[input_data_types[0]]
+    else:
+        return data_dict
+
+
+
 def readFile(filename):
     """
 	read file and return the lines as an array
@@ -140,7 +155,7 @@ def auto_readContacts(probability):
 	"""
     import glob
     filename = glob.glob("*.metapsicov")
-
+    #filename = readInputDataFiles('input_data.txt',['contacts_file'])
 
     with open(filename[0], 'r') as fin:
         lines = fin.readlines()
