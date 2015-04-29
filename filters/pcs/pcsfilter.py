@@ -8,6 +8,9 @@ Date: 24/04/15 , Time: 01:30 PM
 fit PCS and apply Ax,Rh filters
 """
 import utility.io_util as io
+import fastT1FM
+from numpy import pi
+from numpy import linalg as LA
 
 def getPCSData():
     """
@@ -20,7 +23,7 @@ def getPCSData():
     pcs_data = io.getPcsTagInfo(ss_seq, pcs_broker)
     return pcs_data
 
-def getHN(smotif, atom_type='H'):
+def getHN(ss1_list, ss2_list, smotif, atom_type='H'):
     """
     parse the x,y,z of individual SSE into seperate arrays
     :param smotif:
@@ -29,22 +32,83 @@ def getHN(smotif, atom_type='H'):
     #TODO return arrays for any given atom type(s)
 
     rH1 , rH2 = [], []
+    counter = 0
     for entry in  smotif[0][1]:
         # res_no, aa_type, atom_type, x, y, z
         if entry[2] == atom_type:
             x, y, z = entry[3], entry[4], entry[5]
-            rH1.append([x, y, z])
+            res_no = ss1_list[counter]
+            counter +=1
+            rH1.append([x, y, z,res_no])
 
+    counter = 0
     for entry in  smotif[0][2]:
         # res_no, aa_type, atom_type, x, y, z
         if entry[2] == atom_type:
             x, y, z = entry[3], entry[4], entry[5]
-            rH2.append([x, y, z])
+            res_no = ss2_list[counter]
+            counter +=1
+            rH2.append([x, y, z, res_no])
     return rH1, rH2
 
 
-def match_pcss_HN():
-    return  True
+def match_pcss_HN(rh1, rh2, pcs_data):
+    """
+
+    :param rh1:
+    :param rh2:
+    :param pcs_data:
+    :return:
+    """
+    smotif_pcs = []
+
+    for entry in rh1:
+        res_no = (entry[-1])-1
+        smotif_pcs.append(pcs_data[res_no])
+    for entry in rh1:
+        res_no = (entry[-1])-1
+        smotif_pcs.append(pcs_data[res_no])
+    return  smotif_pcs
+
+def PointsOnSpheres(M, N, rMx, rMy, rMz):
+    """
+    quick way from wikipedia
+    :param M:
+    :param N:
+    :param rMx:
+    :param rMy:
+    :param rMz:
+    :return:
+    """
+
+    import math
+    node = []
+    dlong = math.pi*(3-math.sqrt(5))  # ~2.39996323
+    dz = 2.0/N
+    xlong = 0
+    z = 1 - 0.5*dz
+    for k in range(N):
+        r = math.sqrt(1-z*z)
+        node.append([math.cos(xlong)*r, math.sin(xlong)*r, z])
+        z = z - dz
+        xlong = xlong + dlong
+
+    j = 0
+    for i in range(M[0],M[1]):
+        for k in range(N):
+            fastT1FM.SetDvector(j, rMx, i*node[k][0])
+            fastT1FM.SetDvector(j, rMy, i*node[k][1])
+            fastT1FM.SetDvector(j, rMz, i*node[k][2])
+            j = j + 1
+
+def usuablePCS(pcs_array):
+    counter1, counter2 = 0,0
+    for entry in pcs_array:
+        for j in range(0, len(entry)):
+            if entry[j] != 999.999:
+
+
+
 def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     """
 
@@ -54,7 +118,6 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     :param threshold:
     :return:
     """
-
     ss1_list = range(s1_def[4], s1_def[5]+1)
     ss2_list = range(s2_def[4], s2_def[5]+1)
 
@@ -65,11 +128,60 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     print smotif_ss1, smotif_ss2
     print smotif[0][0]
 
-    rH1, rH2 = getHN(smotif, atom_type='H')
-
+    rH1, rH2 = getHN(ss1_list, ss2_list, smotif, atom_type='H')
     pcs_data = getPCSData()
     ntags = len(pcs_data)
+
+    # Init Thomas's hollow concentric shells
+
+    nM = 1000  # 1000 pts in each sphere
+    M = [1,40] # 40 spheres 10-50 Angstrom
+    npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
+    rMx = fastT1FM.MakeDvector(npts) #allocate memmory
+    rMy = fastT1FM.MakeDvector(npts)
+    rMz = fastT1FM.MakeDvector(npts)
+    PointsOnSpheres(M, nM, rMx, rMy, rMz)
+
+
     for tag in range(0,ntags):
-        print tag
+    #for tag in range(0,1):
+        smotif_pcs = match_pcss_HN(rH1, rH2, pcs_data[tag])
+        # initialize variables for Thomas's PCS fitting routine
+        frag_len = len(smotif_pcs)
+        nsets = len(smotif_pcs[0])
+        xyz = fastT1FM.MakeDMatrix(frag_len, 3)
+        pcs = fastT1FM.MakeDMatrix(nsets, frag_len)
+        xyz_HN = rH1+rH2
+
+        for k in range(nsets):
+            for j in range(frag_len):
+                fastT1FM.SetDArray(k, j, pcs, smotif_pcs[j][k])
+
+        cm = [0.0, 0.0, 0.0]
+        for j in range(frag_len):
+            cm[0] = cm[0] + xyz_HN[j][0]
+            cm[1] = cm[1] + xyz_HN[j][1]
+            cm[2] = cm[2] + xyz_HN[j][2]
+        cm[0] = cm[0] / float(frag_len)
+        cm[1] = cm[1] / float(frag_len)
+        cm[2] = cm[2] / float(frag_len)
+        for j in range(frag_len):
+            fastT1FM.SetDArray(j, 0, xyz, xyz_HN[j][0]-cm[0])
+            fastT1FM.SetDArray(j, 1, xyz, xyz_HN[j][1]-cm[1])
+            fastT1FM.SetDArray(j, 2, xyz, xyz_HN[j][2]-cm[2])
+
+        tensor = fastT1FM.MakeDMatrix(nsets, 8)
+        ttmp = fastT1FM.MakeDvector(5)
+        Xtmp = fastT1FM.MakeDvector(2)
+        Xaxrh_range = fastT1FM.MakeDMatrix(nsets, 4)
+        for i in range(0,nsets):
+            fastT1FM.SetDArray(i, 0, Xaxrh_range, 0.05)
+            fastT1FM.SetDArray(i, 1, Xaxrh_range, 100.0)
+            fastT1FM.SetDArray(i, 2, Xaxrh_range, 0.05)
+            fastT1FM.SetDArray(i, 3, Xaxrh_range, 100.0)
+
+        chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
+
+
 
     return True

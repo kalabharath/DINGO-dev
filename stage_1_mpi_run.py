@@ -16,9 +16,13 @@ import stage_1_search as S1search
 
 
 def enum(*sequential, **named):
+    """
 
-    #Handy way to fake an enumerated type in Python
-    #http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
+    :param sequential:
+    :param named:
+    :return:
+    """
+    #fake an enumerated type in Python
 
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)

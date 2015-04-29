@@ -33,9 +33,7 @@ def SmotifSearch(index_array):
     """
 
     s1_def, s2_def = getSSdef(index_array)
-
     smotif_def = sm.getSmotif(s1_def, s2_def)
-
     smotif_data = sm.readSmotifDatabase(smotif_def)
 
 
@@ -43,8 +41,9 @@ def SmotifSearch(index_array):
     for i in range(0,1):
         #print smotif_data[i][0][0]
         smotif = smotif_data[i]
-        # Apply various filters. Nested filters may be a bad idea
+        # TODO Supply the relavant data here itself! currently the appropriate function reads several times from the HDD
         # TODO explore the idea of using nested filters
+        # TODO clever use of variable names, could be confusing if someone other than me works on it or confusing to me itself
 
         seq_id, seq_similar_score, bool_sequence_similarity = Sfilter.SequenceSimilarity(s1_def, s2_def, smotif, threshold = 41)
 
