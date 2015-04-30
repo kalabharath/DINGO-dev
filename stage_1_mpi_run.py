@@ -43,13 +43,9 @@ status = MPI.Status()
 if rank == 0:
 
     tasks = util.getRunSeq()
-    tasks = [[0,0]]
+    #tasks = [[10,0]]
+
     print tasks, len(tasks) # this will be the new tasks
-
-    #tasks = range(2*size )#TODO supply the total number of operations to be performed
-    print tasks
-    # tasks = len(run_seq)
-
     task_index =0 # control the number of processes with this index number
     num_workers = size -1 # 1 processor is reserved for master.
     closed_workers = 0 # control the workers with no more work that can be assigned
@@ -64,7 +60,7 @@ if rank == 0:
             # worker is ready, send her something to do
             if task_index < len(tasks):
                 comm.send(tasks[task_index], dest = source, tag = tags.START)
-                #print ("Sending task {} to worker {}".format(task_index, source))
+                print ("Sending task {} to worker {}".format(task_index, source))
                 task_index +=1 # increment its
             else:
                 #everything is done, lets grant freedom to all
@@ -72,9 +68,9 @@ if rank == 0:
         elif tag == tags.DONE:
             # take the result from the worker
             results = data
-            #print ("Got data from  worker {}".format(source))
+            print ("Got data from  worker {}".format(source))
         elif tag == tags.EXIT:
-            #print ("Worker {} exited".format(source))
+            print ("Worker {} exited".format(source))
             closed_workers += 1
     print "All Done, Master exiting"
     sys.exit()

@@ -37,8 +37,8 @@ def SmotifSearch(index_array):
     smotif_data = sm.readSmotifDatabase(smotif_def)
 
 
-    #for i in range(0,len(smotif_data)):
-    for i in range(0,1):
+    for i in range(0,len(smotif_data)):
+    #for i in range(0,1):
         #print smotif_data[i][0][0]
         smotif = smotif_data[i]
         # TODO Supply the relavant data here itself! currently the appropriate function reads several times from the HDD
@@ -53,7 +53,7 @@ def SmotifSearch(index_array):
 
 
     """
-        if bool_sequence_similarity and contacts_predicition > 80.0 :
+        if bool_sequence_similarity and contacts_predicition > 50.0 :
             print index_array, s1_def, s2_def
             print smotif_def, len(smotif_data)
             print smotif[0][0], 'score', seq_similar_score, "seq_id", seq_id, "i=", i, "/", len(smotif_data), contacts_predicition

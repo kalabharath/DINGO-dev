@@ -39,8 +39,9 @@ def getHN(ss1_list, ss2_list, smotif, atom_type='H'):
             x, y, z = entry[3], entry[4], entry[5]
             res_no = ss1_list[counter]
             counter +=1
+            if counter == len(ss1_list):
+                break
             rH1.append([x, y, z,res_no])
-
     counter = 0
     for entry in  smotif[0][2]:
         # res_no, aa_type, atom_type, x, y, z
@@ -48,7 +49,9 @@ def getHN(ss1_list, ss2_list, smotif, atom_type='H'):
             x, y, z = entry[3], entry[4], entry[5]
             res_no = ss2_list[counter]
             counter +=1
-            rH2.append([x, y, z, res_no])
+            if counter == len(ss2_list):
+                break
+            rH1.append([x, y, z,res_no])
     return rH1, rH2
 
 
@@ -65,7 +68,7 @@ def match_pcss_HN(rh1, rh2, pcs_data):
     for entry in rh1:
         res_no = (entry[-1])-1
         smotif_pcs.append(pcs_data[res_no])
-    for entry in rh1:
+    for entry in rh2:
         res_no = (entry[-1])-1
         smotif_pcs.append(pcs_data[res_no])
     return  smotif_pcs
@@ -102,12 +105,15 @@ def PointsOnSpheres(M, N, rMx, rMy, rMz):
             j = j + 1
 
 def usuablePCS(pcs_array):
-    counter1, counter2 = 0,0
-    for entry in pcs_array:
-        for j in range(0, len(entry)):
+
+    for j in range(0, len(pcs_array[0])):
+        counter = 0
+        for entry in pcs_array:
             if entry[j] != 999.999:
-
-
+                counter +=1
+        if counter <=5:
+            return False
+    return True
 
 def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     """
@@ -124,9 +130,10 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     smotif_ss1 = range(int(smotif[0][0][1]), int(smotif[0][0][2])+1 )
     smotif_ss2 = range(int(smotif[0][0][3]), int(smotif[0][0][4])+1 )
 
-    print ss1_list, ss2_list
-    print smotif_ss1, smotif_ss2
-    print smotif[0][0]
+
+    #print ss1_list, ss2_list
+    #print smotif_ss1, smotif_ss2
+    #print smotif[0][0]
 
     rH1, rH2 = getHN(ss1_list, ss2_list, smotif, atom_type='H')
     pcs_data = getPCSData()
@@ -152,6 +159,11 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
         xyz = fastT1FM.MakeDMatrix(frag_len, 3)
         pcs = fastT1FM.MakeDMatrix(nsets, frag_len)
         xyz_HN = rH1+rH2
+
+        if len(xyz_HN) != frag_len:
+            print xyz_HN, len(xyz_HN)
+            print smotif_pcs, len(smotif_pcs)
+
 
         for k in range(nsets):
             for j in range(frag_len):
@@ -180,8 +192,24 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
             fastT1FM.SetDArray(i, 2, Xaxrh_range, 0.05)
             fastT1FM.SetDArray(i, 3, Xaxrh_range, 100.0)
 
-        chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
+        if usuablePCS(smotif_pcs):
 
+            chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
 
+        else:
+            chisqr = 1.0e+30
 
+        if (chisqr < 1.0e+30):
+            x = fastT1FM.GetDArray(0, 0, tensor)
+            y = fastT1FM.GetDArray(0, 1, tensor)
+            z = fastT1FM.GetDArray(0, 2, tensor)
+            saupe_array=[]
+            for kk in range(nsets):
+                temp_saupe=[]
+                for j in range(3,8):
+                    temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
+                    fastT1FM.SetDvector(j-3, ttmp, fastT1FM.GetDArray(kk, j, tensor))
+                saupe_array.append(temp_saupe)
+            metalpos=[x+cm[0], y+cm[1], z+cm[2]]
+            #print tag+1, chisqr, metalpos, saupe_array
     return True
