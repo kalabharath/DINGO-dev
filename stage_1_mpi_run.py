@@ -44,6 +44,7 @@ if rank == 0:
 
     tasks = util.getRunSeq()
     #tasks = [[10,0]]
+    #tasks = tasks[80:95]
 
     print tasks, len(tasks) # this will be the new tasks
     task_index =0 # control the number of processes with this index number

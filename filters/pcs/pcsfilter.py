@@ -9,8 +9,7 @@ fit PCS and apply Ax,Rh filters
 """
 import utility.io_util as io
 import fastT1FM
-from numpy import pi
-from numpy import linalg as LA
+
 
 def getPCSData():
     """
@@ -115,6 +114,28 @@ def usuablePCS(pcs_array):
             return False
     return True
 
+def calc_axrh(saupe_matrices):
+    """
+
+    :param saupe_matrices:
+    :return:
+    """
+    import numpy
+    from numpy import linalg as LA
+    axrh=[]
+    for t in saupe_matrices:
+        w, v = LA.eig(numpy.array([[t[0], t[1], t[2]], [t[1], t[3], t[4]], [t[2], t[4], -t[0]-t[3]]]))
+        x = []
+        for i in range(3):
+            x.append([abs(w[i]), w[i]])
+        x.sort()
+        for i in range(3):
+            w[i] = x[i][1]
+
+        axrh.append([w[2]-0.5*(w[0]+w[1]),w[0]-w[1]])
+    return axrh
+
+#@profile
 def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     """
 
@@ -124,6 +145,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     :param threshold:
     :return:
     """
+
     ss1_list = range(s1_def[4], s1_def[5]+1)
     ss2_list = range(s2_def[4], s2_def[5]+1)
 
@@ -139,7 +161,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     pcs_data = getPCSData()
     ntags = len(pcs_data)
 
-    # Init Thomas's hollow concentric shells
+    # Define Thomas's implementaion of hollow concentric shells
 
     nM = 1000  # 1000 pts in each sphere
     M = [1,40] # 40 spheres 10-50 Angstrom
@@ -153,6 +175,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     for tag in range(0,ntags):
     #for tag in range(0,1):
         smotif_pcs = match_pcss_HN(rH1, rH2, pcs_data[tag])
+
         # initialize variables for Thomas's PCS fitting routine
         frag_len = len(smotif_pcs)
         nsets = len(smotif_pcs[0])
@@ -208,8 +231,9 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
                 temp_saupe=[]
                 for j in range(3,8):
                     temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
-                    fastT1FM.SetDvector(j-3, ttmp, fastT1FM.GetDArray(kk, j, tensor))
+                    #fastT1FM.SetDvector(j-3, ttmp, fastT1FM.GetDArray(kk, j, tensor))
                 saupe_array.append(temp_saupe)
             metalpos=[x+cm[0], y+cm[1], z+cm[2]]
-            #print tag+1, chisqr, metalpos, saupe_array
+            AxRh = calc_axrh(saupe_array)
+            #print tag+1, chisqr, metalpos, AxRh
     return True

@@ -73,7 +73,7 @@ def ContactPredicition(s1_def, s2_def, smotif, threshold):
                 residue_list.append(False)
     hits =0
     for entry in residue_list:
-        if entry == True:
+        if entry:
             hits +=1
 
     return float(hits)/float(contacts_in_smotif)*100.00

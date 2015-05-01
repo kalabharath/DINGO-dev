@@ -10,24 +10,25 @@ Globally align the amino acid sequences in smotifs against the target sequence
 
 import utility.io_util as io
 
-def getSmotifAASeq(ss1, ss2):
 
-    one_letter ={'VAL':'V', 'ILE':'I', 'LEU':'L', 'GLU':'E', 'GLN':'Q',\
-    'ASP':'D', 'ASN':'N', 'HIS':'H', 'TRP':'W', 'PHE':'F', 'TYR':'Y',\
-    'ARG':'R', 'LYS':'K', 'SER':'S', 'THR':'T', 'MET':'M', 'ALA':'A',\
-    'GLY':'G', 'PRO':'P', 'CYS':'C', 'ASX': 'A', 'GLX':'G'}
-    seq=''
+def getSmotifAASeq(ss1, ss2):
+    one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q', \
+                  'ASP': 'D', 'ASN': 'N', 'HIS': 'H', 'TRP': 'W', 'PHE': 'F', 'TYR': 'Y', \
+                  'ARG': 'R', 'LYS': 'K', 'SER': 'S', 'THR': 'T', 'MET': 'M', 'ALA': 'A', \
+                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'A', 'GLX': 'G'}
+    seq = ''
 
     for entry in ss1:
         if entry[2] == 'CA':
-            aa=entry[1]
-            seq = seq+one_letter[aa]
+            aa = entry[1]
+            seq = seq + one_letter[aa]
     for entry in ss2:
         if entry[2] == 'CA':
-            aa=entry[1]
-            seq = seq+one_letter[aa]
+            aa = entry[1]
+            seq = seq + one_letter[aa]
 
     return seq
+
 
 def SequenceSimilarity(s1_def, s2_def, smotif, threshold):
     """
@@ -36,8 +37,9 @@ def SequenceSimilarity(s1_def, s2_def, smotif, threshold):
     """
     from Bio import pairwise2
     from Bio.SubsMat import MatrixInfo as matlist
+
     matrix = matlist.blosum62
-    #matrix = matlist.pam120
+    # matrix = matlist.pam120
     gap_open = -10
     gap_extend = -0.5
     hit = True
@@ -46,7 +48,7 @@ def SequenceSimilarity(s1_def, s2_def, smotif, threshold):
     # print s1_def
     # print s2_def
     # print aa_seq
-    native_seq = aa_seq[s1_def[4]-1:s1_def[5]]+aa_seq[s2_def[4]-1:s2_def[5]] #-1 to fix residue numbering
+    native_seq = aa_seq[s1_def[4] - 1:s1_def[5]] + aa_seq[s2_def[4] - 1:s2_def[5]]  # -1 to fix residue numbering
 
     smotif_def = smotif[0][0]
     smotif_ss1 = smotif[0][1]
@@ -62,13 +64,13 @@ def SequenceSimilarity(s1_def, s2_def, smotif, threshold):
 
     seqa, qseqa, score, begin, end = top_aln
     j, k = 0.0, 0.0
-    for i in range (0,len(qseqa)):
+    for i in range(0, len(qseqa)):
         if qseqa[i] != '-' and seqa[i] != '-':
-            j +=1
+            j += 1
             if qseqa[i] == seqa[i]:
-                k +=1
+                k += 1
     # seq_id = (k/j)*100
-    seq_id = (k/len(smotif_seq))*100
+    seq_id = (k / len(smotif_seq)) * 100
 
     if seq_id >= threshold and score > 0:
         return seq_id, score, True
