@@ -8,11 +8,6 @@ Date: 16/04/15 , Time: 04:52 PM
 Whether the Smotifs satisfy the input predicted contacts
 """
 
-
-
-import utility.io_util as io
-
-
 def get_distance(coo1, coo2):
     import math
     x1,y1,z1=coo1[0],coo1[1],coo1[2]
@@ -20,9 +15,7 @@ def get_distance(coo1, coo2):
     return (math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1)))
 
 
-
-
-def ContactPredicition(s1_def, s2_def, smotif, threshold):
+def ContactPredicition(s1_def, s2_def, smotif, exp_data, threshold):
 
     """
 
@@ -44,11 +37,11 @@ def ContactPredicition(s1_def, s2_def, smotif, threshold):
     # print smotif_ss1, smotif_ss2
     # print smotif[0][0]
 
-    contacts_list = io.auto_readContacts(threshold)
+    contacts = exp_data['contacts']
 
     residue_list = []
     contacts_in_smotif = 0
-    for contact in contacts_list:
+    for contact in contacts:
         if contact[0] in ss1_list and contact[1] in ss2_list:
             contacts_in_smotif +=1
             res1_index = ss1_list.index(contact[0])

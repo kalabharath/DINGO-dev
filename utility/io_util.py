@@ -88,25 +88,6 @@ def readFasta(filename):
         seq = seq + lines[i].rstrip()
     return header, seq
 
-def readAASeq():
-    """
-	reads in FastA file and returns seq output
-	:param filename:
-	:return:
-	"""
-    import glob
-    filename = glob.glob("*.fasta")
-
-    with open(filename[0], 'r') as fin:
-        lines = fin.readlines()
-
-    header = lines[0].rstrip()
-    seq = ''
-    for i in range(1, len(lines)):
-        seq = seq + lines[i].rstrip()
-    return header, seq
-
-
 def readPsiPred(filename):
     """
 	read in ss_seq as predicted by PsiPred

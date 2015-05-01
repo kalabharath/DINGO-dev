@@ -6,6 +6,7 @@ Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 31/03/15 , Time:10:56 AM
 
 Prepare all the relavant files for stage1 & 2
+
 """
 
 import utility.io_util    as io
@@ -49,3 +50,13 @@ print map_route
 
 io.dumpPickle("pcs_route.pickle", map_route)
 io.dumpPickle("contact_route.pickle", rank_ss)
+
+data_dict ={}
+data_dict['ss_seq']=ss_seq
+data_dict['pcs_data'] = pcsdata
+data_dict['contacts'] = contacts
+
+header, aa_seq = io.readFasta(fasta_file)
+data_dict['aa_seq'] = aa_seq
+
+io.dumpPickle("exp_data.pickle", data_dict)

@@ -7,20 +7,8 @@ Date: 24/04/15 , Time: 01:30 PM
 
 fit PCS and apply Ax,Rh filters
 """
-import utility.io_util as io
+
 import fastT1FM
-
-
-def getPCSData():
-    """
-    This is a very very bad implementation, do refactoring at a a later stage
-    :return:
-    """
-    pcs_broker = io.readInputDataFiles('input_data.txt', ['pcs_broker'])
-    psi_pred = io.readInputDataFiles('input_data.txt', ['psipred_file'])
-    ss_seq = io.readPsiPred(psi_pred)
-    pcs_data = io.getPcsTagInfo(ss_seq, pcs_broker)
-    return pcs_data
 
 def getHN(ss1_list, ss2_list, smotif, atom_type='H'):
     """
@@ -136,7 +124,7 @@ def calc_axrh(saupe_matrices):
     return axrh
 
 #@profile
-def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
+def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold = 0.05):
     """
 
     :param s1_def:
@@ -158,7 +146,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
     #print smotif[0][0]
 
     rH1, rH2 = getHN(ss1_list, ss2_list, smotif, atom_type='H')
-    pcs_data = getPCSData()
+    pcs_data = exp_data['pcs_data']
     ntags = len(pcs_data)
 
     # Define Thomas's implementaion of hollow concentric shells
@@ -235,5 +223,5 @@ def PCSAxRhFit(s1_def, s2_def, smotif, threshold = 0.05):
                 saupe_array.append(temp_saupe)
             metalpos=[x+cm[0], y+cm[1], z+cm[2]]
             AxRh = calc_axrh(saupe_array)
-            #print tag+1, chisqr, metalpos, AxRh
+            print tag+1, chisqr, metalpos, AxRh
     return True

@@ -15,7 +15,7 @@ def getSmotifAASeq(ss1, ss2):
     one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q', \
                   'ASP': 'D', 'ASN': 'N', 'HIS': 'H', 'TRP': 'W', 'PHE': 'F', 'TYR': 'Y', \
                   'ARG': 'R', 'LYS': 'K', 'SER': 'S', 'THR': 'T', 'MET': 'M', 'ALA': 'A', \
-                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'A', 'GLX': 'G'}
+                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'D', 'GLX': 'G'}
     seq = ''
 
     for entry in ss1:
@@ -30,7 +30,7 @@ def getSmotifAASeq(ss1, ss2):
     return seq
 
 
-def SequenceSimilarity(s1_def, s2_def, smotif, threshold):
+def SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold):
     """
     return sequence identity for given unique seqs and
     new queried sequences
@@ -44,7 +44,8 @@ def SequenceSimilarity(s1_def, s2_def, smotif, threshold):
     gap_extend = -0.5
     hit = True
 
-    header, aa_seq = io.readAASeq()
+
+    aa_seq = exp_data['aa_seq']
     # print s1_def
     # print s2_def
     # print aa_seq
