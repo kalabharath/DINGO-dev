@@ -2949,6 +2949,8 @@ static swig_module_info swig_module = {swig_types, 4, 0, 0, 0, 0};
 
  /* Put header files here or function declarations like below */
      extern double **MakeDMatrix(int i, int j);
+     extern void FreeDMatrix(double **a);
+     extern void FreeDArray(double *a);
      extern double GetDArray(int i, int j, double **a);
      extern void SetDArray(int i, int j, double **a, double v);
      extern double GetDvector(int i, double *a);
@@ -3143,6 +3145,48 @@ SWIGINTERN PyObject *_wrap_MakeDMatrix(PyObject *SWIGUNUSEDPARM(self), PyObject 
   arg2 = (int)(val2);
   result = (double **)MakeDMatrix(arg1,arg2);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_double, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FreeDMatrix(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double **arg1 = (double **) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FreeDMatrix",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FreeDMatrix" "', argument " "1"" of type '" "double **""'"); 
+  }
+  arg1 = (double **)(argp1);
+  FreeDMatrix(arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FreeDArray(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double *arg1 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FreeDArray",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FreeDArray" "', argument " "1"" of type '" "double *""'"); 
+  }
+  arg1 = (double *)(argp1);
+  FreeDArray(arg1);
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -3557,6 +3601,8 @@ fail:
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"MakeDMatrix", _wrap_MakeDMatrix, METH_VARARGS, NULL},
+	 { (char *)"FreeDMatrix", _wrap_FreeDMatrix, METH_VARARGS, NULL},
+	 { (char *)"FreeDArray", _wrap_FreeDArray, METH_VARARGS, NULL},
 	 { (char *)"GetDArray", _wrap_GetDArray, METH_VARARGS, NULL},
 	 { (char *)"SetDArray", _wrap_SetDArray, METH_VARARGS, NULL},
 	 { (char *)"GetDvector", _wrap_GetDvector, METH_VARARGS, NULL},

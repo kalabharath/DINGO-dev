@@ -119,11 +119,10 @@ def calc_axrh(saupe_matrices):
         x.sort()
         for i in range(3):
             w[i] = x[i][1]
-
         axrh.append([w[2]-0.5*(w[0]+w[1]),w[0]-w[1]])
     return axrh
 
-@profile
+
 def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold = 0.05):
     """
 
@@ -170,11 +169,6 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold = 0.05):
         xyz = fastT1FM.MakeDMatrix(frag_len, 3)
         pcs = fastT1FM.MakeDMatrix(nsets, frag_len)
         xyz_HN = rH1+rH2
-
-        if len(xyz_HN) != frag_len:
-            print xyz_HN, len(xyz_HN)
-            print smotif_pcs, len(smotif_pcs)
-
 
         for k in range(nsets):
             for j in range(frag_len):
@@ -224,4 +218,17 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold = 0.05):
             metalpos=[x+cm[0], y+cm[1], z+cm[2]]
             AxRh = calc_axrh(saupe_array)
             #print tag+1, chisqr, metalpos, AxRh
+        #Free variables
+
+
+        fastT1FM.FreeDMatrix(xyz)
+        fastT1FM.FreeDMatrix(pcs)
+        fastT1FM.FreeDMatrix(Xaxrh_range)
+        fastT1FM.FreeDMatrix(tensor)
+
+
+    fastT1FM.FreeDArray(rMx)
+    fastT1FM.FreeDArray(rMy)
+    fastT1FM.FreeDArray(rMz)
+
     return True

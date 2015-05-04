@@ -74,6 +74,14 @@ def MakeDMatrix(*args):
   return _fastT1FM.MakeDMatrix(*args)
 MakeDMatrix = _fastT1FM.MakeDMatrix
 
+def FreeDMatrix(*args):
+  return _fastT1FM.FreeDMatrix(*args)
+FreeDMatrix = _fastT1FM.FreeDMatrix
+
+def FreeDArray(*args):
+  return _fastT1FM.FreeDArray(*args)
+FreeDArray = _fastT1FM.FreeDArray
+
 def GetDArray(*args):
   return _fastT1FM.GetDArray(*args)
 GetDArray = _fastT1FM.GetDArray

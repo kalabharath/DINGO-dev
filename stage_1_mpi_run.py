@@ -43,6 +43,7 @@ status = MPI.Status()
 if rank == 0:
 
     tasks = util.getRunSeq()
+
     #tasks = [[10,0]]
     #tasks = tasks[80:85]
 

@@ -70,7 +70,7 @@ void *Gr_malloc(size_t size, char *message)
 
     new_mem = malloc(size);
     if (new_mem == NULL) {
-        //fprintf(stderr, "can't allocate enough memory: %d bytes\n", size);
+        fprintf(stderr, "can't allocate enough memory: %d bytes\n", size);
         error_exit(message);
     }
 #ifdef MEM_CHECK
@@ -295,7 +295,7 @@ void Gr_stop_Timer(FILE *f, time_t *start_time, clock_t *start_clock)
     seconds -= hours * 3600;
     minutes = seconds / 60;
     seconds -= minutes * 60;
-
+    
     fprintf(f, "used real time:\n");
     fprintf(f, "%i days %i hours %i minutes %i seconds\n", days, hours, minutes, seconds);
 

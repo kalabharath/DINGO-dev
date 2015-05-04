@@ -25,7 +25,7 @@ def getSSdef(index_array):
     s1_list, s2_list = uts1.getSSlist()
     return s1_list[index_array[0]], s2_list[index_array[1]]
 
-@profile
+
 def SmotifSearch(index_array):
     """
     Main ()

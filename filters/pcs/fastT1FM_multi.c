@@ -46,6 +46,16 @@ double **MakeDMatrix(int i, int j)
 {
     return DMatrix(i, j, "DArray");
 }
+void FreeDMatrix(double **a)
+{
+    if ((*a)) free(*a);
+    if ((a)) free(a);
+}
+
+void FreeDArray(double *a)
+{
+    if ((a)) free(a);
+}
 double GetDArray(int i, int j, double **a)
 {
     return a[i][j];
@@ -193,6 +203,7 @@ double rfastT1FM_multi(int nM, double *rMx, double *rMy, double *rMz, int nsets,
             }
 
             Saupe2X(W[jj], Xaxrh);
+
             if ((Xaxrh[0] < Xaxrh_range[jj][0]) || (Xaxrh[0] > Xaxrh_range[jj][1]) || (Xaxrh[1] < Xaxrh_range[jj][2]) || (Xaxrh[1] > Xaxrh_range[jj][3])) {
                 c = cbest + 1.0;
                 jj = nsets;             /* finish nsets loop */
