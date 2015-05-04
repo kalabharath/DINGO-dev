@@ -25,7 +25,7 @@ def getSSdef(index_array):
     s1_list, s2_list = uts1.getSSlist()
     return s1_list[index_array[0]], s2_list[index_array[1]]
 
-
+@profile
 def SmotifSearch(index_array):
     """
     Main ()
@@ -44,7 +44,7 @@ def SmotifSearch(index_array):
     #for i in range(0,100):
         #print smotif_data[i][0][0]
         smotif = smotif_data[i]
-        # TODO Supply the relavant data here itself! currently the appropriate function reads several times from the HDD
+
         # TODO explore the idea of using nested filters
         # TODO clever use of variable names, could be confusing if someone other than me works on it or confusing to me itself
 
@@ -59,6 +59,5 @@ def SmotifSearch(index_array):
             print index_array, s1_def, s2_def
             print smotif_def, len(smotif_data)
             print smotif[0][0], 'score', seq_similar_score, "seq_id", seq_id, "i=", i, "/", len(smotif_data), contacts_predicition
-
     return True
 

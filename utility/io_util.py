@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys, os
 import pickle
 
 """
@@ -14,15 +13,14 @@ def readInputDataFiles(filename, input_data_types):
     lines = readFile(filename)
     data_dict = {}
     for line in lines:
-        if line[0] != '#' and line !='\n':
+        if line[0] != '#' and line != '\n':
             data_type, data_file = line.split('=')
-            #print data_type.strip(), data_file.strip()
+            # print data_type.strip(), data_file.strip()
             data_dict[data_type.strip()] = data_file.strip()
     if len(input_data_types) == 1:
-        return  data_dict[input_data_types[0]]
+        return data_dict[input_data_types[0]]
     else:
         return data_dict
-
 
 
 def readFile(filename):
@@ -58,7 +56,7 @@ def dumpPickle(filename, data):
     :return:
     """
     with open(filename, 'w') as f:
-        pickle.dump(data, f )
+        pickle.dump(data, f)
 
 
 def readPickle(filename):
@@ -67,7 +65,7 @@ def readPickle(filename):
     :param filename:
     :return:
     """
-    fin=open(filename,'r')
+    fin = open(filename, 'r')
     data = pickle.load(fin)
     fin.close()
     return data
@@ -87,6 +85,7 @@ def readFasta(filename):
     for i in range(1, len(lines)):
         seq = seq + lines[i].rstrip()
     return header, seq
+
 
 def readPsiPred(filename):
     """
@@ -127,6 +126,7 @@ def readContacts(filename, probability):
                 contacts_seq.setdefault(int(res2), []).append(int(res1))
     return contacts, contacts_seq
 
+
 def auto_readContacts(probability):
     """
     Parses MetaPSICOV's contact file and returns the
@@ -135,8 +135,9 @@ def auto_readContacts(probability):
 	:return contacts array
 	"""
     import glob
+
     filename = glob.glob("*.metapsicov")
-    #filename = readInputDataFiles('input_data.txt',['contacts_file'])
+    # filename = readInputDataFiles('input_data.txt',['contacts_file'])
 
     with open(filename[0], 'r') as fin:
         lines = fin.readlines()
@@ -155,7 +156,6 @@ def auto_readContacts(probability):
     # return contacts, contacts_seq
 
 
-
 def FormatPcs(seqlen, nsets, filenames):
     import string
 
@@ -165,7 +165,7 @@ def FormatPcs(seqlen, nsets, filenames):
     for j in range(len(filenames)):
         f = open(filenames[j], 'r')
         line = f.readline()
-        while (line):
+        while line:
             xx = string.split(line[:-1])
             resno = int(xx[0]) - 1
             try:
@@ -185,12 +185,12 @@ def getPcsTagInfo(ss_seq, brokerfile):
     tsets = []
     npc_files = {}
     for line in brokerlines:
-        if (line[0:7] == 'CLAIMER'):
+        if line[0:7] == 'CLAIMER':
             ntags = ntags + 1
     for i in range(ntags):
         temp = 0
         for l in brokerlines:
-            if (l[0:18] == 'TS' + str(i + 1) + '_PCS_INPUT_FILE'):
+            if l[0:18] == 'TS' + str(i + 1) + '_PCS_INPUT_FILE':
                 npc_files.setdefault(i, []).append(l[19:-1])
                 temp = temp + 1
         tsets.append(temp)

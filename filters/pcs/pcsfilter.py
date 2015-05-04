@@ -80,8 +80,8 @@ def PointsOnSpheres(M, N, rMx, rMy, rMz):
     for k in range(N):
         r = math.sqrt(1-z*z)
         node.append([math.cos(xlong)*r, math.sin(xlong)*r, z])
-        z = z - dz
-        xlong = xlong + dlong
+        z -= dz
+        xlong += dlong
 
     j = 0
     for i in range(M[0],M[1]):
@@ -89,7 +89,7 @@ def PointsOnSpheres(M, N, rMx, rMy, rMz):
             fastT1FM.SetDvector(j, rMx, i*node[k][0])
             fastT1FM.SetDvector(j, rMy, i*node[k][1])
             fastT1FM.SetDvector(j, rMz, i*node[k][2])
-            j = j + 1
+            j += 1
 
 def usuablePCS(pcs_array):
 
@@ -123,7 +123,7 @@ def calc_axrh(saupe_matrices):
         axrh.append([w[2]-0.5*(w[0]+w[1]),w[0]-w[1]])
     return axrh
 
-#@profile
+@profile
 def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold = 0.05):
     """
 
@@ -185,17 +185,17 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold = 0.05):
             cm[0] = cm[0] + xyz_HN[j][0]
             cm[1] = cm[1] + xyz_HN[j][1]
             cm[2] = cm[2] + xyz_HN[j][2]
-        cm[0] = cm[0] / float(frag_len)
-        cm[1] = cm[1] / float(frag_len)
-        cm[2] = cm[2] / float(frag_len)
+        cm[0] /= float(frag_len)
+        cm[1] /= float(frag_len)
+        cm[2] /= float(frag_len)
         for j in range(frag_len):
             fastT1FM.SetDArray(j, 0, xyz, xyz_HN[j][0]-cm[0])
             fastT1FM.SetDArray(j, 1, xyz, xyz_HN[j][1]-cm[1])
             fastT1FM.SetDArray(j, 2, xyz, xyz_HN[j][2]-cm[2])
 
         tensor = fastT1FM.MakeDMatrix(nsets, 8)
-        ttmp = fastT1FM.MakeDvector(5)
-        Xtmp = fastT1FM.MakeDvector(2)
+        #ttmp = fastT1FM.MakeDvector(5)
+        #Xtmp = fastT1FM.MakeDvector(2)
         Xaxrh_range = fastT1FM.MakeDMatrix(nsets, 4)
         for i in range(0,nsets):
             fastT1FM.SetDArray(i, 0, Xaxrh_range, 0.05)
@@ -210,7 +210,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold = 0.05):
         else:
             chisqr = 1.0e+30
 
-        if (chisqr < 1.0e+30):
+        if chisqr < 1.0e+30:
             x = fastT1FM.GetDArray(0, 0, tensor)
             y = fastT1FM.GetDArray(0, 1, tensor)
             z = fastT1FM.GetDArray(0, 2, tensor)
@@ -223,5 +223,5 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold = 0.05):
                 saupe_array.append(temp_saupe)
             metalpos=[x+cm[0], y+cm[1], z+cm[2]]
             AxRh = calc_axrh(saupe_array)
-            print tag+1, chisqr, metalpos, AxRh
+            #print tag+1, chisqr, metalpos, AxRh
     return True

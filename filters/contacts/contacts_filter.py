@@ -12,7 +12,7 @@ def get_distance(coo1, coo2):
     import math
     x1,y1,z1=coo1[0],coo1[1],coo1[2]
     x2,y2,z2=coo2[0],coo2[1],coo2[2]
-    return (math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1)))
+    return math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))
 
 
 def ContactPredicition(s1_def, s2_def, smotif, exp_data, threshold):
@@ -59,11 +59,14 @@ def ContactPredicition(s1_def, s2_def, smotif, exp_data, threshold):
             for res in smotif[0][2]:
                 if res[2] == 'CA' and res[0] == smotif_res2 :
                    coo2 = [res[3], res[4], res[5]]
-            dist = get_distance(coo1,coo2)
-            if dist <= contact[2]:
-                residue_list.append(True)
+            if coo1 and coo2 :
+                dist = get_distance(coo1,coo2)
+                if dist <= contact[2]:
+                    residue_list.append(True)
+                else:
+                    residue_list.append(False)
             else:
-                residue_list.append(False)
+                print "Error in progressing"
     hits =0
     for entry in residue_list:
         if entry:

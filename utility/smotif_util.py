@@ -25,11 +25,12 @@ def getSmotif(s1, s2):
         s2_type = 'h'
     if s2[0] == 'strand':
         s2_type = 's'
-    smotif_type = s1_type+s2_type
+    smotif_type = s1_type + s2_type
     s1_len = s1[1]
     s2_len = s2[1]
-    smotif =  [smotif_type, s1_len, s2_len]
+    smotif = [smotif_type, s1_len, s2_len]
     return smotif
+
 
 def readSmotifDatabase(smotif):
     """
@@ -37,11 +38,11 @@ def readSmotifDatabase(smotif):
     :param smotif:
     :return:
     """
-    #TODO option to parse in database path
+    # TODO option to parse in database path
 
     smotif_db_path = "/home/kalabharath/zinr/smotif_database/"
-    file_name= smotif[0]+"_"+str(smotif[1])+"_"+str(smotif[2])+".db"
-    fin = smotif_db_path+file_name
+    file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db"
+    fin = smotif_db_path + file_name
     smotif_data = io.readPickle(fin)
 
     return smotif_data

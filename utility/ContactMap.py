@@ -141,11 +141,11 @@ def getContactRoute(ss_def, contacts_def):
 	:param contacts_def:
 	:return: map_route
 	"""
-    control = 0 #to control the while loop until the length of all SSEs
-    i = 0       # i, j are the indices of the SSE array
+    control = 0  # to control the while loop until the length of all SSEs
+    i = 0  # i, j are the indices of the SSE array
     j = 0
     map_route = []
-    while (control != len(ss_def) - 1):
+    while control != len(ss_def) - 1:
 
         # [20, 64, 28, 24, 56, 28, 24, 40, 24, 24, 88] 11
         if control == 0:
@@ -159,7 +159,7 @@ def getContactRoute(ss_def, contacts_def):
                 control += 1
                 direction = 'right'
                 map_route.append([ti, j, direction])
-            elif (j == len(ss_def) - 1):  # -1 to deal with array index
+            elif j == len(ss_def) - 1:  # -1 to deal with array index
                 tj = i
                 i = i - 1
                 control += 1

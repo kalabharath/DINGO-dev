@@ -37,7 +37,7 @@ io.dumpPickle("ss_profiles.pickle", ss_combi)
 contacts, contacts_seq = io.readContacts(contactsfile, probability=0.7)
 
 
-#ss_element format = [ss_type,len_ss,l_loop,r_loop,start,end]
+# ss_element format = [ss_type,len_ss,l_loop,r_loop,start,end]
 rank_ss = contact.getContactRoute(ss_def, contacts_seq)
 
 print rank_ss
@@ -51,10 +51,7 @@ print map_route
 io.dumpPickle("pcs_route.pickle", map_route)
 io.dumpPickle("contact_route.pickle", rank_ss)
 
-data_dict ={}
-data_dict['ss_seq']=ss_seq
-data_dict['pcs_data'] = pcsdata
-data_dict['contacts'] = contacts
+data_dict = {'ss_seq': ss_seq, 'pcs_data': pcsdata, 'contacts': contacts}
 
 header, aa_seq = io.readFasta(fasta_file)
 data_dict['aa_seq'] = aa_seq
