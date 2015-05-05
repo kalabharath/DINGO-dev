@@ -52,12 +52,13 @@ def SmotifSearch(index_array):
 
         contacts_predicition = Cfilter.ContactPredicition(s1_def, s2_def, smotif, exp_data, threshold=0.8)
 
-        pcs_axrh_fit_filters = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05)
+        tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05)
 
 
         if bool_sequence_similarity and contacts_predicition > 50.0 :
             print index_array, s1_def, s2_def
             print smotif_def, len(smotif_data)
             print smotif[0][0], 'score', seq_similar_score, "seq_id", seq_id, "i=", i, "/", len(smotif_data), contacts_predicition
+            print tensor_fits
     return True
 
