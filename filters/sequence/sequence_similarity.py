@@ -74,9 +74,9 @@ def SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold):
     seq_id = (k / len(smotif_seq)) * 100
 
     if seq_id >= threshold and score > 0:
-        return seq_id, score, True
+        return smotif_seq, seq_id, score, True
     else:
-        return seq_id, score, False
+        return smotif_seq, seq_id, score, False
 
 
 

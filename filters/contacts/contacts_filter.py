@@ -72,4 +72,4 @@ def ContactPredicition(s1_def, s2_def, smotif, exp_data, threshold):
         if entry:
             hits +=1
 
-    return float(hits)/float(contacts_in_smotif)*100.00
+    return contacts_in_smotif, float(hits)/float(contacts_in_smotif)*100.00

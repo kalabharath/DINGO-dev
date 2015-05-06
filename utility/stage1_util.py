@@ -1,6 +1,19 @@
 import io_util as io
 
 
+def enum(*sequential, **named):
+    """
+
+    :param sequential:
+    :param named:
+    :return:
+    """
+    #fake an enumerated type in Python
+
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    return type('Enum', (), enums)
+
+
 def getPairSSProfiles(s1, s2, ss_profile):
     """
     return corresponding +/- 2 profile
