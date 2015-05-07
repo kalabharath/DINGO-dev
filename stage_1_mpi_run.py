@@ -12,7 +12,7 @@ Perform stage 1 in perfect parallel
 from   mpi4py import  MPI
 import utility.stage1_util as util
 import stage_1_search as S1search
-
+import time
 #Define MPI messaage tags
 
 tags = util.enum('READY', 'DONE', 'EXIT', 'START')
@@ -28,21 +28,20 @@ status = MPI.Status()
 if rank == 0:
 
     tasks = util.getRunSeq()
+    stime = time.time()
 
     #tasks = [[10,0]]
     #tasks = tasks[80:85]
+    tasks =[[0,6],[2,4],[1,6],[0,7],[6,6],[4,7],[7,6],[7,10],[6,8],[8,6],[8,1],[9,6],[8,9],[2,7],[1,8],[6,7],[6,1],[4,6],[7,2],[6,9],[8,7],[8,4],[7,7],[9,0],[8,8]]
 
-    print tasks, len(tasks) # this will be the new tasks
+
+    #print tasks, len(tasks) # this will be the new tasks
     task_index =0 # control the number of processes with this index number
+    finished_task = 0
     num_workers = size -1 # 1 processor is reserved for master.
     closed_workers = 0 # control the workers with no more work that can be assigned
 
     print ("Master starting with {} workers".format(num_workers))
-
-    ###Progress bar
-
-    from tqdm import *
-
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop
         data = comm.recv(source = MPI.ANY_SOURCE, tag = MPI.ANY_TAG, status = status)
@@ -60,6 +59,10 @@ if rank == 0:
         elif tag == tags.DONE:
             # take the result from the worker
             results = data
+            ctime = time.time()
+            elapsed = ctime-stime
+            finished_task += 1
+            print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed)/(60), 0), "mins"
             #print ("Got data from  worker {}".format(source))
         elif tag == tags.EXIT:
             #print ("Worker {} exited".format(source))
@@ -90,4 +93,3 @@ else:
 
     # Tell the master respectfully that you are exiting
     comm.send(None, dest = 0, tag = tags.EXIT)
-

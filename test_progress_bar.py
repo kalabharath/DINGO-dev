@@ -44,10 +44,9 @@ if rank == 0:
     #print ("Master starting with {} workers".format(num_workers))
 
     ###Progress bar
+    from tqdm import  *
     import time
-    bar = ChargingBar('Processing', max=20)
 
-    for i in range(20):
-        bar.next()
+    for i in range(100):
+        trange(1000)
         time.sleep(1)
-    bar.finish()

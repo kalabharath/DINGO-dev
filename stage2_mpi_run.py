@@ -27,5 +27,4 @@ status = MPI.Status()
 ##
 
 if rank == 0:
-
     tasks = util.getRunSeq()

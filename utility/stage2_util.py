@@ -1,5 +1,5 @@
 import  io_util as io
-
+import glob
 
 def enum(*sequential, **named):
     """
@@ -14,7 +14,6 @@ def enum(*sequential, **named):
     return type('Enum', (), enums)
 
 def checkFile(i):
-    import glob
     regex=str(i)+"_*.pickle"
     file_list = glob.glob(regex)
     if len(file_list) > 0:
@@ -28,6 +27,25 @@ def getNextSmotif(map_route):
         if not checkFile(i):
             return i, map_route[i]
 
+def makeTopPickle(previous_smotif_index):
+
+    hits = []
+    regex=str(previous_smotif_index)+"_*.pickle"
+    file_list = glob.glob(regex)
+    for f in file_list:
+        hits.append(io.readPickle(f))
+    """
+     dump_log = [['smotif',['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
+                ['contacts_filter','no_of_contacts', '%_of_contacts_observed'],
+                ['PCS_filter', 'tensor_fits']]]
+    """
+    print len(hits)
+    for hit in hits:
+        smotif = hit[0][0]
+        seq_filter = hit[0][1]
+        print seq_filter
+
+    return True
 
 def getRunSeq():
 
@@ -38,14 +56,17 @@ def getRunSeq():
     ss_profiles = io.readPickle("ss_profiles.pickle")
     map_route = io.readPickle("contact_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
-    print next_index, next_smotif
+
     direction = next_smotif[-1]
     if direction == 'left':
         next_ss_list = ss_profiles[next_smotif[0]]
     else:
         next_ss_list = ss_profiles[next_smotif[1]]
 
-    print next_ss_list
-    ##get and make a list of top 10(n) of the previous run
 
-    return next_ss_list
+    ##get and make a list of top 10(n) of the previous run
+    if makeTopPickle(next_index -1): # send the previous Smotif index
+
+        return True
+
+
