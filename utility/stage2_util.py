@@ -38,10 +38,10 @@ def getNchiSum(pcs_filter):
         snchi += nchi
     return snchi
 
-def makeTopPickle(previous_smotif_index):
+def makeTopPickle(previous_smotif_index, num_hits):
 
     hits = []
-    regex=str(previous_smotif_index)+"_*.pickle"
+    regex=str(previous_smotif_index)+"_*_*.pickle"
     file_list = glob.glob(regex)
     for f in file_list:
         thits = io.readPickle(f)
@@ -49,7 +49,7 @@ def makeTopPickle(previous_smotif_index):
             hits.append(thit)
     """
                     0                                  1
-     dump_log = [['smotif',['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
+    dump_log = [['smotif',['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
                                            2
                 ['contacts_filter','no_of_contacts', '%_of_contacts_observed'],
                               3
@@ -59,7 +59,7 @@ def makeTopPickle(previous_smotif_index):
     new_dict={}
     seqs = []
     for hit in hits:
-        smotif = hit[0]
+        print hit
         seq_filter = hit[1]
         smotif_seq = seq_filter[1]
         if smotif_seq not in seqs:
@@ -69,14 +69,13 @@ def makeTopPickle(previous_smotif_index):
             new_dict.setdefault(nchi_sum, []).append(hit)
     keys = new_dict.keys()
     keys.sort()
-    print len(keys)
     dump_pickle = []
-    for i in range(0,10):
+    for i in range(0,num_hits):
         dump_pickle.append(new_dict[keys[i]])
     io.dumpPickle(str(previous_smotif_index)+"_tophits.pickle", dump_pickle)
-    return True
+    return range(num_hits)
 
-def getRunSeq():
+def getRunSeq(num_hits):
 
     """
     generate run seq, a seq list of pairs of
@@ -94,8 +93,30 @@ def getRunSeq():
 
 
     ##get and make a list of top 10(n) of the previous run
-    if makeTopPickle(next_index -1): # send the previous Smotif index
+    top_hits = makeTopPickle(next_index -1, num_hits) # send the previous Smotif index
+    if top_hits:
+        run_seq = []
+        for i in range(len(top_hits)):
+            for j in range(len(next_ss_list)):
+                run_seq.append([i, j])
+        return run_seq
 
-        return True
+def getSS1(index):
+     map_route = io.readPickle("contact_route.pickle")
+     next_index, next_smotif = getNextSmotif(map_route)
+     top_hits = io.readPickle(str(next_index-1)+"_tophits.pickle") #Read in previous index hits
+     return top_hits[index]
+
+def getSS2(index):
+    map_route = io.readPickle("contact_route.pickle")
+    next_index, next_smotif = getNextSmotif(map_route)
+    direction = next_smotif[-1]
+    if direction == 'left':
+        next_ss_list = ss_profiles[next_smotif[0]]
+    else:
+        next_ss_list = ss_profiles[next_smotif[1]]
+
+    return next_ss_list[index]
+
 
 
