@@ -33,17 +33,21 @@ def makeTopPickle(previous_smotif_index):
     regex=str(previous_smotif_index)+"_*.pickle"
     file_list = glob.glob(regex)
     for f in file_list:
-        hits.append(io.readPickle(f))
+        thits = io.readPickle(f)
+        for thit in thits:
+            hits.append(thit)
     """
      dump_log = [['smotif',['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
                 ['contacts_filter','no_of_contacts', '%_of_contacts_observed'],
                 ['PCS_filter', 'tensor_fits']]]
     """
     print len(hits)
+
     for hit in hits:
-        smotif = hit[0][0]
-        seq_filter = hit[0][1]
+        smotif = hit[0]
+        seq_filter = hit[1]
         print seq_filter
+
 
     return True
 
