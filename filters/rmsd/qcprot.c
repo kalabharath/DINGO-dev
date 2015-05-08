@@ -432,9 +432,6 @@ double
 CalcRMSDRotationalMatrix(double **coords1, double **coords2, const int len, double *rot)
 {
     double A[9], rmsd;
-    //double * rot;
-    //double rota[9];
-    //rot = &rota;
 
     const double *weight = NULL ;
 

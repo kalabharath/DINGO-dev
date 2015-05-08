@@ -12,7 +12,7 @@ import utility.smotif_util as sm
 import utility.io_util as io
 import filters.sequence.sequence_similarity as Sfilter
 import filters.contacts.contacts_filter  as Cfilter
-import filters.rmsd.pymol_rmsd as pyrmsd
+import filters.rmsd.qcp as qcp
 import filters.pcs.pcsfilter as Pfilter
 
 
@@ -53,8 +53,8 @@ def SmotifSearch(index_array):
         csmotif = csmotif_data[i]
         ##Pymol RMSD
 
-        #rmsd, transformed_coos = pyrmsd.pymol_filter(psmotif,csmotif,direction)
-        bool_temp = pyrmsd.pymol_filter(psmotif[0],csmotif,direction)
+        rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0],csmotif, direction)
+
 
         ##
 

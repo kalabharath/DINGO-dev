@@ -108,7 +108,7 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
     gap_extend = -0.5
     hit = True
 
-    print ss_def
+    #print ss_def
     aa_seq = exp_data['aa_seq']
 
     # print s1_def
@@ -127,8 +127,8 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
         smotif_sse = smotif[0][2]
     smotif_seq = getSmotifAASeq_v2(smotif_sse)
     # print smotif_def
-    print native_seq, len(native_seq)
-    print smotif_seq, len(smotif_seq)
+    #print native_seq, len(native_seq)
+    #print smotif_seq, len(smotif_seq)
 
 
     alns = pairwise2.align.globalds(native_seq, smotif_seq, matrix, gap_open, gap_extend)
