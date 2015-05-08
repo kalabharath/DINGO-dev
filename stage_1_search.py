@@ -35,13 +35,14 @@ def SmotifSearch(index_array):
     #print index_array
     s1_def, s2_def = getSSdef(index_array)
     smotif_def = sm.getSmotif(s1_def, s2_def)
+    print s1_def, s2_def
     smotif_data = sm.readSmotifDatabase(smotif_def)
 
     exp_data = io.readPickle("exp_data.pickle")
     """
-    dump_log = [[['smotif'],['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
+    dump_log = [['smotif'],['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
                 ['contacts_filter','no_of_contacts', '%_of_contacts_observed'],
-                ['PCS_filter', 'tensor_fits']]]
+                ['PCS_filter', 'tensor_fits'],['smotif_def',[ss1_def, ss2_def]]]
     """
     dump_log = []
     for i in range(0, len(smotif_data)):
@@ -65,7 +66,8 @@ def SmotifSearch(index_array):
             #print pcs_tensor_fits
             dump_log.append([smotif,['seq_filter', smotif_seq, seq_identity, blosum62_score],
                              ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts],
-                             ['PCS_filter', pcs_tensor_fits]])
+                             ['PCS_filter', pcs_tensor_fits],['smotif_def',[s1_def, s2_def]]])
     if len(dump_log) > 1 :
         io.dumpPickle('0_'+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)
+
     return True

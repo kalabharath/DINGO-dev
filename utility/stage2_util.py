@@ -32,9 +32,9 @@ def getNchiSum(pcs_filter):
     tensors = pcs_filter[1]
     snchi =0
     for tensor in tensors:
-        tag = tensor[0]
+        #tag = tensor[0]
         nchi = tensor[1]
-        axrh = tensor[2]
+        #axrh = tensor[2]
         snchi += nchi
     return snchi
 
@@ -52,14 +52,14 @@ def makeTopPickle(previous_smotif_index, num_hits):
     dump_log = [['smotif',['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
                                            2
                 ['contacts_filter','no_of_contacts', '%_of_contacts_observed'],
-                              3
-                ['PCS_filter', 'tensor_fits']]]
+                              3                        4
+                ['PCS_filter', 'tensor_fits']['smotif_def',[ss1,ss2]]]
     """
-    print len(hits)
+    #print len(hits)
     new_dict={}
     seqs = []
     for hit in hits:
-        print hit
+        #print hit
         seq_filter = hit[1]
         smotif_seq = seq_filter[1]
         if smotif_seq not in seqs:
@@ -101,13 +101,15 @@ def getRunSeq(num_hits):
                 run_seq.append([i, j])
         return run_seq
 
-def getSS1(index):
+def getPreviousSmotif(index):
      map_route = io.readPickle("contact_route.pickle")
      next_index, next_smotif = getNextSmotif(map_route)
      top_hits = io.readPickle(str(next_index-1)+"_tophits.pickle") #Read in previous index hits
-     return top_hits[index]
+     #print len(top_hits)
+     return top_hits[index][0]
 
 def getSS2(index):
+    ss_profiles = io.readPickle("ss_profiles.pickle")
     map_route = io.readPickle("contact_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
     direction = next_smotif[-1]
@@ -116,7 +118,7 @@ def getSS2(index):
     else:
         next_ss_list = ss_profiles[next_smotif[1]]
 
-    return next_ss_list[index]
+    return next_ss_list[index], direction
 
 
 
