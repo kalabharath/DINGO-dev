@@ -39,7 +39,7 @@ if rank == 0:
     num_workers = size -1 # 1 processor is reserved for master.
     closed_workers = 0 # control the workers with no more work that can be assigned
 
-    print ("Master starting with {} workers".format(num_workers))
+    #print ("Master starting with {} workers".format(num_workers))
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop
         data = comm.recv(source = MPI.ANY_SOURCE, tag = MPI.ANY_TAG, status = status)

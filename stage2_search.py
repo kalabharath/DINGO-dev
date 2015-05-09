@@ -35,7 +35,7 @@ def getfromDB(searched_smotifs, current_ss, direction):
 
 def SmotifSearch(index_array):
 
-    print index_array
+    #print index_array
 
     psmotif = uts2.getPreviousSmotif(index_array[0])
     current_ss, direction = uts2.getSS2(index_array[1])
