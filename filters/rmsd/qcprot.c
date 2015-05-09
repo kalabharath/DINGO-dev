@@ -436,8 +436,8 @@ CalcRMSDRotationalMatrix(double **coords1, double **coords2, const int len, doub
     const double *weight = NULL ;
 
     /* center the structures -- if precentered you can omit this step */
-    CenterCoords(coords1, len, weight);
-    CenterCoords(coords2, len, weight);
+    //CenterCoords(coords1, len, weight);
+    //CenterCoords(coords2, len, weight);
 
     /* calculate the (weighted) inner product of two structures */
     double E0 = InnerProduct(A, coords1, coords2, len, weight);

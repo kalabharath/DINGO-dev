@@ -48,8 +48,8 @@ def SmotifSearch(index_array):
 
     """
     dump_log = []
-    for i in range(0, len(csmotif_data)):
-    #for i in range(0,100):
+    #for i in range(0, len(csmotif_data)):
+    for i in range(0,1):
         csmotif = csmotif_data[i]
         ##Pymol RMSD
 
