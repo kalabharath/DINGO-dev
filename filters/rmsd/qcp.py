@@ -181,3 +181,70 @@ def rmsdQCP(psmotif, csmotif, direction):
         transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
 
     return rmsd, transformed_coor
+
+def rmsdQCP3(presse, csmotif, direction):
+
+
+    if direction =='left':
+        frag_b = getcoo(csmotif[0][2])
+        native_fragb_2ndsse = csmotif[0][1]
+        frag_a = presse[-1]
+    else:
+        frag_a = presse[0]
+        frag_b = getcoo(csmotif[0][1])
+        native_fragb_2ndsse = csmotif[0][2]
+
+    frag_a, a_cen = centerCoo(frag_a)
+    frag_b, b_cen = centerCoo(frag_b)
+    frag_aca = getCAcoo(frag_a)
+    frag_bca = getCAcoo(frag_b)
+
+    fraglen = len(frag_aca[0])
+    xyz1 = qcprot.MakeDMatrix(3, fraglen)
+    xyz2 = qcprot.MakeDMatrix(3, fraglen)
+
+    for i in range(0, fraglen):
+        qcprot.SetDArray(0, i, xyz1, frag_aca[0][i])
+        qcprot.SetDArray(1, i, xyz1, frag_aca[1][i])
+        qcprot.SetDArray(2, i, xyz1, frag_aca[2][i])
+    for i in range(0, fraglen):
+        qcprot.SetDArray(0, i, xyz2, frag_bca[0][i])
+        qcprot.SetDArray(1, i, xyz2, frag_bca[1][i])
+        qcprot.SetDArray(2, i, xyz2, frag_bca[2][i])
+
+    rot = qcprot.MakeDvector(9)
+
+    #*********
+    rmsd = qcprot.CalcRMSDRotationalMatrix(xyz1, xyz2, fraglen, rot)
+    #*********
+
+    #print rmsd
+
+    rotmat = []
+    for i in range(0,9):
+        rotmat.append(qcprot.GetDvector(i,rot))
+
+
+
+    rotated_fragb = applyRot(frag_b, rotmat)
+
+
+    trans_fragb = applyTranslation(rotated_fragb, a_cen)
+
+
+    # translate the other SSE of the current smotif
+    sse_2nd_coos = getcoo(native_fragb_2ndsse)
+    cm_sse2nd = translateCM(sse_2nd_coos,b_cen)
+    rot_sse_2nd = applyRot(cm_sse2nd, rotmat)
+    trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
+
+    #append the translated coordinates
+    temp_holder = presse[:]
+
+    if direction == 'left':
+        temp_holder.append(trans_sse2nd)
+
+    else:
+        temp_holder.insert(0,trans_sse2nd)
+
+    return rmsd, temp_holder

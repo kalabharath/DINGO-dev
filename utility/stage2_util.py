@@ -55,18 +55,18 @@ def makeTopPickle(previous_smotif_index, num_hits):
                               3                        4
                 ['PCS_filter', 'tensor_fits']['smotif_def',[ss1,ss2]]]
     """
-    #print len(hits)
+
     new_dict={}
     seqs = []
     for hit in hits:
-        #print hit
+        print hit
         seq_filter = hit[1]
         smotif_seq = seq_filter[1]
+        contacts_filter = hit[2]
         if smotif_seq not in seqs:
             seqs.append(smotif_seq)
-            pcs_filter = hit[3]
-            nchi_sum = getNchiSum(pcs_filter)
-            new_dict.setdefault(nchi_sum, []).append(hit)
+            dict_key_score = seq_filter[2]+contacts_filter[2]
+            new_dict.setdefault(dict_key_score, []).append(hit)
     keys = new_dict.keys()
     keys.sort()
     dump_pickle = []
@@ -76,6 +76,74 @@ def makeTopPickle(previous_smotif_index, num_hits):
     return range(num_hits)
 
 def getRunSeq(num_hits):
+
+    print num_hits
+    """
+    generate run seq, a seq list of pairs of
+    indexes of profiles for job scheduling
+    """
+    ss_profiles = io.readPickle("ss_profiles.pickle")
+    map_route = io.readPickle("contact_route.pickle")
+    next_index, next_smotif = getNextSmotif(map_route)
+
+    direction = next_smotif[-1]
+    if direction == 'left':
+        next_ss_list = ss_profiles[next_smotif[0]]
+    else:
+        next_ss_list = ss_profiles[next_smotif[1]]
+
+    print next_ss_list
+    ##get and make a list of top 10(n) of the previous run
+    top_hits = makeTopPickle(next_index -1, num_hits) # send the previous Smotif index
+    if top_hits:
+        run_seq = []
+        for i in range(len(top_hits)):
+            for j in range(len(next_ss_list)):
+                run_seq.append([i, j])
+        return run_seq, next_index
+
+def makeTopPickle3(previous_smotif_index, num_hits):
+
+    hits = []
+    regex=str(previous_smotif_index)+"_*_*.pickle"
+    file_list = glob.glob(regex)
+    for f in file_list:
+        thits = io.readPickle(f)
+        for thit in thits:
+            hits.append(thit)
+    """
+                            0                                  1
+    dump_log.append([transformed_coos,['seq_filter', csse_seq, seq_identity, blosum62_score],
+                            2                                                           3
+                ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts], sse_ordered])
+
+    """
+    #print len(hits)
+    new_dict={}
+    seqs = []
+    for hit in hits:
+        #print hit
+        seq_filter = hit[1]
+        smotif_seq = seq_filter[1]
+        contacts_filter = hit[2]
+        if smotif_seq not in seqs:
+            seqs.append(smotif_seq)
+            dict_key_score = seq_filter[2]+contacts_filter[2]
+            new_dict.setdefault(dict_key_score, []).append(hit)
+    keys = new_dict.keys()
+    keys.sort()
+    dump_pickle = []
+    try:
+        for i in range(0,num_hits):
+            dump_pickle.append(new_dict[keys[i]])
+    except:
+        print "could only make ", i
+    io.dumpPickle(str(previous_smotif_index)+"_tophits.pickle", dump_pickle)
+    return range(num_hits)
+
+
+
+def getRunSeq3(num_hits):
 
     """
     generate run seq, a seq list of pairs of
@@ -93,13 +161,13 @@ def getRunSeq(num_hits):
 
 
     ##get and make a list of top 10(n) of the previous run
-    top_hits = makeTopPickle(next_index -1, num_hits) # send the previous Smotif index
+    top_hits = makeTopPickle3(next_index -1, num_hits) # send the previous Smotif index
     if top_hits:
         run_seq = []
         for i in range(len(top_hits)):
             for j in range(len(next_ss_list)):
                 run_seq.append([i, j])
-        return run_seq
+        return run_seq, next_index
 
 def getPreviousSmotif(index):
      map_route = io.readPickle("contact_route.pickle")
@@ -107,6 +175,14 @@ def getPreviousSmotif(index):
      top_hits = io.readPickle(str(next_index-1)+"_tophits.pickle") #Read in previous index hits
      #print len(top_hits)
      return top_hits[index][0]
+
+def getPreviousSmotif3(index):
+     map_route = io.readPickle("contact_route.pickle")
+     next_index, next_smotif = getNextSmotif(map_route)
+     top_hits = io.readPickle(str(next_index-1)+"_tophits.pickle") #Read in previous index hits
+     #print len(top_hits)
+     return top_hits[index][0], top_hits[index][-1]
+
 
 def getSS2(index):
     ss_profiles = io.readPickle("ss_profiles.pickle")
@@ -121,4 +197,10 @@ def getSS2(index):
     return next_ss_list[index], direction
 
 
-
+def rename_pickle(index):
+    import glob, os
+    file_list = glob.glob("tx_*.pickle")
+    for file in file_list:
+        mv_cmd = "mv "+file+" "+str(index)+file[2:]
+        os.system(mv_cmd)
+    return True

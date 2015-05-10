@@ -11,7 +11,7 @@ Perform stage 2 in parallel
 
 from   mpi4py import  MPI
 import utility.stage2_util as util
-import stage2_search as S2search
+import stage_3x_search as S3search
 import time
 
 
@@ -29,8 +29,11 @@ status = MPI.Status()
 ##
 
 if rank == 0:
-    tasks, sse_index = util.getRunSeq(num_hits=8)
-    #tasks = [[5,6]]
+    tasks, sse_index = util.getRunSeq3(num_hits=8)
+    print tasks, sse_index
+
+
+    #tasks = [[0,0]]
     stime = time.time()
 
     #print tasks, len(tasks) # this will be the new tasks
@@ -81,7 +84,7 @@ else :
 
         if tag == tags.START:
             #TODO this is where you actually do something
-            result = S2search.SmotifSearch(task)
+            result = S3search.SmotifSearch(task)
 
             comm.send( result, dest=0, tag = tags.DONE)
 
