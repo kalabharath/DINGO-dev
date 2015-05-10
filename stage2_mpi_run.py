@@ -30,7 +30,7 @@ status = MPI.Status()
 
 if rank == 0:
     tasks = util.getRunSeq(num_hits=10)
-    tasks = [[0,0]]
+    #tasks = [[5,6]]
     stime = time.time()
 
     #print tasks, len(tasks) # this will be the new tasks

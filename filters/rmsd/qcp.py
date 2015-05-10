@@ -108,18 +108,22 @@ def rmsdQCP(psmotif, csmotif, direction):
     #print csmotif[0][0]
 
     if direction =='left':
-        native_frag_a = psmotif[0][1]
-        frag_a = getcoo(native_frag_a)
-        native_frag_b = csmotif[0][2]
-        frag_b = getcoo(native_frag_b)
+        native_fraga = getcoo(psmotif[0][1])
+        frag_a = getcoo(psmotif[0][1])
+        frag_b = getcoo(csmotif[0][2])
+        native_fragb_2ndsse = csmotif[0][1]
+        native_fraga_2ndsse = getcoo(psmotif[0][2])
     else:
 
-        native_frag_a = psmotif[0][2]
-        frag_a = getcoo(native_frag_a)
-        native_frag_b = csmotif[0][1]
-        frag_b = getcoo(native_frag_b)
+        native_fraga = getcoo(psmotif[0][2])
+        frag_a = getcoo(psmotif[0][2])
+        frag_b = getcoo(csmotif[0][1])
+        native_fragb_2ndsse = csmotif[0][2]
+        native_fraga_2ndsse = getcoo(psmotif[0][1])
+
 
     frag_a, a_cen = centerCoo(frag_a)
+
     frag_b, b_cen = centerCoo(frag_b)
 
     frag_aca = getCAcoo(frag_a)
@@ -146,16 +150,7 @@ def rmsdQCP(psmotif, csmotif, direction):
     rmsd = qcprot.CalcRMSDRotationalMatrix(xyz1, xyz2, fraglen, rot)
     #*********
 
-    """
-    tx, ty, tz = [], [], []
-    for i in range(0, fraglen):
-        tx.append(qcprot.GetDArray(0, i, xyz2))
-        ty.append(qcprot.GetDArray(1, i, xyz2))
-        tz.append(qcprot.GetDArray(2, i, xyz2))
 
-    frag_bt = [tx, ty, tz]
-    #print frag_bt
-    """
     rotmat = []
     for i in range(0,9):
         rotmat.append(qcprot.GetDvector(i,rot))
@@ -168,20 +163,21 @@ def rmsdQCP(psmotif, csmotif, direction):
     trans_fragb = applyTranslation(rotated_fragb, a_cen)
     #dumpPDBCoo2(trans_fragb)
 
-    #print rmsd
+
 
     # translate the other SSE of the current smotif
-
-    if direction == 'left':
-        sse_2nd = csmotif[0][1]
-    else:
-        sse_2nd = csmotif[0][2]
-    #print sse_2nd
-
-    sse_2nd_coos = getcoo(sse_2nd)
+    sse_2nd_coos = getcoo(native_fragb_2ndsse)
     cm_sse2nd = translateCM(sse_2nd_coos,b_cen)
     rot_sse_2nd = applyRot(cm_sse2nd, rotmat)
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
-    dumpPDBCoo2(trans_sse2nd)
+    #dumpPDBCoo2(trans_sse2nd)
+    #dumpPDBCoo2(trans_fragb)
 
-    return True, True
+    #return 3 arrays of coordinates
+    if direction == 'left':
+        transformed_coor = [native_fraga, native_fraga_2ndsse, trans_sse2nd]
+
+    else:
+        transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
+
+    return rmsd, transformed_coor
