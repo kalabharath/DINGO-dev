@@ -70,8 +70,12 @@ def makeTopPickle(previous_smotif_index, num_hits):
     keys = new_dict.keys()
     keys.sort()
     dump_pickle = []
-    for i in range(0,num_hits):
-        dump_pickle.append(new_dict[keys[i]])
+    try:
+        for i in range(0,num_hits):
+            dump_pickle.append(new_dict[keys[i]])
+    except:
+        print "Could only extract ", i
+        num_hits = i
     io.dumpPickle(str(previous_smotif_index)+"_tophits.pickle", dump_pickle)
     return range(num_hits)
 
@@ -138,6 +142,7 @@ def makeTopPickle3(previous_smotif_index, num_hits):
             dump_pickle.append(new_dict[keys[i]])
     except:
         print "could only make ", i
+        num_hits = i
     io.dumpPickle(str(previous_smotif_index)+"_tophits.pickle", dump_pickle)
     return range(num_hits)
 

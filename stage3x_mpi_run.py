@@ -29,7 +29,7 @@ status = MPI.Status()
 ##
 
 if rank == 0:
-    tasks, sse_index = util.getRunSeq3(num_hits=8)
+    tasks, sse_index = util.getRunSeq3(num_hits=20)
     print tasks, sse_index
 
 

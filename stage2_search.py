@@ -25,7 +25,7 @@ def getfromDB(searched_smotifs, current_ss, direction):
     else:
         previous_ss = psmotif[1]
 
-    print current_ss, previous_ss
+    # current_ss, previous_ss
     if direction == 'left':#double check this implementation
         smotif_def = sm.getSmotif(current_ss, previous_ss)
     else:

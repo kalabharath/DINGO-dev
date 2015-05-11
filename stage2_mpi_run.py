@@ -29,7 +29,7 @@ status = MPI.Status()
 ##
 
 if rank == 0:
-    tasks, sse_index = util.getRunSeq(num_hits=8)
+    tasks, sse_index = util.getRunSeq(num_hits=20)
     #tasks = [[5,6]]
     stime = time.time()
 

@@ -69,7 +69,7 @@ def SmotifSearch(index_array):
 
             ## Sequence filter, align native and smotif aa_seq as a measure of sequence similarity = structure similarity
             csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
-            = Sfilter.S2SequenceSimilarity(current_ss, csmotif, direction, exp_data, threshold=30)
+            = Sfilter.S2SequenceSimilarity(current_ss, csmotif, direction, exp_data, threshold=40)
             #print csse_seq
 
             ## Contacts filter,
