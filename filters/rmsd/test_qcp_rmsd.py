@@ -88,5 +88,4 @@ for i in range(0, fraglen):
 
 
 
-
 print rmsd

@@ -180,6 +180,10 @@ def rmsdQCP(psmotif, csmotif, direction):
     else:
         transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
 
+    qcprot.FreeDMatrix(xyz1)
+    qcprot.FreeDMatrix(xyz2)
+    qcprot.FreeDArray(rot)
+
     return rmsd, transformed_coor
 
 def rmsdQCP3(presse, csmotif, direction):
@@ -247,4 +251,7 @@ def rmsdQCP3(presse, csmotif, direction):
     else:
         temp_holder.insert(0,trans_sse2nd)
 
+    qcprot.FreeDMatrix(xyz1)
+    qcprot.FreeDMatrix(xyz2)
+    qcprot.FreeDArray(rot)
     return rmsd, temp_holder

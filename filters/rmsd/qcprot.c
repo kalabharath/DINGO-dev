@@ -93,6 +93,17 @@ double **MakeDMatrix(int i, int j)
 {
     return DMatrix(i, j, "DArray");
 }
+
+void FreeDMatrix(double **a)
+{
+    if ((*a)) free(*a);
+    if ((a)) free(a);
+}
+
+void FreeDArray(double *a)
+{
+    if ((a)) free(a);
+}
 double GetDArray(int i, int j, double **a)
 {
     return a[i][j];

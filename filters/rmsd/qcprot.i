@@ -3,6 +3,8 @@
  %{
  /* Put header files here or function declarations like below */
  extern double **MakeDMatrix(int i, int j);
+ extern void FreeDMatrix(double **a);
+ extern void FreeDArray(double *a);
  extern double GetDArray(int i, int j, double **a);
  extern void SetDArray(int i, int j, double **a, double v);
  extern double GetDvector(int i, double *a);
@@ -16,6 +18,8 @@ extern int FastCalcRMSDAndRotation(double *rot, double *A, double *rmsd, double 
  %}
 
 extern double **MakeDMatrix(int i, int j);
+extern void FreeDMatrix(double **a);
+extern void FreeDArray(double *a);
 extern double GetDArray(int i, int j, double **a);
 extern void SetDArray(int i, int j, double **a, double v);
 extern double GetDvector(int i, double *a);

@@ -74,6 +74,14 @@ def MakeDMatrix(*args):
   return _qcprot.MakeDMatrix(*args)
 MakeDMatrix = _qcprot.MakeDMatrix
 
+def FreeDMatrix(*args):
+  return _qcprot.FreeDMatrix(*args)
+FreeDMatrix = _qcprot.FreeDMatrix
+
+def FreeDArray(*args):
+  return _qcprot.FreeDArray(*args)
+FreeDArray = _qcprot.FreeDArray
+
 def GetDArray(*args):
   return _qcprot.GetDArray(*args)
 GetDArray = _qcprot.GetDArray
