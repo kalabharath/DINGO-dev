@@ -15,7 +15,7 @@ def get_distance(coo1, coo2):
     return math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))
 
 
-def ContactPredicition(s1_def, s2_def, smotif, exp_data, threshold):
+def ContactPredicition(s1_def, s2_def, smotif, exp_data):
 
     """
 
@@ -61,7 +61,7 @@ def ContactPredicition(s1_def, s2_def, smotif, exp_data, threshold):
                    coo2 = [res[3], res[4], res[5]]
             if coo1 and coo2 :
                 dist = get_distance(coo1,coo2)
-                if dist <= contact[2]:
+                if dist <= contact[2] and dist > 2.0:
                     residue_list.append(True)
                 else:
                     residue_list.append(False)
@@ -75,6 +75,11 @@ def ContactPredicition(s1_def, s2_def, smotif, exp_data, threshold):
     return contacts_in_smotif, float(hits)/float(contacts_in_smotif)*100.00
 
 def getCA(coo_array):
+    """
+
+    :param coo_array:
+    :return:
+    """
 
     xt, yt, zt = [],[],[]
     for i in range(0, len(coo_array[0])):
@@ -91,6 +96,12 @@ def getCA(coo_array):
     return [xt, yt, zt]
 
 def coorCAdict(coo_arrays, sse_list):
+    """
+
+    :param coo_arrays:
+    :param sse_list:
+    :return:
+    """
     ca_dict={}
     for i in range(0,len(sse_list)):
         sse_def = sse_list[i]
@@ -100,7 +111,7 @@ def coorCAdict(coo_arrays, sse_list):
             ca_dict[sse_range[j]] = [ca_array[0][j], ca_array[1][j], ca_array[2][j]]
     return ca_dict
 
-def S2ContactPredicition(coo_arrays, sse_list, exp_data, threshold):
+def S2ContactPredicition(coo_arrays, sse_list, exp_data):
 
     """
     :param s1_def:
@@ -122,7 +133,7 @@ def S2ContactPredicition(coo_arrays, sse_list, exp_data, threshold):
         if res1 in ca_res and res2 in ca_res:
             total_contacts +=1
             dist = get_distance(ca_dict[res1], ca_dict[res2])
-            if dist <= contact[2]:
+            if dist <= contact[2] and dist > 2.0 :
                 residue_list.append(True)
             else:
                 residue_list.append(False)

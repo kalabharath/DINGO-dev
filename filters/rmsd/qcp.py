@@ -7,6 +7,7 @@ Date: 8/05/15 , Time:4:27 AM
 """
 
 import qcprot
+import copy
 
 def dumpPDBCoo(coo_array):
     for i in range(0, len(coo_array[0])):
@@ -104,6 +105,13 @@ def applyRot(frag, rotmat):
 
 
 def rmsdQCP(psmotif, csmotif, direction):
+    """
+
+    :param psmotif:
+    :param csmotif:
+    :param direction:
+    :return:
+    """
     #print psmotif[0][0]
     #print csmotif[0][0]
 
@@ -111,14 +119,14 @@ def rmsdQCP(psmotif, csmotif, direction):
         native_fraga = getcoo(psmotif[0][1])
         frag_a = getcoo(psmotif[0][1])
         frag_b = getcoo(csmotif[0][2])
-        native_fragb_2ndsse = csmotif[0][1]
+        native_fragb_2ndsse = copy.copy(csmotif[0][1])
         native_fraga_2ndsse = getcoo(psmotif[0][2])
     else:
 
         native_fraga = getcoo(psmotif[0][2])
         frag_a = getcoo(psmotif[0][2])
         frag_b = getcoo(csmotif[0][1])
-        native_fragb_2ndsse = csmotif[0][2]
+        native_fragb_2ndsse = copy.copy(csmotif[0][2])
         native_fraga_2ndsse = getcoo(psmotif[0][1])
 
 
@@ -149,7 +157,6 @@ def rmsdQCP(psmotif, csmotif, direction):
     #*********
     rmsd = qcprot.CalcRMSDRotationalMatrix(xyz1, xyz2, fraglen, rot)
     #*********
-
 
     rotmat = []
     for i in range(0,9):
@@ -187,16 +194,24 @@ def rmsdQCP(psmotif, csmotif, direction):
     return rmsd, transformed_coor
 
 def rmsdQCP3(presse, csmotif, direction):
+    """
 
+    :param presse:
+    :param csmotif:
+    :param direction:
+    :return:
+    """
 
     if direction =='left':
         frag_b = getcoo(csmotif[0][2])
-        native_fragb_2ndsse = csmotif[0][1]
-        frag_a = presse[-1]
+        native_fragb_2ndsse = copy.copy(csmotif[0][1])
+
+        frag_a = copy.copy(presse[-1])
     else:
-        frag_a = presse[0]
+        frag_a = copy.copy(presse[0])
+
         frag_b = getcoo(csmotif[0][1])
-        native_fragb_2ndsse = csmotif[0][2]
+        native_fragb_2ndsse = copy.copy(csmotif[0][2])
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)
@@ -229,9 +244,7 @@ def rmsdQCP3(presse, csmotif, direction):
         rotmat.append(qcprot.GetDvector(i,rot))
 
 
-
     rotated_fragb = applyRot(frag_b, rotmat)
-
 
     trans_fragb = applyTranslation(rotated_fragb, a_cen)
 
@@ -243,7 +256,7 @@ def rmsdQCP3(presse, csmotif, direction):
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
 
     #append the translated coordinates
-    temp_holder = presse[:]
+    temp_holder = copy.copy(presse)
 
     if direction == 'left':
         temp_holder.append(trans_sse2nd)
@@ -254,4 +267,6 @@ def rmsdQCP3(presse, csmotif, direction):
     qcprot.FreeDMatrix(xyz1)
     qcprot.FreeDMatrix(xyz2)
     qcprot.FreeDArray(rot)
+
     return rmsd, temp_holder
+

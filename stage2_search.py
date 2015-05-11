@@ -77,7 +77,7 @@ def SmotifSearch(index_array):
 
             ## Contacts filter,
             no_of_contacts, percent_of_satisfied_contacts \
-            = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data, threshold=0.8)
+            = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
 
 
             if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0:
@@ -85,7 +85,7 @@ def SmotifSearch(index_array):
                 dump_log.append([transformed_coos,['seq_filter', csse_seq, seq_identity, blosum62_score],
                 ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts], sse_ordered])
 
-    if len(dump_log) > 1 :
+    if len(dump_log) > 0 :
         io.dumpPickle("tx_"+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)
 
     return True

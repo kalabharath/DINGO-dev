@@ -154,7 +154,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05):
 
     # Define Thomas's implementaion of hollow concentric shells
 
-    nM = 1000  # 1000 pts in each sphere
+    nM = 500  # 1000 pts in each sphere
     M = [1, 40]  # 40 spheres 10-50 Angstrom
     npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
     rMx = fastT1FM.MakeDvector(npts)  #allocate memmory
