@@ -10,6 +10,11 @@ import qcprot
 import copy
 
 def dumpPDBCoo(coo_array):
+    """
+
+    :param coo_array:
+    :return:
+    """
     for i in range(0, len(coo_array[0])):
         x = coo_array[0][i]
         y = coo_array[1][i]
@@ -22,6 +27,11 @@ def dumpPDBCoo(coo_array):
     return True
 
 def dumpPDBCoo2(coo_array):
+    """
+
+    :param coo_array:
+    :return:
+    """
     for i in range(0, len(coo_array[0])):
         x = coo_array[0][i]
         y = coo_array[1][i]
@@ -37,6 +47,11 @@ def dumpPDBCoo2(coo_array):
     return True
 
 def getCAcoo(frag):
+    """
+
+    :param frag:
+    :return:
+    """
     #print frag
     x,y,z = [], [], []
     for i in range(0, len(frag[0])):
@@ -47,6 +62,11 @@ def getCAcoo(frag):
     return [x,y,z]
 
 def getcoo(frag):
+    """
+
+    :param frag:
+    :return:
+    """
     #[41, 'ASP', 'N', 28.117, -17.694, 7.215]
     x,y,z, atom_type, res_no, res = [], [], [], [], [], []
     for i in range(0, len(frag)):
@@ -59,6 +79,11 @@ def getcoo(frag):
     return [x,y,z, atom_type, res_no, res]
 
 def centerCoo(coo_array):
+    """
+
+    :param coo_array:
+    :return:
+    """
 
     xsum, ysum, zsum = 0,0,0
 
@@ -78,6 +103,12 @@ def centerCoo(coo_array):
     return coo_array, [xsum, ysum, zsum]
 
 def applyTranslation(frag, cen_mass):
+    """
+
+    :param frag:
+    :param cen_mass:
+    :return:
+    """
 
     for i in range(0, len(frag[0])):
         frag[0][i] += cen_mass[0]
@@ -86,6 +117,12 @@ def applyTranslation(frag, cen_mass):
     return frag
 
 def translateCM(coo_array, cm):
+    """
+
+    :param coo_array:
+    :param cm:
+    :return:
+    """
     xsum, ysum, zsum = cm[0], cm[1], cm[2]
     for i in range(0, len(coo_array[0])):
         coo_array[0][i] -= xsum
@@ -94,6 +131,12 @@ def translateCM(coo_array, cm):
     return coo_array
 
 def applyRot(frag, rotmat):
+    """
+
+    :param frag:
+    :param rotmat:
+    :return:
+    """
     for i in range(0,len(frag[0])):
         x = rotmat[0]*frag[0][i] + rotmat[1]*frag[1][i] + rotmat[2]*frag[2][i]
         y = rotmat[3]*frag[0][i] + rotmat[4]*frag[1][i] + rotmat[5]*frag[2][i]
@@ -102,7 +145,6 @@ def applyRot(frag, rotmat):
         frag[1][i] = y
         frag[2][i] = z
     return frag
-
 
 def rmsdQCP(psmotif, csmotif, direction):
     """
@@ -131,7 +173,6 @@ def rmsdQCP(psmotif, csmotif, direction):
 
 
     frag_a, a_cen = centerCoo(frag_a)
-
     frag_b, b_cen = centerCoo(frag_b)
 
     frag_aca = getCAcoo(frag_a)
@@ -167,7 +208,7 @@ def rmsdQCP(psmotif, csmotif, direction):
     rotated_fragb = applyRot(frag_b, rotmat)
 
     #dumpPDBCoo2(rotated_fragb)
-    trans_fragb = applyTranslation(rotated_fragb, a_cen)
+    #trans_fragb = applyTranslation(rotated_fragb, a_cen)
     #dumpPDBCoo2(trans_fragb)
 
 
@@ -205,11 +246,9 @@ def rmsdQCP3(presse, csmotif, direction):
     if direction =='left':
         frag_b = getcoo(csmotif[0][2])
         native_fragb_2ndsse = copy.copy(csmotif[0][1])
-
         frag_a = copy.copy(presse[-1])
     else:
         frag_a = copy.copy(presse[0])
-
         frag_b = getcoo(csmotif[0][1])
         native_fragb_2ndsse = copy.copy(csmotif[0][2])
 
@@ -245,8 +284,7 @@ def rmsdQCP3(presse, csmotif, direction):
 
 
     rotated_fragb = applyRot(frag_b, rotmat)
-
-    trans_fragb = applyTranslation(rotated_fragb, a_cen)
+    #trans_fragb = applyTranslation(rotated_fragb, a_cen)
 
 
     # translate the other SSE of the current smotif
@@ -260,7 +298,6 @@ def rmsdQCP3(presse, csmotif, direction):
 
     if direction == 'left':
         temp_holder.append(trans_sse2nd)
-
     else:
         temp_holder.insert(0,trans_sse2nd)
 
