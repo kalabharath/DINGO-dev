@@ -211,8 +211,6 @@ def rmsdQCP(psmotif, csmotif, direction):
     #trans_fragb = applyTranslation(rotated_fragb, a_cen)
     #dumpPDBCoo2(trans_fragb)
 
-
-
     # translate the other SSE of the current smotif
     sse_2nd_coos = getcoo(native_fragb_2ndsse)
     cm_sse2nd = translateCM(sse_2nd_coos,b_cen)
@@ -254,10 +252,12 @@ def rmsdQCP3(presse, csmotif, direction):
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)
+
     frag_aca = getCAcoo(frag_a)
     frag_bca = getCAcoo(frag_b)
 
     fraglen = len(frag_aca[0])
+
     xyz1 = qcprot.MakeDMatrix(3, fraglen)
     xyz2 = qcprot.MakeDMatrix(3, fraglen)
 
@@ -284,6 +284,7 @@ def rmsdQCP3(presse, csmotif, direction):
 
 
     rotated_fragb = applyRot(frag_b, rotmat)
+
     #trans_fragb = applyTranslation(rotated_fragb, a_cen)
 
 

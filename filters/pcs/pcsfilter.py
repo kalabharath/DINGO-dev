@@ -239,3 +239,117 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05):
     fastT1FM.FreeDArray(rMz)
 
     return temp_tensor
+
+
+def PCSAxRhFit3(s1_def, s2_def, smotif, exp_data, threshold=0.05):
+    """
+
+    :param s1_def:
+    :param s2_def:
+    :param smotif:
+    :param threshold:
+    :return:
+    """
+
+    ss1_list = range(s1_def[4], s1_def[5] + 1)
+    ss2_list = range(s2_def[4], s2_def[5] + 1)
+
+    smotif_ss1 = range(int(smotif[0][0][1]), int(smotif[0][0][2]) + 1)
+    smotif_ss2 = range(int(smotif[0][0][3]), int(smotif[0][0][4]) + 1)
+
+
+    # print ss1_list, ss2_list
+    #print smotif_ss1, smotif_ss2
+    #print smotif[0][0]
+
+    rH1, rH2 = getHN(ss1_list, ss2_list, smotif, atom_type='H')
+    pcs_data = exp_data['pcs_data']
+    ntags = len(pcs_data)
+
+    # Define Thomas's implementaion of hollow concentric shells
+
+    nM = 500  # 1000 pts in each sphere
+    M = [1, 40]  # 40 spheres 10-50 Angstrom
+    npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
+    rMx = fastT1FM.MakeDvector(npts)  #allocate memmory
+    rMy = fastT1FM.MakeDvector(npts)
+    rMz = fastT1FM.MakeDvector(npts)
+    PointsOnSpheres(M, nM, rMx, rMy, rMz)
+
+    #Temp storage of tensor values
+    temp_tensor = []
+
+    for tag in range(0, ntags):
+        #for tag in range(0,1):
+        smotif_pcs = match_pcss_HN(rH1, rH2, pcs_data[tag])
+
+        total_pcs, pcs_bool = usuablePCS(smotif_pcs)
+
+        if pcs_bool: #save some time for not running
+
+            # Thomas's fast Tensor calc code init
+
+            frag_len = len(smotif_pcs)
+            nsets = len(smotif_pcs[0])
+            xyz = fastT1FM.MakeDMatrix(frag_len, 3)
+            pcs = fastT1FM.MakeDMatrix(nsets, frag_len)
+            xyz_HN = rH1 + rH2
+
+            for k in range(nsets):
+                for j in range(frag_len):
+                    fastT1FM.SetDArray(k, j, pcs, smotif_pcs[j][k])
+
+            cm = [0.0, 0.0, 0.0]
+            for j in range(frag_len):
+                cm[0] = cm[0] + xyz_HN[j][0]
+                cm[1] = cm[1] + xyz_HN[j][1]
+                cm[2] = cm[2] + xyz_HN[j][2]
+            cm[0] /= float(frag_len)
+            cm[1] /= float(frag_len)
+            cm[2] /= float(frag_len)
+            for j in range(frag_len):
+                fastT1FM.SetDArray(j, 0, xyz, xyz_HN[j][0] - cm[0])
+                fastT1FM.SetDArray(j, 1, xyz, xyz_HN[j][1] - cm[1])
+                fastT1FM.SetDArray(j, 2, xyz, xyz_HN[j][2] - cm[2])
+
+            tensor = fastT1FM.MakeDMatrix(nsets, 8)
+            Xaxrh_range = fastT1FM.MakeDMatrix(nsets, 4)
+            for i in range(0, nsets):
+                fastT1FM.SetDArray(i, 0, Xaxrh_range, 0.05)
+                fastT1FM.SetDArray(i, 1, Xaxrh_range, 100.0)
+                fastT1FM.SetDArray(i, 2, Xaxrh_range, 0.05)
+                fastT1FM.SetDArray(i, 3, Xaxrh_range, 100.0)
+            #****
+            chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
+            #****
+
+            x = fastT1FM.GetDArray(0, 0, tensor)
+            y = fastT1FM.GetDArray(0, 1, tensor)
+            z = fastT1FM.GetDArray(0, 2, tensor)
+            saupe_array = []
+            for kk in range(nsets):
+                temp_saupe = []
+                for j in range(3, 8):
+                    temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
+                saupe_array.append(temp_saupe)
+            metalpos = [x + cm[0], y + cm[1], z + cm[2]]
+            AxRh = calcAxRh(saupe_array)
+            #print tag+1, chisqr, metalpos, AxRh
+
+
+            #Free memory for the variables
+            fastT1FM.FreeDMatrix(xyz)
+            fastT1FM.FreeDMatrix(pcs)
+            fastT1FM.FreeDMatrix(Xaxrh_range)
+            fastT1FM.FreeDMatrix(tensor)
+        else:
+            chisqr = 1.0e+30
+
+        if chisqr < 1.0e+30:
+            temp_tensor.append([tag, chisqr/total_pcs, AxRh ])
+
+    fastT1FM.FreeDArray(rMx)
+    fastT1FM.FreeDArray(rMy)
+    fastT1FM.FreeDArray(rMz)
+
+    return temp_tensor
