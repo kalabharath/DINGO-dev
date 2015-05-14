@@ -56,7 +56,7 @@ def SmotifSearch(index_array):
 
         smotif_seq, seq_identity, blosum62_score, bool_sequence_similarity = Sfilter.SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold=41)
         no_of_contacts, percent_of_satisfied_contacts = Cfilter.ContactPredicition(s1_def, s2_def, smotif, exp_data)
-        pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05)
+        pcs_tensor_fits = Pfilter.PCSAxRhFit2(s1_def, s2_def, smotif, exp_data, threshold=0.05)
 
 
         if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0 :

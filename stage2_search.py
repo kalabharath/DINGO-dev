@@ -12,6 +12,7 @@ import utility.smotif_util as sm
 import utility.io_util as io
 import filters.sequence.sequence_similarity as Sfilter
 import filters.contacts.contacts_filter  as Cfilter
+import filters.pcs.pcsfilter as Pfilter
 import filters.rmsd.qcp as qcp
 
 
@@ -79,6 +80,8 @@ def SmotifSearch(index_array):
             no_of_contacts, percent_of_satisfied_contacts \
             = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
 
+            ## PCS filter
+            pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05)
 
             if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0:
                 print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts

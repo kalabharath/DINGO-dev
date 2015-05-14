@@ -241,7 +241,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05):
     return temp_tensor
 
 
-def PCSAxRhFit3(s1_def, s2_def, smotif, exp_data, threshold=0.05):
+def PCSAxRhFit2(s1_def, s2_def, smotif, exp_data, threshold=0.05):
     """
 
     :param s1_def:
