@@ -21,7 +21,7 @@ def getHN(ss1_list, ss2_list, smotif, atom_type='H'):
 
     rH1, rH2 = [], []
     counter = 0
-    for entry in smotif[0][1]:
+    for entry in smotif[1]:
         # res_no, aa_type, atom_type, x, y, z
         if entry[2] == atom_type:
             x, y, z = entry[3], entry[4], entry[5]
@@ -31,7 +31,7 @@ def getHN(ss1_list, ss2_list, smotif, atom_type='H'):
                 break
             rH1.append([x, y, z, res_no])
     counter = 0
-    for entry in smotif[0][2]:
+    for entry in smotif[2]:
         # res_no, aa_type, atom_type, x, y, z
         if entry[2] == atom_type:
             x, y, z = entry[3], entry[4], entry[5]
@@ -96,6 +96,12 @@ def PointsOnSpheres(M, N, rMx, rMy, rMz):
 
 
 def usuablePCS(pcs_array):
+    """
+
+    :param pcs_array:
+    :return:
+    """
+
     for j in range(0, len(pcs_array[0])):
         counter = 0
         for entry in pcs_array:
@@ -140,8 +146,8 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05):
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)
 
-    smotif_ss1 = range(int(smotif[0][0][1]), int(smotif[0][0][2]) + 1)
-    smotif_ss2 = range(int(smotif[0][0][3]), int(smotif[0][0][4]) + 1)
+    #smotif_ss1 = range(int(smotif[0][0][1]), int(smotif[0][0][2]) + 1)
+    #smotif_ss2 = range(int(smotif[0][0][3]), int(smotif[0][0][4]) + 1)
 
 
     # print ss1_list, ss2_list
@@ -220,10 +226,10 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05):
                 saupe_array.append(temp_saupe)
             metalpos = [x + cm[0], y + cm[1], z + cm[2]]
             AxRh = calcAxRh(saupe_array)
-            #print tag+1, chisqr, metalpos, AxRh
+            # print tag+1, chisqr, metalpos, AxRh
 
 
-            #Free memory for the variables
+            # Free memory for the variables
             fastT1FM.FreeDMatrix(xyz)
             fastT1FM.FreeDMatrix(pcs)
             fastT1FM.FreeDMatrix(Xaxrh_range)
@@ -254,13 +260,15 @@ def PCSAxRhFit2(s1_def, s2_def, smotif, exp_data, threshold=0.05):
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)
 
-    smotif_ss1 = range(int(smotif[0][0][1]), int(smotif[0][0][2]) + 1)
-    smotif_ss2 = range(int(smotif[0][0][3]), int(smotif[0][0][4]) + 1)
+
+
+    # smotif_ss1 = range(int(smotif[0][0][1]), int(smotif[0][0][2]) + 1)
+    # smotif_ss2 = range(int(smotif[0][0][3]), int(smotif[0][0][4]) + 1)
 
 
     # print ss1_list, ss2_list
-    #print smotif_ss1, smotif_ss2
-    #print smotif[0][0]
+    # print smotif_ss1, smotif_ss2
+    # print smotif[0][0]
 
     rH1, rH2 = getHN(ss1_list, ss2_list, smotif, atom_type='H')
     pcs_data = exp_data['pcs_data']
@@ -271,7 +279,7 @@ def PCSAxRhFit2(s1_def, s2_def, smotif, exp_data, threshold=0.05):
     nM = 500  # 1000 pts in each sphere
     M = [1, 40]  # 40 spheres 10-50 Angstrom
     npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
-    rMx = fastT1FM.MakeDvector(npts)  #allocate memmory
+    rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
     PointsOnSpheres(M, nM, rMx, rMy, rMz)
@@ -280,12 +288,12 @@ def PCSAxRhFit2(s1_def, s2_def, smotif, exp_data, threshold=0.05):
     temp_tensor = []
 
     for tag in range(0, ntags):
-        #for tag in range(0,1):
+        # for tag in range(0,1):
         smotif_pcs = match_pcss_HN(rH1, rH2, pcs_data[tag])
 
         total_pcs, pcs_bool = usuablePCS(smotif_pcs)
 
-        if pcs_bool: #save some time for not running
+        if pcs_bool: # save some time for not running
 
             # Thomas's fast Tensor calc code init
 
@@ -334,7 +342,7 @@ def PCSAxRhFit2(s1_def, s2_def, smotif, exp_data, threshold=0.05):
                 saupe_array.append(temp_saupe)
             metalpos = [x + cm[0], y + cm[1], z + cm[2]]
             AxRh = calcAxRh(saupe_array)
-            #print tag+1, chisqr, metalpos, AxRh
+            # print tag+1, chisqr, metalpos, AxRh
 
 
             #Free memory for the variables

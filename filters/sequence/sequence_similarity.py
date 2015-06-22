@@ -67,9 +67,10 @@ def SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold):
     # print aa_seq
     native_seq = aa_seq[s1_def[4] - 1:s1_def[5]] + aa_seq[s2_def[4] - 1:s2_def[5]]  # -1 to fix residue numbering
 
-    smotif_def = smotif[0][0]
-    smotif_ss1 = smotif[0][1]
-    smotif_ss2 = smotif[0][2]
+
+    smotif_def = smotif[0]
+    smotif_ss1 = smotif[1]
+    smotif_ss2 = smotif[2]
     smotif_seq = getSmotifAASeq(smotif_ss1, smotif_ss2)
     # print smotif_def
     # print native_seq, len(native_seq)
@@ -119,12 +120,12 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
     native_seq = aa_seq[ss_def[4] - 1:ss_def[5]]
 
 
-    smotif_def = smotif[0][0]
+    smotif_def = smotif[0]
     if direction == 'left':
-        smotif_sse = smotif[0][1]
+        smotif_sse = smotif[1]
     else:
 
-        smotif_sse = smotif[0][2]
+        smotif_sse = smotif[2]
     smotif_seq = getSmotifAASeq_v2(smotif_sse)
     # print smotif_def
     #print native_seq, len(native_seq)

@@ -17,6 +17,7 @@ import filters.rmsd.qcp as qcp
 
 
 
+
 def getfromDB(searched_smotifs, current_ss, direction):
 
     psmotif = searched_smotifs[-1]
@@ -61,13 +62,16 @@ def SmotifSearch(index_array):
     dump_log = []
 
     sse_ordered = orderSSE(psmotif[-1], current_ss)
-    for i in range(0, len(csmotif_data)):
-    #for i in range(0,1):
+    #for i in range(0, len(csmotif_data)):
+    for i in range(0,1):
 
         csmotif = csmotif_data[i]
 
         ##QCP RMSD
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0],csmotif, direction)
+
+        print rmsd
+        clashes = qcp.clahses(transformed_coos)
 
         if rmsd <= 2.0:
 
@@ -81,7 +85,7 @@ def SmotifSearch(index_array):
             = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
 
             ## PCS filter
-            pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05)
+            # pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05)
 
             if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0:
                 print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts

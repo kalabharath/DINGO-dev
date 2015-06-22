@@ -40,7 +40,8 @@ def readSmotifDatabase(smotif):
     """
     # TODO option to parse in database path
 
-    smotif_db_path = "/home/kalabharath/zinr/smotif_database/"
+    #smotif_db_path = "/home/kalabharath/zinr/smotif_database/"
+    smotif_db_path = "/home/kalabharath/zinr/main/smotif_cen_db/"
     file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db"
     fin = smotif_db_path + file_name
     smotif_data = io.readPickle(fin)

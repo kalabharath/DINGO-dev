@@ -147,9 +147,88 @@ def applyRot(frag, rotmat):
         frag[2][i] = z
     return frag
 
+
 def rmsdQCP(psmotif, csmotif, direction):
     """
 
+    RMSD involves two peptides of equal length, here termed as frag_a, frag_b
+
+    :param psmotif:
+    :param csmotif:
+    :param direction:
+    :return:
+    """
+
+    if direction =='left':
+
+        frag_a = getcoo(psmotif[1])
+        frag_b = getcoo(csmotif[2])
+
+        current_2ndsse = copy.copy(csmotif[1])
+        previous_2ndsse = getcoo(psmotif[2])
+
+    else:
+        frag_a = getcoo(psmotif[2])
+        frag_b = getcoo(csmotif[1])
+
+        current_2ndsse = copy.copy(csmotif[2])
+        previous_2ndsse = getcoo(psmotif[1])
+
+    frag_aca = getCAcoo(frag_a)
+    frag_bca = getCAcoo(frag_b)
+
+    # init variables for QCP
+
+    fraglen = len(frag_aca[0])
+    xyz1 = qcprot.MakeDMatrix(3, fraglen)
+    xyz2 = qcprot.MakeDMatrix(3, fraglen)
+
+    for i in range(0, fraglen):
+        qcprot.SetDArray(0, i, xyz1, frag_aca[0][i])
+        qcprot.SetDArray(1, i, xyz1, frag_aca[1][i])
+        qcprot.SetDArray(2, i, xyz1, frag_aca[2][i])
+    for i in range(0, fraglen):
+        qcprot.SetDArray(0, i, xyz2, frag_bca[0][i])
+        qcprot.SetDArray(1, i, xyz2, frag_bca[1][i])
+        qcprot.SetDArray(2, i, xyz2, frag_bca[2][i])
+
+    rot = qcprot.MakeDvector(9)
+
+    #*********
+    rmsd = qcprot.CalcRMSDRotationalMatrix(xyz1, xyz2, fraglen, rot)
+    #*********
+
+    # Retrive rotation matrix
+
+    rotmat = []
+    for i in range(0,9):
+        rotmat.append(qcprot.GetDvector(i,rot))
+
+
+
+    # translate the other SSE of the current smotif
+    sse_2nd_coos = getcoo(current_2ndsse)
+    rot_sse_2nd = applyRot(sse_2nd_coos, rotmat)
+
+
+
+    #return 3 arrays of coordinates
+    if direction == 'left':
+        transformed_coor = [rot_sse_2nd, frag_a, previous_2ndsse]
+
+    else:
+        transformed_coor = [previous_2ndsse, frag_a, rot_sse_2nd]
+
+    qcprot.FreeDMatrix(xyz1)
+    qcprot.FreeDMatrix(xyz2)
+    qcprot.FreeDArray(rot)
+
+    return rmsd, transformed_coor
+
+
+def rmsdQCP_depricated(psmotif, csmotif, direction):
+    """
+    use rmsdQCP
     :param psmotif:
     :param csmotif:
     :param direction:
@@ -159,18 +238,18 @@ def rmsdQCP(psmotif, csmotif, direction):
     #print csmotif[0][0]
 
     if direction =='left':
-        native_fraga = getcoo(psmotif[0][1])
-        frag_a = getcoo(psmotif[0][1])
-        frag_b = getcoo(csmotif[0][2])
-        native_fragb_2ndsse = copy.copy(csmotif[0][1])
-        native_fraga_2ndsse = getcoo(psmotif[0][2])
+        native_fraga = getcoo(psmotif[1])
+        frag_a = getcoo(psmotif[1])
+        frag_b = getcoo(csmotif[2])
+        native_fragb_2ndsse = copy.copy(csmotif[1])
+        native_fraga_2ndsse = getcoo(psmotif[2])
     else:
 
-        native_fraga = getcoo(psmotif[0][2])
-        frag_a = getcoo(psmotif[0][2])
-        frag_b = getcoo(csmotif[0][1])
-        native_fragb_2ndsse = copy.copy(csmotif[0][2])
-        native_fraga_2ndsse = getcoo(psmotif[0][1])
+        native_fraga = getcoo(psmotif[2])
+        frag_a = getcoo(psmotif[2])
+        frag_b = getcoo(csmotif[1])
+        native_fragb_2ndsse = copy.copy(csmotif[2])
+        native_fraga_2ndsse = getcoo(psmotif[1])
 
 
     frag_a, a_cen = centerCoo(frag_a)
@@ -309,3 +388,12 @@ def rmsdQCP3(presse, csmotif, direction):
 
     return rmsd, temp_holder
 
+def clahses(coo_arrays):
+
+    print coo_arrays[0]
+    print coo_arrays[1]
+    print coo_arrays[2]
+
+    print len(coo_arrays)
+
+    return True

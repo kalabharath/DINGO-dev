@@ -81,11 +81,11 @@ def makeTopPickle(previous_smotif_index, num_hits):
 
 def getRunSeq(num_hits):
 
-    print num_hits
     """
     generate run seq, a seq list of pairs of
     indexes of profiles for job scheduling
     """
+
     ss_profiles = io.readPickle("ss_profiles.pickle")
     map_route = io.readPickle("contact_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
