@@ -100,6 +100,7 @@ def centerCoo(coo_array):
         coo_array[0][i] -= xsum
         coo_array[1][i] -= ysum
         coo_array[2][i] -= zsum
+
     return coo_array, [xsum, ysum, zsum]
 
 def applyTranslation(frag, cen_mass):
