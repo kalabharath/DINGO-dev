@@ -11,7 +11,7 @@ Perform stage 2 in parallel
 
 from   mpi4py import  MPI
 import utility.stage2_util as util
-import stage_3x_search as S3search
+import stage3x_search as S3search
 import time
 
 

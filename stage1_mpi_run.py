@@ -11,7 +11,7 @@ Perform stage 1 in perfect parallel
 
 from   mpi4py import  MPI
 import utility.stage1_util as util
-import stage_1_search as S1search
+import stage1_search as S1search
 import time
 #Define MPI messaage tags
 
