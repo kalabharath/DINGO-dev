@@ -25,13 +25,27 @@ def getSSdef(index_array):
     s1_list, s2_list = uts1.getSSlist()
     return s1_list[index_array[0]], s2_list[index_array[1]]
 
+
+def dumpData(dump_log, tlog):
+    """
+    dump_log.append([smotif,['seq_filter', smotif_seq, seq_identity, blosum62_score],
+    ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts],
+    ['PCS_filter', pcs_tensor_fits],['smotif_def',[s1_def, s2_def]]])
+    """
+    temp=[]
+    for entry in tlog:
+        temp.append(entry)
+    print temp
+    return dump_log.append(temp)
+
 def SmotifSearch(index_array):
     """
     Main ()
     :param index_array:
     :return:
     """
-    #TODO list the complete details for how this function works
+    # TODO list the complete details for how this function works
+    # TODO automatic selection of various filter modules based on available input experimental data
     #print index_array
     s1_def, s2_def = getSSdef(index_array)
     smotif_def = sm.getSmotif(s1_def, s2_def)
@@ -39,37 +53,41 @@ def SmotifSearch(index_array):
 
     smotif_data = sm.readSmotifDatabase(smotif_def)
     exp_data = io.readPickle("exp_data.pickle")
+    exp_data_types = exp_data.keys() #['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
-    """
-    dump_log = [['smotif'],['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
-                ['contacts_filter','no_of_contacts', '%_of_contacts_observed'],
-                ['PCS_filter', 'tensor_fits'],['smotif_def',[ss1_def, ss2_def]]]
-    """
-    dump_log = []
+    dump_log=[]
+
     for i in range(0, len(smotif_data)):
 
-    #for i in range(0,100):
-        #print smotif_data[i][0][0]
-        smotif = smotif_data[i]
-        #print smotif[0][0]
+        tlog = []
+        tlog.append(['smotif',smotif_data[i]])
+        tlog.append(['smotif_def',[s1_def, s2_def]])
 
-        # TODO explore the idea of using nested filters, may not be useful!
+
         # TODO clever use of variable names
 
-        smotif_seq, seq_identity, blosum62_score, bool_sequence_similarity = Sfilter.SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold=41)
-        no_of_contacts, percent_of_satisfied_contacts = Cfilter.ContactPredicition(s1_def, s2_def, smotif, exp_data)
-        pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05)
+        if 'aa_seq' in exp_data_types:
+            smotif_seq, seq_identity, blosum62_score  = Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
+        if 'contacts' in exp_data_types:
+            no_of_contacts, percent_of_satisfied_contacts = Cfilter.ContactPredicition(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
-        if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0 :
+        if 'pcs_data' in exp_data_types:
+            pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['PCS_filter', pcs_tensor_fits])
+
+        if seq_identity > 40.0 and percent_of_satisfied_contacts > 50.0 :
             # print index_array, s1_def, s2_def
             # print smotif_def, len(smotif_data)
-            # print smotif[0][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "i=", i, "/", len(smotif_data), percent_of_satisfied_contacts
-            # print pcs_tensor_fits
-            dump_log.append([smotif,['seq_filter', smotif_seq, seq_identity, blosum62_score],
-                             ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts],
-                             ['PCS_filter', pcs_tensor_fits],['smotif_def',[s1_def, s2_def]]])
+            print smotif_data[i][0][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "i=", i, "/", len(smotif_data), percent_of_satisfied_contacts
+            print pcs_tensor_fits
+
+            dump_log = dumpData(dump_log, tlog)
+
     if len(dump_log) > 1 :
+        print "num of hits", len(dump_log)
         io.dumpPickle('0_'+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)
 
     return True

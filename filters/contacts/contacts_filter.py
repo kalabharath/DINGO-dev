@@ -72,7 +72,10 @@ def ContactPredicition(s1_def, s2_def, smotif, exp_data):
         if entry:
             hits +=1
 
-    return contacts_in_smotif, float(hits)/float(contacts_in_smotif)*100.00
+    if hits:
+        return contacts_in_smotif, float(hits)/float(contacts_in_smotif)*100.00
+    else:
+        return contacts_in_smotif, 9999.999
 
 def getCA(coo_array):
     """

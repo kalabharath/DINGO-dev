@@ -31,7 +31,8 @@ def getRunSeq():
     indexes of profiles for job scheduling
     """
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    map_route = io.readPickle("contact_route.pickle")
+    #map_route = io.readPickle("contact_route.pickle")
+    map_route = io.readPickle("pcs_route.pickle")
     s1, s2 = map_route[0][0], map_route[0][1]
     s1_list, s2_list = getPairSSProfiles(s1, s2, ss_profiles)
 
@@ -44,9 +45,7 @@ def getRunSeq():
 
 def getSSlist():
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    map_route = io.readPickle("contact_route.pickle")
+    map_route = io.readPickle("pcs_route.pickle")
     s1, s2 = map_route[0][0], map_route[0][1]
     s1_list, s2_list = getPairSSProfiles(s1, s2, ss_profiles)
     return s1_list, s2_list
-
-    # getRunSeq()

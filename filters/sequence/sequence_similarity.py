@@ -15,7 +15,7 @@ def getSmotifAASeq(ss1, ss2):
     one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q',
                   'ASP': 'D', 'ASN': 'N', 'HIS': 'H', 'TRP': 'W', 'PHE': 'F', 'TYR': 'Y',
                   'ARG': 'R', 'LYS': 'K', 'SER': 'S', 'THR': 'T', 'MET': 'M', 'ALA': 'A',
-                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'D', 'GLX': 'G'}
+                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'D', 'GLX': 'G', 'UNK': 'A'}
     seq = ''
 
     for entry in ss1:
@@ -36,7 +36,7 @@ def getSmotifAASeq_v2(sse):
     one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q',
                   'ASP': 'D', 'ASN': 'N', 'HIS': 'H', 'TRP': 'W', 'PHE': 'F', 'TYR': 'Y',
                   'ARG': 'R', 'LYS': 'K', 'SER': 'S', 'THR': 'T', 'MET': 'M', 'ALA': 'A',
-                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'D', 'GLX': 'G'}
+                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'D', 'GLX': 'G', 'UNK': 'A'}
     seq = ''
 
     for entry in sse:
@@ -46,7 +46,7 @@ def getSmotifAASeq_v2(sse):
     return seq
 
 
-def SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold):
+def SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold=50):
     """
     return sequence identity for given unique seqs and
     new queried sequences
@@ -90,10 +90,9 @@ def SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold):
     # seq_id = (k/j)*100
     seq_id = (k / len(smotif_seq)) * 100
 
-    if seq_id >= threshold and score > 0:
-        return smotif_seq, seq_id, score, True
-    else:
-        return smotif_seq, seq_id, score, False
+
+    return smotif_seq, seq_id, score
+
 
 def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
     """

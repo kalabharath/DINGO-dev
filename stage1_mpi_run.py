@@ -62,7 +62,7 @@ if rank == 0:
             ctime = time.time()
             elapsed = ctime-stime
             finished_task += 1
-            print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed)/(60), 0), "mins"
+            print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed)/(60), 2), "mins"
             #print ("Got data from  worker {}".format(source))
         elif tag == tags.EXIT:
             #print ("Worker {} exited".format(source))

@@ -147,6 +147,12 @@ def applyRot(frag, rotmat):
         frag[2][i] = z
     return frag
 
+def get_dist(r1,r2):
+    import math
+    x1,y1,z1=r1[0],r1[1],r1[2]
+    x2,y2,z2=r2[0],r2[1],r2[2]
+    return (math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1)))
+
 
 def rmsdQCP(psmotif, csmotif, direction):
     """
@@ -389,11 +395,20 @@ def rmsdQCP3(presse, csmotif, direction):
     return rmsd, temp_holder
 
 def clahses(coo_arrays):
+    """
+    Find the clashes between all the SSEs
+    :param coo_arrays:
+    :return:
+    """
 
-    print coo_arrays[0]
-    print coo_arrays[1]
-    print coo_arrays[2]
+    for i in range(0,len(coo_arrays)-1):
 
-    print len(coo_arrays)
+        sse1 = getCAcoo(coo_arrays[i])
+        sse2 = getCAcoo(coo_arrays[i+1])
 
+        for j in  range(0, len(sse1[0])):
+            for k in range(0, len(sse2[0])):
+                dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]],[sse2[0][k], sse2[1][k], sse2[2][k]])
+                if dist < 2.0:
+                    return False
     return True

@@ -59,7 +59,7 @@ def makeTopPickle(previous_smotif_index, num_hits):
     new_dict={}
     seqs = []
     for hit in hits:
-        print hit
+        #print hit
         seq_filter = hit[1]
         smotif_seq = seq_filter[1]
         contacts_filter = hit[2]
@@ -87,7 +87,8 @@ def getRunSeq(num_hits):
     """
 
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    map_route = io.readPickle("contact_route.pickle")
+    #map_route = io.readPickle("contact_route.pickle")
+    map_route = io.readPickle("pcs_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
 
     direction = next_smotif[-1]
@@ -175,7 +176,7 @@ def getRunSeq3(num_hits):
         return run_seq, next_index
 
 def getPreviousSmotif(index):
-     map_route = io.readPickle("contact_route.pickle")
+     map_route = io.readPickle("pcs_route.pickle")
      next_index, next_smotif = getNextSmotif(map_route)
      top_hits = io.readPickle(str(next_index-1)+"_tophits.pickle") #Read in previous index hits
      #print len(top_hits)
@@ -191,7 +192,8 @@ def getPreviousSmotif3(index):
 
 def getSS2(index):
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    map_route = io.readPickle("contact_route.pickle")
+    #map_route = io.readPickle("contact_route.pickle")
+    map_route = io.readPickle("pcs_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
     direction = next_smotif[-1]
     if direction == 'left':

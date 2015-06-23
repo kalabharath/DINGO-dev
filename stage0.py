@@ -20,7 +20,8 @@ print data
 
 
 # TODO refactor of reading input files to readInputDataFiles
-
+# TODO modular exp data input
+# TODO automatic recognition of various experimental data
 
 fasta_file = './2m47.fasta'
 psipred_file = './2m47.psipass2'
