@@ -16,11 +16,11 @@ import filters.pcs.pcsfilter as Pfilter
 import filters.rmsd.qcp as qcp
 
 
+def getfromDB(previous_smotif, current_ss, direction):
 
-
-def getfromDB(searched_smotifs, current_ss, direction):
-
-    psmotif = searched_smotifs[-1]
+    for entry in previous_smotif:
+        if 'smotif_def' == entry[0]:
+            psmotif = entry[-1]
 
     if direction == 'left':
         previous_ss = psmotif[0]
@@ -36,9 +36,13 @@ def getfromDB(searched_smotifs, current_ss, direction):
     return sm.readSmotifDatabase(smotif_def)
 
 
-def orderSSE(previous_seq, current_sse):
-    ordered_SSE = []
+def orderSSE(previous_smotif, current_sse):
 
+    for entry in previous_smotif:
+        if 'smotif_def' == entry[0]:
+            previous_seq = entry
+
+    ordered_SSE = []
     for sse_array in previous_seq[1]:
         ordered_SSE.append(sse_array)
     ordered_SSE.append(current_sse)
@@ -50,42 +54,45 @@ def SmotifSearch(index_array):
     #print index_array
 
     psmotif = uts2.getPreviousSmotif(index_array[0])
+
     current_ss, direction = uts2.getSS2(index_array[1])
+    csmotif_data = getfromDB(psmotif, current_ss, direction)
 
-
-    csmotif_data = getfromDB(psmotif[-1], current_ss, direction)
     exp_data = io.readPickle("exp_data.pickle")
+    exp_data_types = exp_data.keys() #['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+
     """
     always narrow down to previous sse and current sse and operate on them individually
 
     """
+    sse_ordered = orderSSE(psmotif, current_ss)
+
     dump_log = []
+    for i in range(0, len(csmotif_data)):
 
-    sse_ordered = orderSSE(psmotif[-1], current_ss)
-    #for i in range(0, len(csmotif_data)):
-    for i in range(0,1):
-
-        csmotif = csmotif_data[i]
+    #for i in range(0,1):
 
         ##QCP RMSD
-        rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0],csmotif, direction)
+        rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0],csmotif_data[i], direction)
 
-        print rmsd
         clashes = qcp.clahses(transformed_coos)
 
         if rmsd <= 2.0 and clashes :
-
+            print rmsd
             ## Sequence filter, align native and smotif aa_seq as a measure of sequence similarity = structure similarity
-            csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
-            = Sfilter.S2SequenceSimilarity(current_ss, csmotif, direction, exp_data, threshold=40)
 
+            if 'aa_seq' in exp_data_types:
+                csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
+                = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
 
-            ## Contacts filter,
-            no_of_contacts, percent_of_satisfied_contacts \
-            = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
+            if 'contacts' in exp_data_types:
+                no_of_contacts, percent_of_satisfied_contacts \
+                = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
 
-            ## PCS filter
-            # pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif, exp_data, threshold=0.05)
+            if 'pcs_data' in exp_data_types:
+                ## PCS filter
+                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
+                pass
 
             if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0:
                 print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts

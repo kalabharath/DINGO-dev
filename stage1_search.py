@@ -27,16 +27,25 @@ def getSSdef(index_array):
 
 
 def dumpData(dump_log, tlog):
+    import copy
     """
     dump_log.append([smotif,['seq_filter', smotif_seq, seq_identity, blosum62_score],
     ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts],
     ['PCS_filter', pcs_tensor_fits],['smotif_def',[s1_def, s2_def]]])
     """
+    tdlog = copy.copy(dump_log)
     temp=[]
     for entry in tlog:
         temp.append(entry)
-    print temp
-    return dump_log.append(temp)
+
+    try:
+        tdlog.append(tlog)
+        return tdlog
+    except:
+        print "exception"
+        print "dump_log", tdlog
+        print "tlog", tlog
+        print "temp", temp
 
 def SmotifSearch(index_array):
     """
@@ -45,8 +54,8 @@ def SmotifSearch(index_array):
     :return:
     """
     # TODO list the complete details for how this function works
-    # TODO automatic selection of various filter modules based on available input experimental data
-    #print index_array
+
+    # print index_array
     s1_def, s2_def = getSSdef(index_array)
     smotif_def = sm.getSmotif(s1_def, s2_def)
     print s1_def, s2_def
@@ -66,27 +75,35 @@ def SmotifSearch(index_array):
 
         # TODO clever use of variable names
 
+        ### Filters
+
         if 'aa_seq' in exp_data_types:
-            smotif_seq, seq_identity, blosum62_score  = Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
+            smotif_seq, seq_identity, blosum62_score  = \
+                Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
         if 'contacts' in exp_data_types:
-            no_of_contacts, percent_of_satisfied_contacts = Cfilter.ContactPredicition(s1_def, s2_def, smotif_data[i], exp_data)
+            no_of_contacts, percent_of_satisfied_contacts = \
+                Cfilter.ContactPredicition(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
         if 'pcs_data' in exp_data_types:
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
+        ### Filters
+
         if seq_identity > 40.0 and percent_of_satisfied_contacts > 50.0 :
             # print index_array, s1_def, s2_def
             # print smotif_def, len(smotif_data)
-            print smotif_data[i][0][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "i=", i, "/", len(smotif_data), percent_of_satisfied_contacts
+            print smotif_data[i][0][0], 'blosum62 score', blosum62_score, \
+                "seq_id", seq_identity, "i=", i, "/", len(smotif_data), percent_of_satisfied_contacts
             print pcs_tensor_fits
 
-            dump_log = dumpData(dump_log, tlog)
+            #dump_log = dumpData(dump_log, tlog)
+            dump_log.append(tlog)
 
-    if len(dump_log) > 1 :
+    if dump_log:
         print "num of hits", len(dump_log)
         io.dumpPickle('0_'+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)
 

@@ -43,36 +43,44 @@ def makeTopPickle(previous_smotif_index, num_hits):
     hits = []
     regex=str(previous_smotif_index)+"_*_*.pickle"
     file_list = glob.glob(regex)
+    print file_list
     for f in file_list:
         thits = io.readPickle(f)
         for thit in thits:
             hits.append(thit)
     """
-                    0                                  1
-    dump_log = [['smotif',['seq_filter', 'smotif_seq', 'seq_identity', "blosum62_score"],
-                                           2
-                ['contacts_filter','no_of_contacts', '%_of_contacts_observed'],
-                              3                        4
-                ['PCS_filter', 'tensor_fits']['smotif_def',[ss1,ss2]]]
+    identifiers: smotif, smotif_def, seq_filter, contacts_filter, PCS_filter,
+
     """
 
     new_dict={}
     seqs = []
     for hit in hits:
-        #print hit
-        seq_filter = hit[1]
-        smotif_seq = seq_filter[1]
-        contacts_filter = hit[2]
+        for entry in hit:
+            if entry[0] == 'smotif':
+                print entry[1][0]
+            if entry[0] == 'seq_filter':
+                seq_filter = entry
+                smotif_seq = seq_filter[1]
+            if entry[0] == 'contacts_filter':
+                contacts_filter = entry
+            if entry[0] == 'PCS_filter':
+                pcs_data = entry
+                Nchi =getNchiSum(pcs_data)
+
         if smotif_seq not in seqs:
             seqs.append(smotif_seq)
-            dict_key_score = seq_filter[2]+contacts_filter[2]
+            dict_key_score = Nchi
             new_dict.setdefault(dict_key_score, []).append(hit)
+
     keys = new_dict.keys()
     keys.sort()
     dump_pickle = []
+
     try:
         for i in range(0,num_hits):
             dump_pickle.append(new_dict[keys[i]])
+            print "final sele", new_dict[keys[i]][0][0][1][0]
     except:
         print "Could only extract ", i
         num_hits = i
@@ -105,6 +113,7 @@ def getRunSeq(num_hits):
         for i in range(len(top_hits)):
             for j in range(len(next_ss_list)):
                 run_seq.append([i, j])
+        print run_seq, next_index
         return run_seq, next_index
 
 def makeTopPickle3(previous_smotif_index, num_hits):

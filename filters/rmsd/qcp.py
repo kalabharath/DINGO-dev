@@ -165,6 +165,8 @@ def rmsdQCP(psmotif, csmotif, direction):
     :return:
     """
 
+    psmotif = copy.copy(psmotif[1])
+
     if direction =='left':
 
         frag_a = getcoo(psmotif[1])
@@ -219,8 +221,15 @@ def rmsdQCP(psmotif, csmotif, direction):
 
 
     #return 3 arrays of coordinates
+    """
     if direction == 'left':
         transformed_coor = [rot_sse_2nd, frag_a, previous_2ndsse]
+
+    else:
+        transformed_coor = [previous_2ndsse, frag_a, rot_sse_2nd]
+    """
+    if direction == 'left':
+        transformed_coor = [frag_a, previous_2ndsse, rot_sse_2nd]
 
     else:
         transformed_coor = [previous_2ndsse, frag_a, rot_sse_2nd]

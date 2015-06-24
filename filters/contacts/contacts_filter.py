@@ -111,6 +111,7 @@ def coorCAdict(coo_arrays, sse_list):
         ca_array = getCA(coo_arrays[i])
         sse_range = range(sse_def[4], sse_def[5]+1)
         for j in range(0, len(sse_range)):
+
             ca_dict[sse_range[j]] = [ca_array[0][j], ca_array[1][j], ca_array[2][j]]
     return ca_dict
 
@@ -125,6 +126,7 @@ def S2ContactPredicition(coo_arrays, sse_list, exp_data):
     """
 
     contacts = exp_data['contacts']
+
     ca_dict = coorCAdict(coo_arrays, sse_list)
 
     ca_res = ca_dict.keys()

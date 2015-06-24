@@ -17,6 +17,7 @@ def getSmotif(s1, s2):
     new_smotif_file = hh_6_23.db
     ['helix', 6, 9, 4, 146, 151] ['helix', 23, 4, 1, 156, 178]
     """
+    print s1, s2
     if s1[0] == 'helix':
         s1_type = 'h'
     if s1[0] == 'strand':
