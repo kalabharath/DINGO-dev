@@ -38,6 +38,7 @@ def getfromDB(previous_smotif, current_ss, direction):
 
 def orderSSE(previous_smotif, current_sse):
 
+    previous_seq = []
     for entry in previous_smotif:
         if 'smotif_def' == entry[0]:
             previous_seq = entry
@@ -70,34 +71,40 @@ def SmotifSearch(index_array):
     dump_log = []
     for i in range(0, len(csmotif_data)):
 
-    #for i in range(0,1):
+        csmotif = csmotif_data[i][0]
 
         ##QCP RMSD
-        rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0],csmotif_data[i], direction)
+
+
+        rmsd, transformed_coos = qcp.rmsdQCP_depricated(psmotif[0],csmotif_data[i], direction)
 
         clashes = qcp.clahses(transformed_coos)
 
-        if rmsd <= 2.0 and clashes :
-            print rmsd
+        if rmsd <= 1.5 and clashes:
+
+
+
             ## Sequence filter, align native and smotif aa_seq as a measure of sequence similarity = structure similarity
 
             if 'aa_seq' in exp_data_types:
                 csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
-                = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
+                    = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
 
             if 'contacts' in exp_data_types:
                 no_of_contacts, percent_of_satisfied_contacts \
-                = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
+                    = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
 
             if 'pcs_data' in exp_data_types:
-                ## PCS filter
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
-                pass
+
 
             if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0:
+                print "rmsd", rmsd
+                print csmotif
+                print pcs_tensor_fits
                 print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts
-                dump_log.append([transformed_coos,['seq_filter', csse_seq, seq_identity, blosum62_score],
-                ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts], sse_ordered])
+                dump_log.append([transformed_coos, ['seq_filter', csse_seq, seq_identity, blosum62_score],
+                                 ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts], sse_ordered])
 
     if len(dump_log) > 0 :
         io.dumpPickle("tx_"+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)

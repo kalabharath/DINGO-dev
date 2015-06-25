@@ -54,7 +54,7 @@ def match_pcss_HN(rh1, rh2, pcs_data):
     smotif_pcs = []
 
     for entry in rh1:
-        res_no = (entry[-1]) - 1
+        res_no = (entry[-1]) - 1 #because python numbering starts from '0'
         smotif_pcs.append(pcs_data[res_no])
     for entry in rh2:
         res_no = (entry[-1]) - 1
@@ -252,6 +252,70 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     return temp_tensor
 
 
+def getAtomCoo(coo_array, atom_type):
+    """
+    link to contacts_filter.py
+
+    :param coo_array:
+    :return:
+    """
+
+    xt, yt, zt = [],[],[]
+    for i in range(0, len(coo_array[0])):
+        x = coo_array[0][i]
+        y = coo_array[1][i]
+        z = coo_array[2][i]
+        atom = coo_array[3][i]
+        res_no = coo_array[4][i]
+        res = coo_array[5][i]
+        if atom == atom_type:
+            xt.append(x)
+            yt.append(y)
+            zt.append(z)
+    return [xt, yt, zt]
+
+
+
+def coorNHdict(coo_arrays, sse_list):
+    """
+    link to contacts_filter.py
+
+    :param coo_arrays:
+    :param sse_list:
+    :return:
+    """
+    nh_dict={}
+    for i in range(0,len(sse_list)):
+        sse_def = sse_list[i]
+        nh_array = getAtomCoo(coo_arrays[i], atom_type='H')
+        sse_range = range(sse_def[4], sse_def[5]+1)
+        try:
+            for j in range(0, len(sse_range)):
+                nh_dict[sse_range[j]] = [nh_array[0][j], nh_array[1][j], nh_array[2][j]]
+        except:
+            print "Exception"
+            print sse_range, nh_array
+    return nh_dict
+
+
+def matchPCS(nh_dict, pcs_data):
+
+    smotif_pcs = []
+    xyz_HN =[]
+
+    residues = nh_dict.keys()
+    residues.sort()
+    for res in residues:        
+        smotif_pcs.append(pcs_data[res-1])
+        xyz = nh_dict[res]
+        xyz.append(res)
+        xyz_HN.append(xyz)
+
+    return xyz_HN, smotif_pcs
+
+
+
+                #(s1_def, s2_def, smotif, exp_data)
 def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
     """
 
@@ -262,27 +326,21 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
     :return:
     """
 
-    ss1_list = range(s1_def[4], s1_def[5] + 1)
-    ss2_list = range(s2_def[4], s2_def[5] + 1)
+    #print sse_ordered
+    #print transformed_coos
 
+    #print sse_ordered
+    nh_dict = coorNHdict(transformed_coos, sse_ordered)
 
-
-    # smotif_ss1 = range(int(smotif[0][0][1]), int(smotif[0][0][2]) + 1)
-    # smotif_ss2 = range(int(smotif[0][0][3]), int(smotif[0][0][4]) + 1)
-
-
-    # print ss1_list, ss2_list
-    # print smotif_ss1, smotif_ss2
-    # print smotif[0][0]
-
-    rH1, rH2 = getHN(ss1_list, ss2_list, smotif, atom_type='H')
     pcs_data = exp_data['pcs_data']
+
+    #print "pcs_data", pcs_data
     ntags = len(pcs_data)
 
     # Define Thomas's implementaion of hollow concentric shells
 
     nM = 500  # 1000 pts in each sphere
-    M = [1, 40]  # 40 spheres 10-50 Angstrom
+    M = [0, 40]  # 40 spheres 10-50 Angstrom
     npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
     rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
     rMy = fastT1FM.MakeDvector(npts)
@@ -293,20 +351,22 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
     temp_tensor = []
 
     for tag in range(0, ntags):
+
         # for tag in range(0,1):
-        smotif_pcs = match_pcss_HN(rH1, rH2, pcs_data[tag])
+        xyz_HN, smotif_pcs = matchPCS(nh_dict, pcs_data[tag])
+
 
         total_pcs, pcs_bool = usuablePCS(smotif_pcs)
 
+
         if pcs_bool:  # save some time for not running
 
-            # Thomas's fast Tensor calc code init
-
+            # Thomas's fast Tensor calc code
             frag_len = len(smotif_pcs)
             nsets = len(smotif_pcs[0])
             xyz = fastT1FM.MakeDMatrix(frag_len, 3)
             pcs = fastT1FM.MakeDMatrix(nsets, frag_len)
-            xyz_HN = rH1 + rH2
+
 
             for k in range(nsets):
                 for j in range(frag_len):
@@ -359,6 +419,7 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
+            #print "normalised chi: ", chisqr/total_pcs
             temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)

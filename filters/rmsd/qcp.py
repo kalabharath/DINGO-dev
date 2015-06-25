@@ -172,6 +172,9 @@ def rmsdQCP(psmotif, csmotif, direction):
         frag_a = getcoo(psmotif[1])
         frag_b = getcoo(csmotif[2])
 
+        print "psmotif-1", psmotif[1]
+
+        print "csmotif-2", csmotif[2]
         current_2ndsse = copy.copy(csmotif[1])
         previous_2ndsse = getcoo(psmotif[2])
 
@@ -249,8 +252,8 @@ def rmsdQCP_depricated(psmotif, csmotif, direction):
     :param direction:
     :return:
     """
-    #print psmotif[0][0]
-    #print csmotif[0][0]
+
+    psmotif = copy.copy(psmotif[1])
 
     if direction =='left':
         native_fraga = getcoo(psmotif[1])
@@ -308,15 +311,20 @@ def rmsdQCP_depricated(psmotif, csmotif, direction):
 
     # translate the other SSE of the current smotif
     sse_2nd_coos = getcoo(native_fragb_2ndsse)
+    #sse_2nd_coos, sec_cm = centerCoo(sse_2nd_coos)
     cm_sse2nd = translateCM(sse_2nd_coos,b_cen)
     rot_sse_2nd = applyRot(cm_sse2nd, rotmat)
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
+    #print trans_sse2nd
     #dumpPDBCoo2(trans_sse2nd)
     #dumpPDBCoo2(trans_fragb)
 
     #return 3 arrays of coordinates
     if direction == 'left':
         transformed_coor = [native_fraga, native_fraga_2ndsse, trans_sse2nd]
+        #dumpPDBCoo2(native_fraga)
+        #dumpPDBCoo2(native_fraga_2ndsse)
+        #dumpPDBCoo2(trans_sse2nd)
 
     else:
         transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
