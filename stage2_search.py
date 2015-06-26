@@ -60,7 +60,7 @@ def SmotifSearch(index_array):
     csmotif_data = getfromDB(psmotif, current_ss, direction)
 
     exp_data = io.readPickle("exp_data.pickle")
-    exp_data_types = exp_data.keys() #['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
     """
     always narrow down to previous sse and current sse and operate on them individually
@@ -69,12 +69,13 @@ def SmotifSearch(index_array):
     sse_ordered = orderSSE(psmotif, current_ss)
 
     dump_log = []
+
     for i in range(0, len(csmotif_data)):
 
-        csmotif = csmotif_data[i][0]
-
-        ##QCP RMSD
-
+        tlog = []
+        tlog.append(['smotif', csmotif_data[i]])
+        tlog.append(['smotif_def', sse_ordered])
+        # QCP RMSD
 
         rmsd, transformed_coos = qcp.rmsdQCP_depricated(psmotif[0],csmotif_data[i], direction)
 
@@ -82,29 +83,28 @@ def SmotifSearch(index_array):
 
         if rmsd <= 1.5 and clashes:
 
-
-
             ## Sequence filter, align native and smotif aa_seq as a measure of sequence similarity = structure similarity
 
             if 'aa_seq' in exp_data_types:
                 csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
                     = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
+                tlog.append(['seq_filter', csse_seq, seq_identity, blosum62_score])
 
             if 'contacts' in exp_data_types:
                 no_of_contacts, percent_of_satisfied_contacts \
                     = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
+                tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
             if 'pcs_data' in exp_data_types:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
+                tlog.append(['PCS_filter', pcs_tensor_fits])
 
-
-            if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0:
+            if pcs_tensor_fits and seq_identity > 40:
                 print "rmsd", rmsd
-                print csmotif
+                print csmotif_data[i][0]
                 print pcs_tensor_fits
                 print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts
-                dump_log.append([transformed_coos, ['seq_filter', csse_seq, seq_identity, blosum62_score],
-                                 ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts], sse_ordered])
+                dump_log.append(tlog)
 
     if len(dump_log) > 0 :
         io.dumpPickle("tx_"+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)

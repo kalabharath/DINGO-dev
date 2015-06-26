@@ -146,6 +146,7 @@ def S2ContactPredicition(coo_arrays, sse_list, exp_data):
     for entry in residue_list:
         if entry:
             hits +=1
-#    print total_contacts, float(hits)/float(total_contacts)*100.00
-    return total_contacts, float(hits)/float(total_contacts)*100.00
-
+    if hits:
+        return total_contacts, float(hits)/float(total_contacts)*100.00
+    else:
+        return total_contacts, 9999.999

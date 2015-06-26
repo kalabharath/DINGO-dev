@@ -137,6 +137,19 @@ def calcAxRh(saupe_matrices):
         axrh.append([w[2] - 0.5 * (w[0] + w[1]), w[0] - w[1]])
     return axrh
 
+def checkAxRh(axrh, chisqr):
+    """
+    Check whether axial and rhombic are within reasonable
+    values
+    :param axrh:
+    :param chisqr:
+    :return:
+    """
+    for metal in axrh:
+        for parameter in metal:
+            if abs(parameter) > 100:
+                return 1.0e+30
+    return chisqr
 
 def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     """
@@ -220,19 +233,17 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
             # ****
 
-            x = fastT1FM.GetDArray(0, 0, tensor)
-            y = fastT1FM.GetDArray(0, 1, tensor)
-            z = fastT1FM.GetDArray(0, 2, tensor)
+
             saupe_array = []
             for kk in range(nsets):
                 temp_saupe = []
                 for j in range(3, 8):
                     temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
                 saupe_array.append(temp_saupe)
-            metalpos = [x + cm[0], y + cm[1], z + cm[2]]
-            AxRh = calcAxRh(saupe_array)
-            # print tag+1, chisqr, metalpos, AxRh
 
+            # Compute and check Axial and Rhombic parameters
+            AxRh = calcAxRh(saupe_array)
+            chisqr = checkAxRh(AxRh,chisqr) # modifies the values of chisqr
 
             # Free memory for the variables
             fastT1FM.FreeDMatrix(xyz)
@@ -251,6 +262,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
 
     return temp_tensor
 
+###For stage 2
 
 def getAtomCoo(coo_array, atom_type):
     """
@@ -289,12 +301,12 @@ def coorNHdict(coo_arrays, sse_list):
         sse_def = sse_list[i]
         nh_array = getAtomCoo(coo_arrays[i], atom_type='H')
         sse_range = range(sse_def[4], sse_def[5]+1)
-        try:
-            for j in range(0, len(sse_range)):
+
+        for j in range(0, len(sse_range)):
+            try:
                 nh_dict[sse_range[j]] = [nh_array[0][j], nh_array[1][j], nh_array[2][j]]
-        except:
-            print "Exception"
-            print sse_range, nh_array
+            except:
+                pass
     return nh_dict
 
 
@@ -316,6 +328,7 @@ def matchPCS(nh_dict, pcs_data):
 
 
                 #(s1_def, s2_def, smotif, exp_data)
+
 def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
     """
 
@@ -355,9 +368,7 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
         # for tag in range(0,1):
         xyz_HN, smotif_pcs = matchPCS(nh_dict, pcs_data[tag])
 
-
         total_pcs, pcs_bool = usuablePCS(smotif_pcs)
-
 
         if pcs_bool:  # save some time for not running
 
@@ -396,21 +407,18 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
             chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
             # ****
 
-            x = fastT1FM.GetDArray(0, 0, tensor)
-            y = fastT1FM.GetDArray(0, 1, tensor)
-            z = fastT1FM.GetDArray(0, 2, tensor)
             saupe_array = []
             for kk in range(nsets):
                 temp_saupe = []
                 for j in range(3, 8):
                     temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
                 saupe_array.append(temp_saupe)
-            metalpos = [x + cm[0], y + cm[1], z + cm[2]]
+
+            # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-            # print tag+1, chisqr, metalpos, AxRh
+            chisqr = checkAxRh(AxRh,chisqr)# modifies the values of chisqr
 
-
-            # Free memory for the variables
+            # Free memory
             fastT1FM.FreeDMatrix(xyz)
             fastT1FM.FreeDMatrix(pcs)
             fastT1FM.FreeDMatrix(Xaxrh_range)

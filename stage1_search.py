@@ -25,28 +25,6 @@ def getSSdef(index_array):
     s1_list, s2_list = uts1.getSSlist()
     return s1_list[index_array[0]], s2_list[index_array[1]]
 
-
-def dumpData(dump_log, tlog):
-    import copy
-    """
-    dump_log.append([smotif,['seq_filter', smotif_seq, seq_identity, blosum62_score],
-    ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts],
-    ['PCS_filter', pcs_tensor_fits],['smotif_def',[s1_def, s2_def]]])
-    """
-    tdlog = copy.copy(dump_log)
-    temp=[]
-    for entry in tlog:
-        temp.append(entry)
-
-    try:
-        tdlog.append(tlog)
-        return tdlog
-    except:
-        print "exception"
-        print "dump_log", tdlog
-        print "tlog", tlog
-        print "temp", temp
-
 def SmotifSearch(index_array):
     """
     Main ()
@@ -99,8 +77,6 @@ def SmotifSearch(index_array):
             print smotif_data[i][0][0], 'blosum62 score', blosum62_score, \
                 "seq_id", seq_identity, "i=", i, "/", len(smotif_data), percent_of_satisfied_contacts
             print pcs_tensor_fits
-
-            #dump_log = dumpData(dump_log, tlog)
             dump_log.append(tlog)
 
     if dump_log:
