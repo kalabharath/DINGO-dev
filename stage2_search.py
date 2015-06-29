@@ -77,7 +77,7 @@ def SmotifSearch(index_array):
         tlog.append(['smotif_def', sse_ordered])
         # QCP RMSD
 
-        rmsd, transformed_coos = qcp.rmsdQCP_depricated(psmotif[0],csmotif_data[i], direction)
+        rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0],csmotif_data[i], direction)
 
         clashes = qcp.clahses(transformed_coos)
 

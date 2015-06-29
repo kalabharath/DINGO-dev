@@ -76,27 +76,24 @@ def SmotifSearch(index_array):
 
     for i in range(0, len(csmotif_data)):
 
-
         tlog = []
         tlog.append(['smotif', csmotif_data[i]])
         tlog.append(['smotif_def', sse_ordered])
 
-        csmotif = csmotif_data[i]
-
         # QCP RMSD
-        rmsd, transformed_coos = qcp.rmsdQCP3(preSSE,csmotif, direction)
+        rmsd, transformed_coos = qcp.rmsdQCP3(preSSE,csmotif_data[i], direction)
 
         clashes = qcp.clahses(transformed_coos)
 
-        if rmsd <= 2.0 and csmotif[0][0] == '2z2iA00' and clashes:
-            print rmsd, csmotif[0]
+        if rmsd <= 2.0 and csmotif_data[i][0][0] == '2z2iA00' and clashes:
+            print rmsd, csmotif_data[i][0]
 
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
             if 'aa_seq' in exp_data_types:
 
                 csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
-                = Sfilter.S2SequenceSimilarity(current_ss, csmotif, direction, exp_data, threshold=40)
+                = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
                 tlog.append(['seq_filter', csse_seq, seq_identity, blosum62_score])
 
             if 'contacts' in exp_data_types:
@@ -109,7 +106,7 @@ def SmotifSearch(index_array):
             if 'pcs_data' in exp_data_types:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
 
-            if csmotif[0][0] == '2z2iA00':
+            if csmotif_data[i][0][0] == '2z2iA00':
 
                 print pcs_tensor_fits
 

@@ -83,7 +83,7 @@ else:
             comm.send(result, dest=0, tag= tags.DONE)
 
         elif tag == tags.EXIT:
-            # break the infinite loop because there is no more work that can be assigned
+            # break the (while) infinite loop because there is no more work that can be assigned
             break
 
     # Tell the master respectfully that you are exiting
