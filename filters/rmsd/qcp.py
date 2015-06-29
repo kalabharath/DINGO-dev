@@ -335,7 +335,7 @@ def rmsdQCP_depricated(psmotif, csmotif, direction):
 
     return rmsd, transformed_coor
 
-def rmsdQCP3(presse, csmotif, direction):
+def rmsdQCP3(previous_smotif, csmotif, direction):
     """
 
     :param presse:
@@ -344,14 +344,19 @@ def rmsdQCP3(presse, csmotif, direction):
     :return:
     """
 
+    for entry in previous_smotif:
+        # ['qcp_rmsd', transformed_coos, sse_ordered, rmsd]
+        if 'qcp_rmsd' == entry[0]:
+            presse = entry[1]
+
     if direction =='left':
-        frag_b = getcoo(csmotif[0][2])
-        native_fragb_2ndsse = copy.copy(csmotif[0][1])
+        frag_b = getcoo(csmotif[2])
+        native_fragb_2ndsse = copy.copy(csmotif[1])
         frag_a = copy.copy(presse[-1])
     else:
         frag_a = copy.copy(presse[0])
-        frag_b = getcoo(csmotif[0][1])
-        native_fragb_2ndsse = copy.copy(csmotif[0][2])
+        frag_b = getcoo(csmotif[1])
+        native_fragb_2ndsse = copy.copy(csmotif[2])
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)

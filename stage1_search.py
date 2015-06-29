@@ -5,7 +5,7 @@ Project_Name: main, File_name: stage_1_search.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 14/04/15 , Time:01:05 PM
 
-Perform stage 1 in perfect parallel
+stage 1 in parallel
 """
 
 import utility.stage1_util as uts1
@@ -17,6 +17,7 @@ import filters.pcs.pcsfilter as Pfilter
 
 
 def getSSdef(index_array):
+
     """
 
     :param index_array:
@@ -26,6 +27,7 @@ def getSSdef(index_array):
     return s1_list[index_array[0]], s2_list[index_array[1]]
 
 def SmotifSearch(index_array):
+
     """
     Main ()
     :param index_array:
@@ -50,10 +52,9 @@ def SmotifSearch(index_array):
         tlog.append(['smotif',smotif_data[i]])
         tlog.append(['smotif_def',[s1_def, s2_def]])
 
-
         # TODO clever use of variable names
 
-        ### Filters
+        # Filters
 
         if 'aa_seq' in exp_data_types:
             smotif_seq, seq_identity, blosum62_score  = \

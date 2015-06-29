@@ -7,7 +7,6 @@ Date: 13/04/15 , Time:10:05 AM
 
 Perform stage 2 in parallel
 """
-# TODO write detailed comments
 
 from   mpi4py import  MPI
 import utility.stage2_util as util
@@ -28,7 +27,7 @@ status = MPI.Status()
 
 if rank == 0:
     tasks, sse_index = util.getRunSeq(num_hits=20)
-    #tasks = [[5,6]]
+    # tasks = [[5,6]]
     stime = time.time()
 
     # print tasks, len(tasks) # this will be the new tasks

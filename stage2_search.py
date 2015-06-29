@@ -83,6 +83,8 @@ def SmotifSearch(index_array):
 
         if rmsd <= 1.5 and clashes:
 
+            tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
+
             ## Sequence filter, align native and smotif aa_seq as a measure of sequence similarity = structure similarity
 
             if 'aa_seq' in exp_data_types:
