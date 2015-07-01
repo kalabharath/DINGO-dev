@@ -16,9 +16,7 @@ import filters.pcs.pcsfilter as Pfilter
 import filters.rmsd.qcp as qcp
 
 
-
 def getfromDB(previous_smotif, current_ss, direction):
-
     # print "previous_smotif: ", previous_smotif
 
     for entry in previous_smotif:
@@ -31,7 +29,7 @@ def getfromDB(previous_smotif, current_ss, direction):
     # print "previous_ss: ", previous_ss
     # print "current_ss : ", current_ss
 
-    if direction == 'left':#double check this implementation
+    if direction == 'left':  # double check this implementation
 
         smotif_def = sm.getSmotif(current_ss, previous_ss)
     else:
@@ -56,16 +54,13 @@ def orderSSE(previous_smotif, current_sse):
 
             return previous_sse
 
-def SmotifSearch(index_array):
 
-    #print index_array
+def SmotifSearch(index_array):
+    # print index_array
 
     preSSE = uts2.getPreviousSmotif(index_array[0])
-
     current_ss, direction = uts2.getSS2(index_array[1])
-
     print current_ss, direction
-
     csmotif_data = getfromDB(preSSE, current_ss, direction)
 
     exp_data = io.readPickle("exp_data.pickle")
@@ -76,45 +71,42 @@ def SmotifSearch(index_array):
 
     for i in range(0, len(csmotif_data)):
 
-        tlog = []
-        tlog.append(['smotif', csmotif_data[i]])
-        tlog.append(['smotif_def', sse_ordered])
-
         # QCP RMSD
-        rmsd, transformed_coos = qcp.rmsdQCP3(preSSE,csmotif_data[i], direction)
+        rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
+        no_clashes = qcp.clahses(transformed_coos)
 
-        clashes = qcp.clahses(transformed_coos)
 
-        if rmsd <= 2.0 and csmotif_data[i][0][0] == '2z2iA00' and clashes:
-            print rmsd, csmotif_data[i][0]
-
+        if rmsd <= 1.5 and no_clashes :
+        #if csmotif_data[i][0][0] == '2z2iA00':
+            #print "clashes", clashes
+            tlog = []
+            tlog.append(['smotif', csmotif_data[i]])
+            tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
             if 'aa_seq' in exp_data_types:
-
                 csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
-                = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
+                    = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
                 tlog.append(['seq_filter', csse_seq, seq_identity, blosum62_score])
 
             if 'contacts' in exp_data_types:
-                ## Contacts filter,
+                ## Contacts filter
                 no_of_contacts, percent_of_satisfied_contacts \
-                = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
+                    = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
-                tlog.append(['PCS_filter', pcs_tensor_fits])
 
             if 'pcs_data' in exp_data_types:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
+                tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if csmotif_data[i][0][0] == '2z2iA00':
-
+            if pcs_tensor_fits and seq_identity > 40:
+            #if True:
+                print "rmsd", rmsd
+                print csmotif_data[i][0]
                 print pcs_tensor_fits
-
-            if bool_sequence_similarity and percent_of_satisfied_contacts > 50.0:
                 print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts
-                dump_log.append([transformed_coos,['seq_filter', csse_seq, seq_identity, blosum62_score],
-                ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts], sse_ordered])
+                dump_log.append(tlog)
 
-    if len(dump_log) > 0 :
-        io.dumpPickle("tx_"+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)
+    if len(dump_log) > 0:
+        io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
     return True

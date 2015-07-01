@@ -72,17 +72,16 @@ def SmotifSearch(index_array):
 
     for i in range(0, len(csmotif_data)):
 
-        tlog = []
-        tlog.append(['smotif', csmotif_data[i]])
-        tlog.append(['smotif_def', sse_ordered])
+
         # QCP RMSD
-
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0],csmotif_data[i], direction)
+        no_clashes = qcp.clahses(transformed_coos)
 
-        clashes = qcp.clahses(transformed_coos)
+        if rmsd <= 1.5 and no_clashes:
 
-        if rmsd <= 1.5 and clashes:
-
+            tlog = []
+            tlog.append(['smotif', csmotif_data[i]])
+            tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
             ## Sequence filter, align native and smotif aa_seq as a measure of sequence similarity = structure similarity

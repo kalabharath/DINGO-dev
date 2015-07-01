@@ -7,8 +7,7 @@ Date: 8/05/15 , Time:4:27 AM
 """
 
 import qcprot
-
-import copy
+import copy, time
 
 
 def dumpPDBCoo(coo_array):
@@ -44,7 +43,7 @@ def dumpPDBCoo2(coo_array):
         res = coo_array[5][i]
 
         pdb_line = "%-6s%5d  %-2s%5s%2s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s"\
-                   %('ATOM',i+1,atom,res,'A',res_no," ",x, y, z,1.0,30.0,' ',' ')
+                   %('ATOM', i+1, atom, res, 'A', res_no, " ", x, y, z, 1.0, 30.0, ' ', ' ')
         print pdb_line
     print 'TER'
     return True
@@ -219,13 +218,9 @@ def rmsdQCP(psmotif, csmotif, direction):
     for i in range(0, 9):
         rotmat.append(qcprot.GetDvector(i, rot))
 
-    # dumpPDBCoo(frag_bca)
-
     rotated_fragb = applyRot(frag_b, rotmat)
 
-    # dumpPDBCoo2(rotated_fragb)
     # trans_fragb = applyTranslation(rotated_fragb, a_cen)
-    # dumpPDBCoo2(trans_fragb)
 
     # translate the other SSE of the current smotif
     sse_2nd_coos = getcoo(native_fragb_2ndsse)
@@ -233,16 +228,10 @@ def rmsdQCP(psmotif, csmotif, direction):
     cm_sse2nd = translateCM(sse_2nd_coos,b_cen)
     rot_sse_2nd = applyRot(cm_sse2nd, rotmat)
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
-    # print trans_sse2nd
-    # dumpPDBCoo2(trans_sse2nd)
-    # dumpPDBCoo2(trans_fragb)
 
     #return 3 arrays of coordinates
     if direction == 'left':
         transformed_coor = [native_fraga, native_fraga_2ndsse, trans_sse2nd]
-        # dumpPDBCoo2(native_fraga)
-        # dumpPDBCoo2(native_fraga_2ndsse)
-        # dumpPDBCoo2(trans_sse2nd)
 
     else:
         transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
@@ -264,16 +253,17 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     """
 
     for entry in previous_smotif:
-        # ['qcp_rmsd', transformed_coos, sse_ordered, rmsd]
         if 'qcp_rmsd' == entry[0]:
-            presse = entry[1]
+            temp_holder = entry[1]
+            presse = temp_holder[:]
 
     if direction == 'left':
         frag_b = getcoo(csmotif[2])
         native_fragb_2ndsse = copy.copy(csmotif[1])
-        frag_a = copy.copy(presse[-1])
+        frag_a = copy.deepcopy(presse[-1])
+
     else:
-        frag_a = copy.copy(presse[0])
+        frag_a = copy.deepcopy(presse[0])
         frag_b = getcoo(csmotif[1])
         native_fragb_2ndsse = copy.copy(csmotif[2])
 
@@ -308,16 +298,16 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     rotmat = []
     for i in range(0, 9):
         rotmat.append(qcprot.GetDvector(i, rot))
-    # rotated_fragb = applyRot(frag_b, rotmat)
-    # trans_fragb = applyTranslation(rotated_fragb, a_cen)
+
     # translate the other SSE of the current smotif
+
     sse_2nd_coos = getcoo(native_fragb_2ndsse)
     cm_sse2nd = translateCM(sse_2nd_coos, b_cen)
     rot_sse_2nd = applyRot(cm_sse2nd, rotmat)
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
 
     # append the translated coordinates
-    temp_holder = copy.copy(presse)
+    temp_holder = copy.deepcopy(presse)
 
     if direction == 'left':
         temp_holder.append(trans_sse2nd)
@@ -328,6 +318,12 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     qcprot.FreeDMatrix(xyz2)
     qcprot.FreeDArray(rot)
 
+    """
+    for coo_array in temp_holder:
+        dumpPDBCoo2(coo_array)
+
+    time.sleep(10) # time to kill!
+    """
     return rmsd, temp_holder
 
 

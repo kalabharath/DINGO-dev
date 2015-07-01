@@ -102,11 +102,11 @@ def makeTopPickle(previous_smotif_index, num_hits):
     """
 
     new_dict = {}
-    seqs = []
+
     for hit in hits:
         for entry in hit:
             if entry[0] == 'smotif':
-                print entry[1][0]
+                name = entry[1][0]
             if entry[0] == 'seq_filter':
                 seq_filter = entry
                 smotif_seq = seq_filter[1]
@@ -115,24 +115,42 @@ def makeTopPickle(previous_smotif_index, num_hits):
             if entry[0] == 'PCS_filter':
                 pcs_data = entry
                 Nchi = getNchiSum(pcs_data)
-
-        if smotif_seq not in seqs:
-            seqs.append(smotif_seq)
-            dict_key_score = Nchi
-            new_dict.setdefault(dict_key_score, []).append(hit)
+                new_dict.setdefault(Nchi, []).append(hit)
 
     keys = new_dict.keys()
     keys.sort()
-    dump_pickle = []
 
+    non_redundant = {}
+    seqs = []
+    for i in range(0, len(keys)):
+        for entry in new_dict[keys[i]][0]:
+            if entry[0] == 'smotif':
+                name = entry[1][0]
+            if entry[0] == 'seq_filter':
+                seq_filter = entry
+                smotif_seq = seq_filter[1]
+            if entry[0] == 'contacts_filter':
+                contacts_filter = entry
+            if entry[0] == 'PCS_filter':
+                pcs_data = entry
+                Nchi = getNchiSum(pcs_data)
+        if smotif_seq not in seqs:
+            seqs.append(smotif_seq)
+            print name, Nchi
+            non_redundant.setdefault(Nchi, []).append(new_dict[keys[i]][0])
+
+    keys = non_redundant.keys()
+    keys.sort()
+    dump_pickle = []
     try:
         for i in range(0, num_hits):
-            dump_pickle.append(new_dict[keys[i]])
-            print "final sele", new_dict[keys[i]][0][0][1][0]
+            dump_pickle.append(non_redundant[keys[i]])
+            print "final sele", non_redundant[keys[i]][0][0][1][0]
     except:
         print "Could only extract ", i
         num_hits = i
     io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
+    print "actual number in top hits ", len(dump_pickle)
     return range(num_hits)
 
 
