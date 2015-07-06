@@ -76,8 +76,8 @@ def SmotifSearch(index_array):
         no_clashes = qcp.clahses(transformed_coos)
 
 
-        if rmsd <= 1.5 and no_clashes :
-        #if csmotif_data[i][0][0] == '2z2iA00':
+        #if rmsd <= 1.5 and no_clashes :
+        if csmotif_data[i][0][0] == '2z2iA00':
             #print "clashes", clashes
             tlog = []
             tlog.append(['smotif', csmotif_data[i]])
@@ -99,8 +99,8 @@ def SmotifSearch(index_array):
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if pcs_tensor_fits and seq_identity > 40:
-            #if True:
+            #if pcs_tensor_fits and seq_identity > 40:
+            if True:
                 print "rmsd", rmsd
                 print csmotif_data[i][0]
                 print pcs_tensor_fits

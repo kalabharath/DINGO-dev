@@ -7,7 +7,7 @@ Date: 8/05/15 , Time:4:27 AM
 """
 
 import qcprot
-import copy, time
+import copy
 
 
 def dumpPDBCoo(coo_array):
@@ -72,7 +72,7 @@ def getcoo(frag):
     :return:
     """
     #[41, 'ASP', 'N', 28.117, -17.694, 7.215]
-    x,y,z, atom_type, res_no, res = [], [], [], [], [], []
+    x, y, z, atom_type, res_no, res = [], [], [], [], [], []
     for i in range(0, len(frag)):
         x.append(frag[i][3])
         y.append(frag[i][4])
@@ -160,7 +160,7 @@ def get_dist(r1, r2):
     import math
     x1, y1, z1 = r1[0], r1[1], r1[2]
     x2, y2, z2 = r2[0], r2[1], r2[2]
-    return (math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1)))
+    return math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))
 
 
 def rmsdQCP(psmotif, csmotif, direction):
