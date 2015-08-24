@@ -66,8 +66,11 @@ import sys
 top_result = io.readPickle(sys.argv[1])
 
 top_struct = top_result[0]
+print top_struct
 
 coor_arrays = top_struct[0][0]
+
+
 ss_list = top_struct[0][-1]
 print ss_list
 print  len(coor_arrays)

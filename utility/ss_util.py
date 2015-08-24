@@ -1,4 +1,4 @@
-def genSSDef(ss_seq):
+def genSSDef_BACK(ss_seq):
     """
 	returns an array of smotifs derived from the ss_seq with extended
 	functionality ie information about left_loop length
@@ -42,6 +42,50 @@ def genSSDef(ss_seq):
                 seq = []
     return return_array, l_loop + 1
 
+
+def genSSDef(ss_seq):
+    """
+	returns an array of smotifs derived from the ss_seq with extended
+	functionality ie information about left_loop length
+	return [[ss_type,len_ss,l_loop,start,end]['strand', 5, 4, 5, 9]]
+	:param ss_seq:
+	:return:
+	"""
+    helix, strand, loop, l_loop = 1, 1, 1, 0
+    return_array = []
+    seq = []
+    for i in range(0, len(ss_seq)):
+        if i == 0:
+            continue
+        else:
+            if (ss_seq[i] == 'C') or (ss_seq[i] == 'L'):
+                l_loop += 1
+            if ss_seq[i] == ss_seq[i - 1]:
+                if ss_seq[i] == 'H':
+                    seq.append(i)
+                    helix = helix + 1
+                if ss_seq[i] == 'E':
+                    seq.append(i)
+                    strand = strand + 1
+                if (ss_seq[i] == 'C') or (ss_seq[i] == 'L'):
+                    loop = loop + 1
+            else:
+                if (helix > 3) and ( (strand == 1) ):
+                    end = i
+                    return_array.append(['helix', helix, l_loop, seq[0], end])
+                    seq = []
+                    l_loop = 0
+                elif (strand > 3) and ( helix == 1):
+                    end = i
+                    return_array.append(['strand', strand, l_loop, seq[0], end])
+                    seq = []
+                    l_loop = 0
+                elif (loop > 3) and ( (strand == 1) and (helix == 1)):
+                    end = i
+                    seq = []
+                helix, strand, loop = 1, 1, 1
+                seq = []
+    return return_array, l_loop + 1
 
 def check_profile(ss_type, tlen_ss, tl_loop, tr_loop, tstart, tend, X, Y):
     """
@@ -146,6 +190,3 @@ def genSSCombinations(ss_seq):
                         if arr:
                             ss_combi.setdefault(k, []).append(arr)
     return exn_ss, ss_combi
-
-
-

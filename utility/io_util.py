@@ -9,7 +9,7 @@ Utility file for frequently used functions
 """
 
 
-def readInputDataFiles(filename, input_data_types):
+def readInputDataFiles(filename):
     lines = readFile(filename)
     data_dict = {}
     for line in lines:
@@ -17,8 +17,8 @@ def readInputDataFiles(filename, input_data_types):
             data_type, data_file = line.split('=')
             # print data_type.strip(), data_file.strip()
             data_dict[data_type.strip()] = data_file.strip()
-    if len(input_data_types) == 1:
-        return data_dict[input_data_types[0]]
+    if len(data_dict.keys()) == 1:
+        return data_dict
     else:
         return data_dict
 
