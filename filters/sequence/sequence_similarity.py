@@ -108,12 +108,12 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
     gap_extend = -0.5
     hit = True
 
-    print ss_def
-    print smotif
+    #print ss_def
+    #print smotif
 
     aa_seq = exp_data['aa_seq']
 
-    print aa_seq
+    #print aa_seq
 
     # print s1_def
     # print s2_def
