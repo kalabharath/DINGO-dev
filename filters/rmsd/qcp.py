@@ -252,6 +252,7 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     :return:
     """
 
+    presse = []
     for entry in previous_smotif:
         if 'qcp_rmsd' == entry[0]:
             temp_holder = entry[1]
@@ -274,6 +275,10 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     frag_bca = getCAcoo(frag_b)
 
     fraglen = len(frag_aca[0])
+    check_fraglen = len(frag_bca[0])
+
+    if fraglen != check_fraglen:
+        return 999.999, []
 
     xyz1 = qcprot.MakeDMatrix(3, fraglen)
     xyz2 = qcprot.MakeDMatrix(3, fraglen)

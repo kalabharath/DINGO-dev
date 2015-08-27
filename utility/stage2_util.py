@@ -52,6 +52,27 @@ def scoreCombination(score_list):
                 min_score = c1 + c2
     return min_score
 
+def scoreCombination4t(score_list):
+    """
+
+    :param score_list:
+    :return:
+    """
+
+    import itertools
+    min_score = 999
+    combi_list = list(itertools.combinations(score_list, 3))
+
+    for combi in combi_list:
+        c1 = combi[0]
+        c2 = combi[1]
+        c3 = combi[2]
+        if c1 and c2 and c3:
+            #print c1, c2, "minscore:", min_score
+            if c1+c2+c3 < min_score:
+                min_score = c1 + c2 + c3
+    return min_score
+
 def getNchiSum(pcs_filter):
 
     """
@@ -73,12 +94,20 @@ def getNchiSum(pcs_filter):
             # axrh = tensor[2]
             snchi += nchi
 
-    if len(tensors) >= 3:
-        # Scoring three or more tags
+    if len(tensors) == 3:
+        return snchi
+        # Scoring three tags, get lowest Nchi for 2
         score_list = []
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination(score_list)
+
+    if len(tensors) >= 4:
+        # For 4 tags, get lowest Nchi for 3
+        score_list = []
+        for tensor in tensors:
+            score_list.append(tensor[1])
+        snchi = scoreCombination4t(score_list)
 
     if len(tensors) == 1:
         # Discourage single tag scoring by returning high score

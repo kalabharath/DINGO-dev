@@ -1,4 +1,4 @@
-def genSSDef_BACK(ss_seq):
+def genSSDef(ss_seq):
     """
 	returns an array of smotifs derived from the ss_seq with extended
 	functionality ie information about left_loop length
@@ -43,8 +43,11 @@ def genSSDef_BACK(ss_seq):
     return return_array, l_loop + 1
 
 
-def genSSDef(ss_seq):
+def genSSDef_BACK(ss_seq):
     """
+    BACKED up comy that uses a min of 4 residues per SSE
+
+
 	returns an array of smotifs derived from the ss_seq with extended
 	functionality ie information about left_loop length
 	return [[ss_type,len_ss,l_loop,start,end]['strand', 5, 4, 5, 9]]

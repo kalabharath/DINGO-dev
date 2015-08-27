@@ -64,23 +64,34 @@ def SmotifSearch(index_array):
     csmotif_data = getfromDB(preSSE, current_ss, direction)
 
     exp_data = io.readPickle("exp_data.pickle")
-    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts', 'natives']
     sse_ordered = orderSSE(preSSE, current_ss)
 
     dump_log = []
 
     for i in range(0, len(csmotif_data)):
 
+        # Save CPU time by excluding natives
+        if 'natives' in exp_data_types:
+            natives = exp_data['natives']
+            tpdbid = csmotif_data[i][0][0]
+            pdbid = tpdbid[0:4]
+            if pdbid in natives:
+                #Stop further execution and iterate
+                continue
+
         # QCP RMSD
+
         rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
 
         no_clashes = qcp.clahses(transformed_coos)
-        #if rmsd <= 1.5 and no_clashes :
-        if no_clashes :
-            print rmsd
+        if rmsd <= 1.5 and no_clashes :
+
+        #if no_clashes :
+            #print rmsd
             pcs_tensor_fits = []
         #if csmotif_data[i][0][0] == '2z2iA00':
-            #print "clashes", clashes
+
             tlog = []
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
@@ -94,7 +105,7 @@ def SmotifSearch(index_array):
             """
 
             csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
-            = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
+                = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
             tlog.append(['seq_filter', csse_seq, seq_identity, blosum62_score])
 
             if 'contacts' in exp_data_types:
@@ -104,17 +115,17 @@ def SmotifSearch(index_array):
                 tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
             #if 'pcs_data' in exp_data_types:
-            if 'pcs_data' in exp_data_types and seq_identity > 30:
+            if 'pcs_data' in exp_data_types and seq_identity > 80.0:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if pcs_tensor_fits and seq_identity > 30:
+            if pcs_tensor_fits and seq_identity > 80.0:
             #if True:
-                print "rmsd", rmsd
-                print csmotif_data[i][0]
-                print pcs_tensor_fits
+                #print "rmsd", rmsd
+                #print csmotif_data[i][0][0]
+                #print pcs_tensor_fits
                 #print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts
-                print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd
+                print csmotif_data[i][0][0],'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:

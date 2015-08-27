@@ -48,32 +48,48 @@ def SmotifSearch(index_array):
 
     for i in range(0, len(smotif_data)):
 
+        # Save CPU time by excluding natives
+        if 'natives' in exp_data_types:
+            natives = exp_data['natives']
+            tpdbid = smotif_data[i][0][0]
+            pdbid = tpdbid[0:4]
+            if pdbid in natives:
+                #Stop further execution and iterate
+                continue
         tlog = []
         tlog.append(['smotif',smotif_data[i]])
         tlog.append(['smotif_def',[s1_def, s2_def]])
+        tlog.append(['cathcodes',[smotif_data[i][0]]])
 
         # TODO clever use of variable names
-
         # Filters
-
+        # Add new modules here
+        """
         if 'aa_seq' in exp_data_types:
             smotif_seq, seq_identity, blosum62_score  = \
                 Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
+        """
+
+        smotif_seq, seq_identity, blosum62_score  = \
+                Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
+        tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
+
 
         if 'contacts' in exp_data_types:
             no_of_contacts, percent_of_satisfied_contacts = \
                 Cfilter.ContactPredicition(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
-        if 'pcs_data' in exp_data_types:
+        #if 'pcs_data' in exp_data_types:
+        if 'pcs_data' in exp_data_types and seq_identity > 80.0:
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
         ### Filters
 
         #if seq_identity > 40.0 and percent_of_satisfied_contacts > 50.0 :
-        if seq_identity > 30.0 :
+        if seq_identity > 80.0 :
             # print index_array, s1_def, s2_def
             # print smotif_def, len(smotif_data)
             print smotif_data[i][0][0], 'blosum62 score', blosum62_score, \
