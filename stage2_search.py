@@ -111,11 +111,11 @@ def SmotifSearch(index_array):
                     = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
-            if 'pcs_data' in exp_data_types and seq_identity > 80.0:
+            if 'pcs_data' in exp_data_types and seq_identity > 0.0:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if pcs_tensor_fits and seq_identity > 80.0:
+            if pcs_tensor_fits and seq_identity > 0.0:
                 #tlog.append(['log',])
                 #print "rmsd", rmsd
                 #print csmotif_data[i][0]

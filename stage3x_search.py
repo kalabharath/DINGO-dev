@@ -71,13 +71,13 @@ def SmotifSearch(index_array):
 
     for i in range(0, len(csmotif_data)):
 
-        # Save CPU time by excluding natives
+        # Exclude the natives if present
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
             tpdbid = csmotif_data[i][0][0]
             pdbid = tpdbid[0:4]
             if pdbid in natives:
-                #Stop further execution and iterate
+                #Stop further execution and resume iteration
                 continue
 
         # QCP RMSD
@@ -115,11 +115,11 @@ def SmotifSearch(index_array):
                 tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
             #if 'pcs_data' in exp_data_types:
-            if 'pcs_data' in exp_data_types and seq_identity > 80.0:
+            if 'pcs_data' in exp_data_types and seq_identity > 0.0:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if pcs_tensor_fits and seq_identity > 80.0:
+            if pcs_tensor_fits and seq_identity > 0.0:
             #if True:
                 #print "rmsd", rmsd
                 #print csmotif_data[i][0][0]

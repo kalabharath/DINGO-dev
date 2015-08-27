@@ -1,12 +1,24 @@
+import sys, os
+sys.path.append("/home/kalabharath/zinr/main")
 __author__ = 'kalabharath'
 
 
 import  utility.io_util as io
 import glob
 
-def dumpPDBCoo2(coo_array, i):
-    outfile = open(str(i)+"_.pdb", 'w')
+def dumpPDBCoo2(coo_array, sse_pos, sse_seq, aa_seq,prefix):
+
+    three_letter ={'V':'VAL', 'I':'ILE', 'L':'LEU', 'E':'GLU', 'Q':'GLN', \
+                   'D':'ASP', 'N':'ASN', 'H':'HIS', 'W':'TRP', 'F':'PHE', 'Y':'TYR',    \
+                   'R':'ARG', 'K':'LYS', 'S':'SER', 'T':'THR', 'M':'MET', 'A':'ALA',    \
+                   'G':'GLY', 'P':'PRO', 'C':'CYS'}
+
+    print sse_seq
+    outfile = open(str(prefix)+"_"+str(sse_pos)+"_.pdb", 'w')
+    t_count = 0
+    res_num = sse_seq[-2]
     for i in range(0, len(coo_array[0])):
+
         x = coo_array[0][i]
         y = coo_array[1][i]
         z = coo_array[2][i]
@@ -14,10 +26,27 @@ def dumpPDBCoo2(coo_array, i):
         res_no = coo_array[4][i]
         res = coo_array[5][i]
 
-        pdb_line = "%-6s%5d  %-2s%5s%2s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s"\
-                   %('ATOM',i+1,atom,res,'A',res_no," ",x, y, z,1.0,30.0,' ',' \n')
-        outfile.write(pdb_line)
+        if t_count <= 5:
+            t_count +=1
+            if t_count < 5 :
+                res = three_letter[aa_seq[res_num+1]]
+                pdb_line = "%-6s%5d  %-2s%5s%2s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s"\
+                   %('ATOM',i+1,atom,res,'A',res_num," ",x, y, z,1.0,30.0,' ',' \n')
+                outfile.write(pdb_line)
+
+            if t_count == 5:
+                res = three_letter[aa_seq[res_num+1]]
+                pdb_line = "%-6s%5d  %-2s%5s%2s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s"\
+                   %('ATOM',i+1,atom,res,'A',res_num," ",x, y, z,1.0,30.0,' ',' \n')
+                outfile.write(pdb_line)
+                res_num+=1
+                t_count = 0
+
+        #pdb_line = "%-6s%5d  %-2s%5s%2s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s"\
+        #           %('ATOM',i+1,atom,res,'A',res_no," ",x, y, z,1.0,30.0,' ',' \n')
+        #outfile.write(pdb_line)
         #print pdb_line
+    print i, sse_seq[-1]-sse_seq[-2]
     print 'TER'
     outfile.close()
     return True
@@ -61,20 +90,49 @@ def makeTopPickle3(previous_smotif_index, num_hits):
     io.dumpPickle(str(previous_smotif_index)+"_tophits.pickle", dump_pickle)
     return range(num_hits)
 
-#makeTopPickle3(6, 10)
+
+import utility.stage2_util as util
+#makeTopPickle3(5, 10)
+
+seq = int(sys.argv[1])
+
+
+#util.makeTopPickle(seq,10)
 import sys
-top_result = io.readPickle(sys.argv[1])
-
-top_struct = top_result[0]
-print top_struct
-
-coor_arrays = top_struct[0][0]
+top_result = io.readPickle(str(seq)+"_tophits.pickle")
 
 
-ss_list = top_struct[0][-1]
-print ss_list
-print  len(coor_arrays)
+
+for p in range(0, 10):
+
+    top_struct = top_result[p]
+
+    import copy
+
+    top_struct = copy.copy(top_struct[0])
+
+    print len(top_struct)
+
+    sse_sequence =  top_struct[1][1]
+
+    print sse_sequence
+
+    coor_arrays = top_struct[2][1]
+    #print coor_arrays
+    ss_list = top_struct[0][-1]
+    #print ss_list
+    #print  len(coor_arrays)
+    exp_data = io.readPickle("exp_data.pickle")
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+
+    aa_seq = exp_data['aa_seq']
+
+    print aa_seq
+    for i in range(0, len(coor_arrays)):
+        dumpPDBCoo2(coor_arrays[i], i, sse_sequence[i],aa_seq,p)
 
 
-for i in range(0, len(coor_arrays)):
-    dumpPDBCoo2(coor_arrays[i], i)
+for q in range(0, 10):
+    cat = "cat "+str(q)+"_*_.pdb >model_"+str(q)+".pdb"
+    print cat
+    os.system(cat)

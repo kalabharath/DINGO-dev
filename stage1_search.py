@@ -82,14 +82,14 @@ def SmotifSearch(index_array):
             tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
         #if 'pcs_data' in exp_data_types:
-        if 'pcs_data' in exp_data_types and seq_identity > 80.0:
+        if 'pcs_data' in exp_data_types and seq_identity > 0.0:
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
         ### Filters
 
         #if seq_identity > 40.0 and percent_of_satisfied_contacts > 50.0 :
-        if seq_identity > 80.0 :
+        if seq_identity > 0.0 :
             # print index_array, s1_def, s2_def
             # print smotif_def, len(smotif_data)
             print smotif_data[i][0][0], 'blosum62 score', blosum62_score, \
