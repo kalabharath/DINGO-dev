@@ -95,7 +95,6 @@ def getNchiSum(pcs_filter):
             snchi += nchi
 
     if len(tensors) == 3:
-        return snchi
         # Scoring three tags, get lowest Nchi for 2
         score_list = []
         for tensor in tensors:
@@ -180,7 +179,7 @@ def makeTopPickle(previous_smotif_index, num_hits):
         num_hits = i
     io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
     delete_old = "rm "+str(previous_smotif_index)+"_*_*.pickle"
-    os.system(delete_old)
+    #os.system(delete_old)
     print "actual number in top hits ", len(dump_pickle)
     return range(num_hits)
 
