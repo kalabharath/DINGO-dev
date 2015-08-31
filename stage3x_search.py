@@ -24,7 +24,12 @@ def getfromDB(previous_smotif, current_ss, direction):
             searched_smotifs = entry[-1]
 
     # ['smotif_def', [['helix', 6, 7, 5, 145, 150], ['helix', 23, 5, 1, 156, 178], ['strand', 5, 7, 8, 133, 137]]]
-    previous_ss = searched_smotifs[-1]
+
+    if direction == 'left':
+        previous_ss = searched_smotifs[0]
+    else:
+        previous_ss = searched_smotifs[-1]
+
 
     # print "previous_ss: ", previous_ss
     # print "current_ss : ", current_ss
@@ -38,7 +43,7 @@ def getfromDB(previous_smotif, current_ss, direction):
     return sm.readSmotifDatabase(smotif_def)
 
 
-def orderSSE(previous_smotif, current_sse):
+def orderSSE(previous_smotif, current_sse, direction):
     """
 
     :param previous_smotif:
@@ -50,8 +55,11 @@ def orderSSE(previous_smotif, current_sse):
         # ['qcp_rmsd', transformed_coos, sse_ordered, rmsd]
         if 'qcp_rmsd' == entry[0]:
             previous_sse = entry[2]
-            previous_sse.append(current_sse)
 
+            if direction == 'left':
+                previous_sse.insert(0,current_sse)
+            else:
+                previous_sse.append(current_sse)
             return previous_sse
 
 
@@ -61,12 +69,13 @@ def SmotifSearch(index_array):
     preSSE = uts2.getPreviousSmotif(index_array[0])
     current_ss, direction = uts2.getSS2(index_array[1])
     print current_ss, direction
+
     csmotif_data = getfromDB(preSSE, current_ss, direction)
 
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts', 'natives']
-    sse_ordered = orderSSE(preSSE, current_ss)
-
+    sse_ordered = orderSSE(preSSE, current_ss, direction)
+    #print sse_ordered
     dump_log = []
 
     for i in range(0, len(csmotif_data)):
@@ -81,17 +90,20 @@ def SmotifSearch(index_array):
                 continue
 
         # QCP RMSD
+        #if csmotif_data[i][0][0] == '2z2iA00':
 
         rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
 
         no_clashes = qcp.clahses(transformed_coos)
-        if rmsd <= 1.5 and no_clashes :
+
+
+        if rmsd <= 0.5 and no_clashes :
 
         #if no_clashes :
             #print rmsd
             pcs_tensor_fits = []
-        #if csmotif_data[i][0][0] == '2z2iA00':
 
+            print csmotif_data[i]
             tlog = []
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
@@ -108,26 +120,26 @@ def SmotifSearch(index_array):
                 = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
             tlog.append(['seq_filter', csse_seq, seq_identity, blosum62_score])
 
-            if 'contacts' in exp_data_types:
+            if 'contats' in exp_data_types:
                 ## Contacts filter
                 no_of_contacts, percent_of_satisfied_contacts \
                     = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
             #if 'pcs_data' in exp_data_types:
-            if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
+            if 'pcs_data' in exp_data_types and seq_identity >= 80.0:
             #if 'pcs_data' in exp_data_types and blosum62_score > 0.0:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if pcs_tensor_fits and seq_identity >= 0.0:
+            if pcs_tensor_fits and seq_identity >= 80.0:
             #if pcs_tensor_fits and blosum62_score >= 0.0 :
             #if True:
                 #print "rmsd", rmsd
                 #print csmotif_data[i][0][0]
                 #print pcs_tensor_fits
                 #print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts
-                print csmotif_data[i][0][0],'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd
+                print csmotif_data[i][0],'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:

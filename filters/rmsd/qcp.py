@@ -30,7 +30,7 @@ def dumpPDBCoo(coo_array):
 
 def dumpPDBCoo2(coo_array):
     """
-
+ 
     :param coo_array:
     :return:
     """
@@ -231,9 +231,12 @@ def rmsdQCP(psmotif, csmotif, direction):
 
     #return 3 arrays of coordinates
     if direction == 'left':
-        transformed_coor = [native_fraga, native_fraga_2ndsse, trans_sse2nd]
+        #transformed_coor = [native_fraga, native_fraga_2ndsse, trans_sse2nd]
 
+        transformed_coor = [trans_sse2nd, native_fraga, native_fraga_2ndsse]
+        #
     else:
+
         transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
 
     qcprot.FreeDMatrix(xyz1)
@@ -250,41 +253,23 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     :param csmotif:
     :param direction:
     :return:
-
+    """
 
     for entry in previous_smotif:
         if 'qcp_rmsd' == entry[0]:
             temp_holder = entry[1]
             presse = temp_holder[:]
 
+    #print csmotif
     if direction == 'left':
         frag_b = getcoo(csmotif[2])
-        native_fragb_2ndsse = copy.deepcopy(csmotif[1])
-        frag_a = copy.deepcopy(presse[-1])
-
-    else:
+        native_fragb_2ndsse = copy.copy(csmotif[1])
         frag_a = copy.deepcopy(presse[0])
-        frag_b = getcoo(csmotif[1])
-        native_fragb_2ndsse = copy.deepcopy(csmotif[2])
-    """
-    temp_holder = []
-    presse = []
-
-    for entry in previous_smotif:
-        if 'qcp_rmsd' == entry[0]:
-            presse = entry[1][:]
-            temp_holder = presse[:]
-
-
-    if direction == 'left':
-        frag_b = getcoo(csmotif[2])
-        native_fragb_2ndsse = csmotif[1][:]
-        frag_a = presse[-1][:]
 
     else:
-        frag_a = presse[0][:]
+        frag_a = copy.deepcopy(presse[-1])
         frag_b = getcoo(csmotif[1])
-        native_fragb_2ndsse = csmotif[2][:]
+        native_fragb_2ndsse = copy.copy(csmotif[2])
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)
@@ -293,10 +278,6 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     frag_bca = getCAcoo(frag_b)
 
     fraglen = len(frag_aca[0])
-    check_fraglen = len(frag_bca[0])
-
-    if fraglen != check_fraglen:
-        return 999.999, []
 
     xyz1 = qcprot.MakeDMatrix(3, fraglen)
     xyz2 = qcprot.MakeDMatrix(3, fraglen)
@@ -330,12 +311,13 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
 
     # append the translated coordinates
-
+    temp_holder = copy.deepcopy(presse)
 
     if direction == 'left':
-        temp_holder.append(trans_sse2nd)
-    else:
         temp_holder.insert(0, trans_sse2nd)
+    else:
+        temp_holder.append(trans_sse2nd)
+
 
     qcprot.FreeDMatrix(xyz1)
     qcprot.FreeDMatrix(xyz2)

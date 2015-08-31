@@ -36,7 +36,7 @@ def getfromDB(previous_smotif, current_ss, direction):
     return sm.readSmotifDatabase(smotif_def)
 
 
-def orderSSE(previous_smotif, current_sse):
+def orderSSE(previous_smotif, current_sse, direction):
 
     previous_seq = []
     for entry in previous_smotif:
@@ -46,7 +46,11 @@ def orderSSE(previous_smotif, current_sse):
     ordered_SSE = []
     for sse_array in previous_seq[1]:
         ordered_SSE.append(sse_array)
-    ordered_SSE.append(current_sse)
+
+    if direction =='left':
+        ordered_SSE.insert(0, current_sse)
+    else:
+        ordered_SSE.append(current_sse)
     return ordered_SSE
 
 
@@ -66,7 +70,7 @@ def SmotifSearch(index_array):
     always narrow down to previous sse and current sse and operate on them individually
 
     """
-    sse_ordered = orderSSE(psmotif, current_ss)
+    sse_ordered = orderSSE(psmotif, current_ss, direction)
 
     dump_log = []
 
@@ -106,24 +110,24 @@ def SmotifSearch(index_array):
             = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
             tlog.append(['seq_filter', csse_seq, seq_identity, blosum62_score])
 
-            if 'contacts' in exp_data_types:
+            if 'contcts' in exp_data_types:
                 no_of_contacts, percent_of_satisfied_contacts \
                     = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
 
-            if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
+            if 'pcs_data' in exp_data_types and seq_identity >= 80.0:
             #if 'pcs_data' in exp_data_types and blosum62_score >= 0.0:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if pcs_tensor_fits and seq_identity >= 0.0:
+            if pcs_tensor_fits and seq_identity >= 80.0:
             #if pcs_tensor_fits and blosum62_score > 0.0 :
                 #tlog.append(['log',])
                 #print "rmsd", rmsd
                 #print csmotif_data[i][0]
                 #print pcs_tensor_fits
                 #print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts
-                print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd
+                print csmotif_data[i][0],'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd
                 dump_log.append(tlog)
 
     if len(dump_log) > 0 :
