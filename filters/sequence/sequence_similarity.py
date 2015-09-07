@@ -127,8 +127,8 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
     if direction == 'left':
         smotif_sse = smotif[1]
     else:
-
         smotif_sse = smotif[2]
+
     smotif_seq = getSmotifAASeq_v2(smotif_sse)
     # print smotif_def
     #print native_seq, len(native_seq)

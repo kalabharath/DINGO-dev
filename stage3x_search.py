@@ -19,6 +19,7 @@ import filters.rmsd.qcp as qcp
 def getfromDB(previous_smotif, current_ss, direction):
     # print "previous_smotif: ", previous_smotif
 
+    searched_smotifs = []
     for entry in previous_smotif:
         if 'smotif_def' == entry[0]:
             searched_smotifs = entry[-1]
@@ -29,7 +30,6 @@ def getfromDB(previous_smotif, current_ss, direction):
         previous_ss = searched_smotifs[0]
     else:
         previous_ss = searched_smotifs[-1]
-
 
     # print "previous_ss: ", previous_ss
     # print "current_ss : ", current_ss
@@ -90,55 +90,37 @@ def SmotifSearch(index_array):
                 continue
 
         # QCP RMSD
-        #if csmotif_data[i][0][0] == '2z2iA00':
 
         rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
 
         no_clashes = qcp.clahses(transformed_coos)
 
+        #if rmsd <= 1.5 and no_clashes :
 
-        if rmsd <= 0.5 and no_clashes :
+        if csmotif_data[i][0][0] == '2z2iA00':
 
-        #if no_clashes :
-            #print rmsd
             pcs_tensor_fits = []
 
-            print csmotif_data[i]
+            #print csmotif_data[i]
             tlog = []
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
-
-            """
-            if 'aa_seq' in exp_data_types:
-                csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
-                    = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
-                tlog.append(['seq_filter', csse_seq, seq_identity, blosum62_score])
-            """
+            tlog.append(['cathcodes',sm.orderCATH(preSSE, csmotif_data[i][0], direction)])
 
             csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
                 = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
-            tlog.append(['seq_filter', csse_seq, seq_identity, blosum62_score])
 
-            if 'contats' in exp_data_types:
-                ## Contacts filter
-                no_of_contacts, percent_of_satisfied_contacts \
-                    = Cfilter.S2ContactPredicition(transformed_coos, sse_ordered, exp_data)
-                tlog.append(['contacts_filter', no_of_contacts, percent_of_satisfied_contacts])
+            concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
+            print csse_seq
+            print concat_seq
+            tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
-            #if 'pcs_data' in exp_data_types:
-            if 'pcs_data' in exp_data_types and seq_identity >= 80.0:
-            #if 'pcs_data' in exp_data_types and blosum62_score > 0.0:
+            if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if pcs_tensor_fits and seq_identity >= 80.0:
-            #if pcs_tensor_fits and blosum62_score >= 0.0 :
-            #if True:
-                #print "rmsd", rmsd
-                #print csmotif_data[i][0][0]
-                #print pcs_tensor_fits
-                #print 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, "Contacts", percent_of_satisfied_contacts
+            if pcs_tensor_fits :
                 print csmotif_data[i][0],'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd
                 dump_log.append(tlog)
 

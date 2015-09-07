@@ -49,4 +49,44 @@ def readSmotifDatabase(smotif):
 
     return smotif_data
 
+def orderSeq(previous_smotif, current_seq, direction):
 
+    """
+    :param previous_seq:
+    :param current_seq:
+    :param direction:
+    :return:
+    """
+    previous_seq = ''
+
+    for entry in previous_smotif:
+        if entry[0] == 'seq_filter':
+            seq_filter = entry
+            previous_seq = seq_filter[1]
+
+    if direction == 'left':
+        concat_seq = current_seq + previous_seq
+    else:
+        concat_seq = previous_seq + current_seq
+
+    return concat_seq
+
+def orderCATH(previous_smotif, current_smotif, direction):
+    """
+
+    :param previous_smotif:
+    :param current_smotif:
+    :param direction:
+    :return:
+    """
+    previous_cath = []
+    for entry in previous_smotif:
+        if entry[0] == 'cathcodes':
+            previous_cath = entry[1]
+
+    if direction == 'left':
+        previous_cath.insert(0, current_smotif)
+    else:
+        previous_cath.append(current_smotif)
+
+    return previous_cath

@@ -147,7 +147,7 @@ def checkAxRh(axrh, chisqr):
     """
     for metal in axrh:
         for parameter in metal:
-            if abs(parameter) > 100:
+            if abs(parameter) > 150:
                 return 1.0e+30
     return chisqr
 

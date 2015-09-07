@@ -323,12 +323,6 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     qcprot.FreeDMatrix(xyz2)
     qcprot.FreeDArray(rot)
 
-    """
-    for coo_array in temp_holder:
-        dumpPDBCoo2(coo_array)
-
-    time.sleep(10) # time to kill!
-    """
     return rmsd, temp_holder
 
 

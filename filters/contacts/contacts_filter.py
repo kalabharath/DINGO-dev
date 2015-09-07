@@ -6,6 +6,14 @@ Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 16/04/15 , Time: 04:52 PM
 
 Whether the Smotifs satisfy the input predicted contacts
+
+
+
+
+
+*********************
+ERROR: Needs review and fixing of directionality
+*********************
 """
 
 def get_distance(coo1, coo2):

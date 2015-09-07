@@ -47,7 +47,6 @@ def scoreCombination(score_list):
         c1 = combi[0]
         c2 = combi[1]
         if c1 and c2:
-            #print c1, c2, "minscore:", min_score
             if c1+c2 < min_score:
                 min_score = c1 + c2
     return min_score
@@ -68,7 +67,6 @@ def scoreCombination4t(score_list):
         c2 = combi[1]
         c3 = combi[2]
         if c1 and c2 and c3:
-            #print c1, c2, "minscore:", min_score
             if c1+c2+c3 < min_score:
                 min_score = c1 + c2 + c3
     return min_score
@@ -178,7 +176,7 @@ def makeTopPickle(previous_smotif_index, num_hits):
         print "Could only extract ", i
         num_hits = i
     io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
-    delete_old = "rm "+str(previous_smotif_index)+"_*_*.pickle"
+    #delete_old = "rm "+str(previous_smotif_index)+"_*_*.pickle"
     #os.system(delete_old)
     print "actual number in top hits ", len(dump_pickle)
     return range(num_hits)
