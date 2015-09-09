@@ -105,8 +105,8 @@ def SmotifSearch(index_array):
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0],csmotif_data[i], direction)
         no_clashes = qcp.clahses(transformed_coos)
 
-        #if rmsd <= 1.5 and no_clashes:
-        if csmotif_data[i][0][0] == '2z2iA00':
+        if rmsd <= 1.0 and no_clashes:
+        #if csmotif_data[i][0][0] == '2z2iA00':
             print csmotif_data[i][0]
             tlog = []
             pcs_tensor_fits = []
@@ -122,12 +122,11 @@ def SmotifSearch(index_array):
             = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
             # concat current to previous seq
             concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
-            print csse_seq
-            print concat_seq
+
 
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
-            if 'pcs_data' in exp_data_types and seq_identity >= 80.0:
+            if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 

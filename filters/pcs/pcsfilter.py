@@ -137,7 +137,7 @@ def calcAxRh(saupe_matrices):
         axrh.append([w[2] - 0.5 * (w[0] + w[1]), w[0] - w[1]])
     return axrh
 
-def checkAxRh(axrh, chisqr):
+def checkAxRh(axrh, chisqr, stage):
     """
     Check whether axial and rhombic are within reasonable
     values
@@ -147,8 +147,13 @@ def checkAxRh(axrh, chisqr):
     """
     for metal in axrh:
         for parameter in metal:
-            if abs(parameter) > 150:
-                return 1.0e+30
+            if stage ==1:
+                if abs(parameter) > 150:
+                    return 1.0e+30
+            else:
+                if abs(parameter) > 80:
+                    return 1.0e+30
+
     return chisqr
 
 def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
@@ -243,7 +248,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
 
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-            chisqr = checkAxRh(AxRh,chisqr) # modifies the values of chisqr
+            chisqr = checkAxRh(AxRh,chisqr, stage = 1) # modifies the values of chisqr
 
             # Free memory for the variables
             fastT1FM.FreeDMatrix(xyz)
@@ -324,10 +329,6 @@ def matchPCS(nh_dict, pcs_data):
         xyz_HN.append(xyz)
 
     return xyz_HN, smotif_pcs
-
-
-
-                #(s1_def, s2_def, smotif, exp_data)
 
 def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
     """
@@ -416,7 +417,7 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
 
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-            chisqr = checkAxRh(AxRh,chisqr)# modifies the values of chisqr
+            chisqr = checkAxRh(AxRh,chisqr, stage = 2)# modifies the values of chisqr
 
             # Free memory
             fastT1FM.FreeDMatrix(xyz)

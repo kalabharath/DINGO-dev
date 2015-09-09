@@ -189,7 +189,6 @@ def getRunSeq(num_hits):
     """
 
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    # map_route = io.readPickle("contact_route.pickle")
     map_route = io.readPickle("pcs_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
 
