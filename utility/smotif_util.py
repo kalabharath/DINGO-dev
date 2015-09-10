@@ -82,7 +82,8 @@ def orderCATH(previous_smotif, current_smotif, direction):
     previous_cath = []
     for entry in previous_smotif:
         if entry[0] == 'cathcodes':
-            previous_cath = entry[1]
+            t_cath = entry[1]
+            previous_cath = t_cath[:]
 
     if direction == 'left':
         previous_cath.insert(0, current_smotif)
