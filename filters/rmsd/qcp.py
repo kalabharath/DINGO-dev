@@ -336,11 +336,11 @@ def clahses(coo_arrays):
     for i in range(0, len(coo_arrays)-1):
 
         sse1 = getCAcoo(coo_arrays[i])
-        sse2 = getCAcoo(coo_arrays[i+1])
-
-        for j in range(0, len(sse1[0])):
-            for k in range(0, len(sse2[0])):
-                dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                if dist < 2.0:
-                    return False
+        for p in range(i+1,len(coo_arrays)):
+            sse2 = getCAcoo(coo_arrays[p])
+            for j in range(0, len(sse1[0])):
+                for k in range(0, len(sse2[0])):
+                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
+                    if dist < 2.0:
+                        return False
     return True

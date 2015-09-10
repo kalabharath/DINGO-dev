@@ -11,9 +11,9 @@ import utility.stage2_util as uts2
 import utility.smotif_util as sm
 import utility.io_util as io
 import filters.sequence.sequence_similarity as Sfilter
-import filters.contacts.contacts_filter  as Cfilter
 import filters.pcs.pcsfilter as Pfilter
 import filters.rmsd.qcp as qcp
+import time
 
 
 def getfromDB(previous_smotif, current_ss, direction):
@@ -78,6 +78,8 @@ def SmotifSearch(index_array):
     #print sse_ordered
     dump_log = []
 
+
+    ctime = time.time()
     for i in range(0, len(csmotif_data)):
 
         # Exclude the natives if present
@@ -106,7 +108,10 @@ def SmotifSearch(index_array):
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
-            tlog.append(['cathcodes',sm.orderCATH(preSSE, csmotif_data[i][0], direction)])
+
+            cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
+            #print cathcodes
+            tlog.append(['cathcodes', cathcodes])
 
             csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
                 = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
@@ -120,8 +125,18 @@ def SmotifSearch(index_array):
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
             if pcs_tensor_fits :
-                print csmotif_data[i][0],'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd
+                print csmotif_data[i][0],'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
+
+        #Time bound search
+        stime = time.time()
+        elapsed = ctime-stime
+        if elapsed/60.0> 120.0: #stop execution after 2 hrs
+            if len(dump_log) > 0:
+                io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
+                return True
+            else:
+                return True
 
     if len(dump_log) > 0:
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)

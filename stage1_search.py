@@ -12,8 +12,8 @@ import utility.stage1_util as uts1
 import utility.smotif_util as sm
 import utility.io_util as io
 import filters.sequence.sequence_similarity as Sfilter
-import filters.contacts.contacts_filter  as Cfilter
 import filters.pcs.pcsfilter as Pfilter
+import time
 
 
 def getSSdef(index_array):
@@ -45,8 +45,15 @@ def SmotifSearch(index_array):
     exp_data_types = exp_data.keys() #['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
     dump_log=[]
+    ctime = time.time()
 
     for i in range(0, len(smotif_data)):
+
+        stime = time.time()
+        elapsed = ctime-stime
+        if elapsed/60.0> 120.0: #stop execution after 2 hrs
+            return True
+
 
         # Save CPU time by excluding natives
         if 'natives' in exp_data_types:
@@ -85,7 +92,16 @@ def SmotifSearch(index_array):
                 "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             #print pcs_tensor_fits
             dump_log.append(tlog)
+                #Time bound search
 
+        stime = time.time()
+        elapsed = ctime-stime
+        if elapsed/60.0> 120.0: #stop execution after 2 hrs
+            if len(dump_log) > 0:
+                io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
+                return True
+            else:
+                return True
     if dump_log:
         print "num of hits", len(dump_log)
         io.dumpPickle('0_'+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)
