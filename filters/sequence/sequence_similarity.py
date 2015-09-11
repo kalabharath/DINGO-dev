@@ -114,7 +114,6 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
     aa_seq = exp_data['aa_seq']
 
     #print aa_seq
-
     # print s1_def
     # print s2_def
     # print aa_seq

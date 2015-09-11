@@ -259,6 +259,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
+            #temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
             temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)
@@ -429,7 +430,8 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
 
         if chisqr < 1.0e+30:
             #print "normalised chi: ", chisqr/total_pcs
-            temp_tensor.append([tag, chisqr / total_pcs, AxRh])
+            temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
+            #temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)
     fastT1FM.FreeDArray(rMy)
