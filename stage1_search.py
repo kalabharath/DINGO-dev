@@ -45,17 +45,11 @@ def SmotifSearch(index_array):
     exp_data_types = exp_data.keys() #['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
     dump_log=[]
-    ctime = time.time()
+    stime = time.time()
 
     for i in range(0, len(smotif_data)):
 
-        stime = time.time()
-        elapsed = ctime-stime
-        if elapsed/60.0> 120.0: #stop execution after 2 hrs
-            return True
-
-
-        # Save CPU time by excluding natives
+        # Excluding natives if needed
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
             tpdbid = smotif_data[i][0][0]
@@ -94,14 +88,13 @@ def SmotifSearch(index_array):
             dump_log.append(tlog)
                 #Time bound search
 
-        stime = time.time()
+        ctime = time.time()
         elapsed = ctime-stime
-        if elapsed/60.0> 120.0: #stop execution after 2 hrs
-            if len(dump_log) > 0:
-                io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
-                return True
-            else:
-                return True
+        print elapsed
+        if (elapsed/60.0)> 5.0: #stop execution after 2 hrs
+            print elapsed/60, "Breaking further execution"
+            break
+
     if dump_log:
         print "num of hits", len(dump_log)
         io.dumpPickle('0_'+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)

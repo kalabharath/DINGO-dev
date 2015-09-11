@@ -85,11 +85,11 @@ def SmotifSearch(index_array):
 
     dump_log = []
 
-    ctime = time.time()
+    stime = time.time()
 
     for i in range(0, len(csmotif_data)):
 
-        # Save CPU time by excluding natives
+        # Exclude natives if needed
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
             tpdbid = csmotif_data[i][0][0]
@@ -103,8 +103,6 @@ def SmotifSearch(index_array):
         no_clashes = qcp.clahses(transformed_coos)
 
         if rmsd <= 1.0 and no_clashes:
-            # if csmotif_data[i][0][0] == '2z2iA00':
-
             tlog = []
             pcs_tensor_fits = []
 
@@ -134,14 +132,11 @@ def SmotifSearch(index_array):
                 dump_log.append(tlog)
 
         #Time bound search
-        stime = time.time()
+        ctime = time.time()
         elapsed = ctime-stime
-        if elapsed/60.0> 120.0: #stop execution after 2 hrs
-            if len(dump_log) > 0:
-                io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
-                return True
-            else:
-                return True
+        if (elapsed/60.0)> 120.0: #stop execution after 2 hrs
+            print "Breaking further execution"
+            break
 
     if len(dump_log) > 0:
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
