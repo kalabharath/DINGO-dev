@@ -83,16 +83,14 @@ def SmotifSearch(index_array):
             # print index_array, s1_def, s2_def
             # print smotif_def, len(smotif_data)
             print smotif_data[i][0][0], \
-                "seq_id", seq_identity, "i=", i, "/", len(smotif_data), pcs_tensor_fits
-            #print pcs_tensor_fits
+                "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             dump_log.append(tlog)
                 #Time bound search
-
-        ctime = time.time()
-        elapsed = ctime-stime
-        if (elapsed/60.0)> 120.0: #stop execution after 2 hrs
-            print elapsed/60, "Breaking further execution"
-            break
+            ctime = time.time()
+            elapsed = ctime-stime
+            if (elapsed/60.0)> 120.0: #stop execution after 2 hrs
+                print elapsed/60, "Breaking further execution"
+                break
 
     if dump_log:
         print "num of hits", len(dump_log)
