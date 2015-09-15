@@ -102,7 +102,7 @@ def SmotifSearch(index_array):
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
         no_clashes = qcp.clahses(transformed_coos)
 
-        if rmsd <= 1.0 and no_clashes:
+        if rmsd <= 2.0 and no_clashes:
             tlog = []
             pcs_tensor_fits = []
 
@@ -128,7 +128,7 @@ def SmotifSearch(index_array):
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
             if pcs_tensor_fits:
-                print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                #print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
                 #Time bound search

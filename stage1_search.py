@@ -77,13 +77,8 @@ def SmotifSearch(index_array):
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
-
         if pcs_tensor_fits:
-        #if blosum62_score > 0.0 :
-            # print index_array, s1_def, s2_def
-            # print smotif_def, len(smotif_data)
-            print smotif_data[i][0][0], \
-                "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
+            #print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             dump_log.append(tlog)
                 #Time bound search
             ctime = time.time()
