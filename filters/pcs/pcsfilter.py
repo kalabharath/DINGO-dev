@@ -220,7 +220,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
 
     # Define Thomas's implementaion of hollow concentric shells
 
-    nM = 10000  # 1000 pts in each sphere
+    nM = 200  # 1000 pts in each sphere
     M = [1, 45]  # 40 spheres 10-50 Angstrom
 
     """
