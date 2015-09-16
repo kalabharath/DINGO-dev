@@ -94,6 +94,41 @@ def PointsOnSpheres(M, N, rMx, rMy, rMz):
             fastT1FM.SetDvector(j, rMz, i * node[k][2])
             j += 1
 
+def newPointsOnSpheres(M, sN, rMx, rMy, rMz):
+    """
+    quick way from wikipedia
+    :param M:
+    :param sN: num of points on the starting sphere
+    :param rMx:
+    :param rMy:
+    :param rMz:
+    :return:
+    Hardcoded increments from 200 pts innershell * number of shells
+    """
+
+    import math
+    j = 0
+    for i in range(M[0], M[1]):
+        N = i * sN
+        node = []
+        #dlong = math.pi * (3 - math.sqrt(5))  # ~2.39996323
+        dlong = 2.39996322973
+        dz = 2.0 / N
+        xlong = 0
+        z = 1 - 0.5 * dz
+
+        for l in range(N):
+            r = math.sqrt(1 - z * z)
+            node.append([math.cos(xlong) * r, math.sin(xlong) * r, z])
+            z -= dz
+            xlong += dlong
+
+        for k in range(N):
+            fastT1FM.SetDvector(j, rMx, i * node[k][0])
+            fastT1FM.SetDvector(j, rMy, i * node[k][1])
+            fastT1FM.SetDvector(j, rMz, i * node[k][2])
+            j += 1
+
 
 def usuablePCS(pcs_array):
     """
@@ -105,16 +140,18 @@ def usuablePCS(pcs_array):
     if not pcs_array:
         return 0, False
     else:
+        total_pcs = 0
         for j in range(0, len(pcs_array[0])):
             counter = 0
             for entry in pcs_array:
                 if entry[j] != 999.999:
                     counter += 1
+            total_pcs = total_pcs + counter
             if counter <= 5:
-                return counter, False
+                return total_pcs, False
 
 
-    return counter, True
+    return total_pcs, True
 
 
 def calcAxRh(saupe_matrices):
@@ -185,11 +222,23 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
 
     nM = 10000  # 1000 pts in each sphere
     M = [1, 45]  # 40 spheres 10-50 Angstrom
-    npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
-    rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
+
+    """
+    npts = 0
+    for i in range(M[0],M[1]):
+        t = i*200
+        npts = npts + t
+
+    #npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
+    print npts
+    """
+
+    npts = 198000
+    rMx = fastT1FM.MakeDvector(npts)  #   allocate memmory
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
-    PointsOnSpheres(M, nM, rMx, rMy, rMz)
+    #PointsOnSpheres(M, nM, rMx, rMy, rMz)
+    newPointsOnSpheres(M, nM, rMx, rMy, rMz)
 
     # Temp storage of tensor values
     temp_tensor = []
@@ -259,8 +308,8 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
-            #temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
-            temp_tensor.append([tag, chisqr / total_pcs, AxRh])
+            temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
+            #temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)
     fastT1FM.FreeDArray(rMy)
@@ -354,13 +403,16 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
 
     # Define Thomas's implementaion of hollow concentric shells
 
-    nM = 10000  # 1000 pts in each sphere
-    M = [0, 45]  # 40 spheres 10-50 Angstrom
-    npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
+    nM = 200  # 200 pts in starting sphere
+    M = [1, 45]  # 40 spheres 10-50 Angstrom
+
+    #npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
+    npts = 198000
     rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
-    PointsOnSpheres(M, nM, rMx, rMy, rMz)
+    #PointsOnSpheres(M, nM, rMx, rMy, rMz)
+    newPointsOnSpheres(M, nM, rMx, rMy, rMz)
 
     # Temp storage of tensor values
     temp_tensor = []
@@ -429,8 +481,9 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
-            #print "normalised chi: ", chisqr/total_pcs
-            temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
+            #print total_pcs, nsets, nsets*5, chisqr / float (total_pcs - (nsets * 5))
+            temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
+
             #temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)

@@ -125,7 +125,7 @@ def SmotifSearch(index_array):
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
             if pcs_tensor_fits :
-                print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
             #Time bound search
