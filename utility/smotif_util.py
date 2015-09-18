@@ -40,9 +40,13 @@ def readSmotifDatabase(smotif):
     :return:
     """
     # TODO option to parse in database path
+    import os
+    smotif_db_path = "/short/xc4/kbp502/zinr/main/smotif_cen_db/"
+    if os.path.exists(smotif_db_path):
+        pass
+    else:
+        smotif_db_path = "/home/kalabharath/zinr/main/smotif_cen_db/"
 
-    #smotif_db_path = "/short/xc4/kbp502/zinr/main/smotif_cen_db/"
-    smotif_db_path = "/home/kalabharath/zinr/main/smotif_cen_db/"
     file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db"
     fin = smotif_db_path + file_name
     smotif_data = io.readPickle(fin)
