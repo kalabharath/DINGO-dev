@@ -151,7 +151,7 @@ def usuablePCS(pcs_array):
                 return total_pcs, False
 
 
-    return total_pcs, True
+    return float(total_pcs), True
 
 
 def calcAxRh(saupe_matrices):
@@ -182,7 +182,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
     :param chisqr:
     :return:
     """
-    if (chisqr/float(total_pcs)) > 0.0075:
+    if (chisqr/total_pcs) > 0.02:
         return 1.0e+30
     for metal in axrh:
         for parameter in metal:
@@ -310,7 +310,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
-            temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
+            temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
             #temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)
@@ -473,7 +473,7 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
             chisqr = checkAxRh(AxRh,chisqr, total_pcs, stage = 1) # modifies the values of chisqr
-            
+
 
             # Free memory
             fastT1FM.FreeDMatrix(xyz)
