@@ -46,6 +46,7 @@ def writeFile(array_of_lines, filename):
         fout.write(line)
         fout.write("\n")
     fout.close()
+    return True
 
 
 def dumpPickle(filename, data):
@@ -57,6 +58,8 @@ def dumpPickle(filename, data):
     """
     with open(filename, 'w') as f:
         pickle.dump(data, f)
+    f.close()
+    return True
 
 
 def readPickle(filename):

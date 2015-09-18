@@ -91,6 +91,8 @@ def getNchiSum(pcs_filter):
             nchi = tensor[1]
             # axrh = tensor[2]
             snchi += nchi
+        return 999.999 #discourage double tag score only for 4 tags
+
 
     if len(tensors) == 3:
         # Scoring three tags, get lowest Nchi for 2
@@ -155,8 +157,6 @@ def makeTopPickle(previous_smotif_index, num_hits):
             if entry[0] == 'seq_filter':
                 seq_filter = entry
                 smotif_seq = seq_filter[1]
-            if entry[0] == 'contacts_filter':
-                contacts_filter = entry
             if entry[0] == 'PCS_filter':
                 pcs_data = entry
                 Nchi = getNchiSum(pcs_data)
@@ -176,9 +176,9 @@ def makeTopPickle(previous_smotif_index, num_hits):
         print "Could only extract ", i
         num_hits = i
     io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
-    #delete_old = "rm "+str(previous_smotif_index)+"_*_*.pickle"
-    #os.system(delete_old)
+
     print "actual number in top hits ", len(dump_pickle)
+    dump_pickle = []
     return range(num_hits)
 
 
