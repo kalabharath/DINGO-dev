@@ -472,7 +472,8 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
 
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-            chisqr = checkAxRh(AxRh,chisqr, stage = 2)# modifies the values of chisqr
+            chisqr = checkAxRh(AxRh,chisqr, total_pcs, stage = 1) # modifies the values of chisqr
+            
 
             # Free memory
             fastT1FM.FreeDMatrix(xyz)
