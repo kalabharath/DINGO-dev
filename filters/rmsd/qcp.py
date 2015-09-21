@@ -7,7 +7,7 @@ Date: 8/05/15 , Time:4:27 AM
 """
 
 import qcprot
-import copy
+#import copy
 
 
 def dumpPDBCoo(coo_array):
@@ -172,20 +172,27 @@ def rmsdQCP(psmotif, csmotif, direction):
     :return:
     """
 
-    psmotif = copy.copy(psmotif[1])
+    #psmotif = copy.copy(psmotif[1])
+    th = psmotif[1]
+    psmotif = th[:]
+
 
     if direction == 'left':
         native_fraga = getcoo(psmotif[1])
         frag_a = getcoo(psmotif[1])
         frag_b = getcoo(csmotif[2])
-        native_fragb_2ndsse = copy.copy(csmotif[1])
+        #native_fragb_2ndsse = copy.copy(csmotif[1])
+        th = csmotif[1]
+        native_fragb_2ndsse = th[:]
         native_fraga_2ndsse = getcoo(psmotif[2])
     else:
 
         native_fraga = getcoo(psmotif[2])
         frag_a = getcoo(psmotif[2])
         frag_b = getcoo(csmotif[1])
-        native_fragb_2ndsse = copy.copy(csmotif[2])
+        #native_fragb_2ndsse = copy.copy(csmotif[2])
+        th = csmotif[2]
+        native_fragb_2ndsse = th[:]
         native_fraga_2ndsse = getcoo(psmotif[1])
 
     frag_a, a_cen = centerCoo(frag_a)
@@ -263,13 +270,21 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     #print csmotif
     if direction == 'left':
         frag_b = getcoo(csmotif[2])
-        native_fragb_2ndsse = copy.copy(csmotif[1])
-        frag_a = copy.deepcopy(presse[0])
+        #native_fragb_2ndsse = copy.copy(csmotif[1])
+        th=csmotif[1]
+        native_fragb_2ndsse = th[:]
+        #frag_a = copy.deepcopy(presse[0])
+        th = presse[0]
+        frag_a = th[:]
 
     else:
-        frag_a = copy.deepcopy(presse[-1])
+        #frag_a = copy.deepcopy(presse[-1])
+        th = presse[-1]
+        frag_a = th[:]
         frag_b = getcoo(csmotif[1])
-        native_fragb_2ndsse = copy.copy(csmotif[2])
+        #native_fragb_2ndsse = copy.copy(csmotif[2])
+        th = csmotif[2]
+        native_fragb_2ndss = th[:]
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)
@@ -311,7 +326,8 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
 
     # append the translated coordinates
-    temp_holder = copy.deepcopy(presse)
+    #temp_holder = copy.deepcopy(presse)
+    temp_holder = presse[:]
 
     if direction == 'left':
         temp_holder.insert(0, trans_sse2nd)
