@@ -91,7 +91,7 @@ def getNchiSum(pcs_filter):
             nchi = tensor[1]
             # axrh = tensor[2]
             snchi += nchi
-        return 999.999 #discourage double tag score only for 4 tags
+        #return 999.999 #discourage double tag score only for 4 tags
 
 
     if len(tensors) == 3:
