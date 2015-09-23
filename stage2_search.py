@@ -74,6 +74,12 @@ def SmotifSearch(index_array):
     current_ss, direction = uts2.getSS2(index_array[1])
     csmotif_data = getfromDB(psmotif, current_ss, direction)
 
+    if not csmotif_data:
+        # If the smotif library doesn't exist
+        # Terminate further execution
+        return True
+
+
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 

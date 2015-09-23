@@ -43,6 +43,8 @@ def SmotifSearch(index_array):
     smotif_data = sm.readSmotifDatabase(smotif_def)
 
     if not smotif_data:
+        # If the smotif library doesn't exist
+        # Terminate further execution
         return True
 
     exp_data = io.readPickle("exp_data.pickle")

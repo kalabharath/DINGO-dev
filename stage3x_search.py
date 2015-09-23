@@ -72,6 +72,12 @@ def SmotifSearch(index_array):
 
     csmotif_data = getfromDB(preSSE, current_ss, direction)
 
+    if not csmotif_data:
+        # If the smotif library doesn't exist
+        # Terminate further execution
+        return True
+
+
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts', 'natives']
     sse_ordered = orderSSE(preSSE, current_ss, direction)

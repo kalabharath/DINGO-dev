@@ -70,7 +70,6 @@ def readPickle(filename):
     """
     if os.path.isfile(filename):
         fin = open(filename, 'r')
-
         data = pickle.load(fin)
         fin.close()
         return data
