@@ -41,6 +41,10 @@ def SmotifSearch(index_array):
     print s1_def, s2_def
 
     smotif_data = sm.readSmotifDatabase(smotif_def)
+
+    if not smotif_data:
+        return True
+
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys() #['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 

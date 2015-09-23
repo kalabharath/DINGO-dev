@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import pickle
+import pickle, os
 
 """
 Project_Name: setup, File_name: util.py
@@ -68,10 +68,14 @@ def readPickle(filename):
     :param filename:
     :return:
     """
-    fin = open(filename, 'r')
-    data = pickle.load(fin)
-    fin.close()
-    return data
+    if os.path.isfile(filename):
+        fin = open(filename, 'r')
+
+        data = pickle.load(fin)
+        fin.close()
+        return data
+    else:
+        return False
 
 
 def readFasta(filename):
