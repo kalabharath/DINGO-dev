@@ -63,6 +63,20 @@ def getCAcoo(frag):
             z.append(frag[2][i])
     return [x, y, z]
 
+def getCcoo(frag):
+    """
+    :param frag:
+    :return:
+    """
+    #print frag
+    x, y, z = [], [], []
+    for i in range(0, len(frag[0])):
+        if frag[3][i] == 'C':
+            x.append(frag[0][i])
+            y.append(frag[1][i])
+            z.append(frag[2][i])
+    return [x, y, z]
+
 
 def getcoo(frag):
     """
@@ -341,4 +355,15 @@ def clahses(coo_arrays):
                     dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
                     if dist < 2.0:
                         return False
+
+    for i in range(0, len(coo_arrays)-1):
+        sse1 = getCcoo(coo_arrays[i])
+        for p in range(i+1,len(coo_arrays)):
+            sse2 = getCcoo(coo_arrays[p])
+            for j in range(0, len(sse1[0])):
+                for k in range(0, len(sse2[0])):
+                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
+                    if dist < 2.0:
+                        return False
+
     return True
