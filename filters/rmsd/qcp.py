@@ -334,8 +334,7 @@ def clahses(coo_arrays):
 
     for i in range(0, len(coo_arrays)-1):
         sse1 = getCAcoo(coo_arrays[i])
-        for p in range(i+1,len(coo_arrays)+1):
-            print p
+        for p in range(i+1,len(coo_arrays)):
             sse2 = getCAcoo(coo_arrays[p])
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
