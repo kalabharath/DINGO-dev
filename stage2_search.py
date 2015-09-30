@@ -101,7 +101,7 @@ def SmotifSearch(index_array):
             tpdbid = csmotif_data[i][0][0]
             pdbid = tpdbid[0:4]
             if pdbid in natives:
-                # Stop further execution and iterate
+                # Stop further execution and
                 continue
 
         # QCP RMSD

@@ -51,7 +51,6 @@ def dumpPDBCoo2(coo_array):
 
 def getCAcoo(frag):
     """
-
     :param frag:
     :return:
     """
@@ -334,9 +333,8 @@ def clahses(coo_arrays):
     """
 
     for i in range(0, len(coo_arrays)-1):
-
         sse1 = getCAcoo(coo_arrays[i])
-        for p in range(i+1,len(coo_arrays)):
+        for p in range(i+1,len(coo_arrays)+1):
             sse2 = getCAcoo(coo_arrays[p])
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
