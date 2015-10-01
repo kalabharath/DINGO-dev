@@ -45,11 +45,6 @@ def dumpPDBCoo2(coo_array, sse_pos, sse_seq, aa_seq,prefix):
                 outfile.write(pdb_line)
                 res_num+=1
                 t_count = 0
-
-        #pdb_line = "%-6s%5d  %-2s%5s%2s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s"\
-        #           %('ATOM',i+1,atom,res,'A',res_no," ",x, y, z,1.0,30.0,' ',' \n')
-        #outfile.write(pdb_line)
-        #print pdb_line
     print i, sse_seq[-1]-sse_seq[-2]
     print 'TER'
     outfile.close()
@@ -64,8 +59,6 @@ def getNchiSum(pcs_filter):
     """
     snchi = 999.999
     tensors = pcs_filter[1]
-    #print len(tensors)
-
     if len(tensors):
         snchi = 0
         for tensor in tensors:
@@ -78,7 +71,6 @@ def makefinal(previous_smotif_index, num_hits):
     hits = []
     regex = str(previous_smotif_index) + "_*_*.pickle"
     file_list = glob.glob(regex)
-    #print file_list
     for f in file_list:
         thits = io.readPickle(f)
         for thit in thits:
@@ -137,25 +129,18 @@ def makefinal(previous_smotif_index, num_hits):
     io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
 
     print "actual number in top hits ", len(dump_pickle)
-    dump_pickle = []
     return range(num_hits)
-
-
-
-import utility.stage2_util as util
-
 
 seq = int(sys.argv[1])
 
 
 makefinal(seq,10)
-import sys
+
 top_result = io.readPickle(str(seq)+"_tophits.pickle")
 
 
 
 for p in range(0, len(top_result)):
-#for p in range(0,5):
 
     top_struct = top_result[p]
 
@@ -172,15 +157,11 @@ for p in range(0, len(top_result)):
         if entry[0] =='cathcodes':
             print entry
     coor_arrays = top_struct[2][1]
-    #print coor_arrays
     ss_list = top_struct[0][-1]
-    #print ss_list
-    #print  len(coor_arrays)
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
     aa_seq = exp_data['aa_seq']
-
     print aa_seq, len(aa_seq)
 
     for i in range(0, len(coor_arrays)):
@@ -188,7 +169,5 @@ for p in range(0, len(top_result)):
 
 
 for q in range(0, len(top_result)):
-#for q in range(0,5):
     cat = "cat "+str(q)+"_*_.pdb >model_"+str(q)+".pdb"
-    #print cat
     os.system(cat)
