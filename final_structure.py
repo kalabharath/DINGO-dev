@@ -51,57 +51,96 @@ def dumpPDBCoo2(coo_array, sse_pos, sse_seq, aa_seq,prefix):
     outfile.close()
     return True
 
-def makeTopPickle3(previous_smotif_index, num_hits):
+def getNchiSum(pcs_filter):
 
+    """
+
+    :param pcs_filter:
+    :return:
+    """
+    snchi = 999.999
+    tensors = pcs_filter[1]
+    #print len(tensors)
+
+    if len(tensors):
+        snchi = 0
+        for tensor in tensors:
+            nchi = tensor[1]
+            snchi += nchi
+    return snchi
+
+
+def makefinal(previous_smotif_index, num_hits):
     hits = []
-    regex=str(previous_smotif_index)+"_*_*.pickle"
+    regex = str(previous_smotif_index) + "_*_*.pickle"
     file_list = glob.glob(regex)
+    #print file_list
     for f in file_list:
         thits = io.readPickle(f)
         for thit in thits:
             hits.append(thit)
     """
-                            0                                  1
-    dump_log.append([transformed_coos,['seq_filter', csse_seq, seq_identity, blosum62_score],
-                            2                                                           3
-                ['contacts_filter', no_of_contacts, percent_of_satisfied_contacts], sse_ordered])
+    identifiers: smotif, smotif_def, seq_filter, contacts_filter, PCS_filter,
 
     """
-    #print len(hits)
-    new_dict={}
-    seqs = []
+
+    new_dict = {}
+
     for hit in hits:
-        #print hit
-        seq_filter = hit[1]
-        smotif_seq = seq_filter[1]
-        contacts_filter = hit[2]
+        for entry in hit:
+            if entry[0] == 'smotif':
+                name = entry[1][0]
+            if entry[0] == 'seq_filter':
+                seq_filter = entry
+                smotif_seq = seq_filter[1]
+            if entry[0] == 'contacts_filter':
+                contacts_filter = entry
+            if entry[0] == 'PCS_filter':
+                pcs_data = entry
+                Nchi = getNchiSum(pcs_data)
+                new_dict.setdefault(Nchi, []).append(hit)
+
+    keys = new_dict.keys()
+    keys.sort()
+
+    non_redundant = {}
+    seqs = []
+    for i in range(0, len(keys)):
+        for entry in new_dict[keys[i]][0]:
+            if entry[0] == 'smotif':
+                name = entry[1][0]
+            if entry[0] == 'seq_filter':
+                seq_filter = entry
+                smotif_seq = seq_filter[1]
+            if entry[0] == 'PCS_filter':
+                pcs_data = entry
+                Nchi = getNchiSum(pcs_data)
         if smotif_seq not in seqs:
             seqs.append(smotif_seq)
-            dict_key_score = seq_filter[2]+contacts_filter[2]
-            new_dict.setdefault(dict_key_score, []).append(hit)
-    keys = new_dict.keys()
+            print name, Nchi
+            non_redundant.setdefault(Nchi, []).append(new_dict[keys[i]][0])
+
+    keys = non_redundant.keys()
     keys.sort()
     dump_pickle = []
     try:
-        for i in range(0,num_hits):
-            dump_pickle.append(new_dict[keys[i]])
+        for i in range(0, num_hits):
+            dump_pickle.append(non_redundant[keys[i]])
+            print "final sele", non_redundant[keys[i]][0][0][1][0]
     except:
-        print "could only make ", i
-    io.dumpPickle(str(previous_smotif_index)+"_tophits.pickle", dump_pickle)
+        print "Could only extract ", i
+        num_hits = i
+    io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
+
+    print "actual number in top hits ", len(dump_pickle)
+    dump_pickle = []
     return range(num_hits)
-
-
-import utility.stage2_util as util
-#makeTopPickle3(5, 10)
 
 seq = int(sys.argv[1])
 
+makefinal(seq, 10)
 
-#util.makeTopPickle(seq,10)
-import sys
 top_result = io.readPickle(str(seq)+"_tophits.pickle")
-
-
 
 for p in range(0, 10):
 

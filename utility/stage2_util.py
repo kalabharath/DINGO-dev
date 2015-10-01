@@ -78,9 +78,7 @@ def getNchiSum(pcs_filter):
     :param pcs_filter:
     :return:
     """
-
     snchi = 999.999
-
     tensors = pcs_filter[1]
     #print len(tensors)
 
@@ -92,7 +90,6 @@ def getNchiSum(pcs_filter):
             # axrh = tensor[2]
             snchi += nchi
         return 999.999 #discourage double tag score only for 4 tags
-
 
     if len(tensors) == 3:
         # Scoring three tags, get lowest Nchi for 2
