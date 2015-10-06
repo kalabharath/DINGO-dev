@@ -28,7 +28,7 @@ status = MPI.Status()
 ##
 
 if rank == 0:
-    tasks, sse_index = util.getRunSeq(num_hits=20)
+    tasks, sse_index = util.getRunSeq(num_hits=20, stage=3)
 
     #print tasks, sse_index
     #tasks = [[0,0]]
