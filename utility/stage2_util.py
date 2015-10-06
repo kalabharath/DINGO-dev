@@ -112,7 +112,7 @@ def getNchiSum(pcs_filter, stage):
         # Discourage single tag scoring by returning high score
         return snchi
 
-        return snchi
+    return snchi
 
 
 def makeTopPickle(previous_smotif_index, num_hits, stage):
