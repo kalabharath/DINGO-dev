@@ -112,7 +112,7 @@ def getNchiSum(pcs_filter, stage):
         # Discourage single tag scoring by returning high score
         return snchi
 
-    return snchi
+        return snchi
 
 
 def makeTopPickle(previous_smotif_index, num_hits, stage):
@@ -190,7 +190,11 @@ def getRunSeq(num_hits, stage):
 
     ss_profiles = io.readPickle("ss_profiles.pickle")
     map_route = io.readPickle("pcs_route.pickle")
-    next_index, next_smotif = getNextSmotif(map_route)
+
+    try:
+        next_index, next_smotif = getNextSmotif(map_route)
+    except TypeError:
+        return [999], 999
 
     direction = next_smotif[-1]
     if direction == 'left':

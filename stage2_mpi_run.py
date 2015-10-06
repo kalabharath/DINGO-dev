@@ -26,7 +26,17 @@ name = MPI.Get_processor_name()
 status = MPI.Status()
 
 if rank == 0:
-    tasks, sse_index = util.getRunSeq(num_hits=20)
+
+    tasks, sse_index = util.getRunSeq(num_hits=20, stage = 2)
+
+    if sse_index == 999 :
+        # kill all slaves if there is there is EOL
+        # only makes sense for self submitting jobs
+        for i in range(0, size-1):
+            source = status.Get_source()
+            comm.send(None, dest = source, tag = tags.EXIT)
+        exit()
+
     # tasks = [[5,6]]
     stime = time.time()
 
