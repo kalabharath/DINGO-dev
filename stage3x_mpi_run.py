@@ -35,8 +35,11 @@ if rank == 0:
         # kill all slaves if there is there is EOL
         # only makes sense for self submitting jobs
         for i in range(0, size-1):
+            data = comm.recv(source = MPI.ANY_SOURCE, tag = MPI.ANY_TAG, status = status)
             source = status.Get_source()
-            comm.send(None, dest = source, tag = tags.EXIT)
+            tag = status.Get_tag()
+            if tag == tags.READY:
+                comm.send(None, dest = source, tag = tags.EXIT)
         exit()
 
     #print tasks, sse_index

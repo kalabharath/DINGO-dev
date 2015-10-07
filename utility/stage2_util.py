@@ -82,6 +82,10 @@ def getNchiSum(pcs_filter, stage):
     tensors = pcs_filter[1]
     #print len(tensors)
 
+    if len(tensors) == 1:
+        # Discourage single tag scoring by returning high score
+        return 999.999 #discourage double tag score only for 4 tags
+
     if len(tensors) == 2 and stage < 3:
         snchi = 0
         for tensor in tensors:
@@ -89,20 +93,19 @@ def getNchiSum(pcs_filter, stage):
             nchi = tensor[1]
             # axrh = tensor[2]
             snchi += nchi
+        return 999.999 #discourage double tag score only for 4 tags
 
-
-    if len(tensors) == 3 and stage <= 3:
+    if len(tensors) == 3 and stage < 3:
         # Scoring three tags, get lowest Nchi for 2
         score_list = []
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination(score_list)
 
-    """
-    if len(tensors) == 3 and stage == 3:
-        return 999.999 #discourage double tag score only for 4 tags
-    """
 
+    if len(tensors) == 3 and stage == 3:
+        # Discourage three tag scoring by returning high score
+        return 999.999 #discourage double tag score only for 4 tags
 
     if len(tensors) >= 4 and stage == 3:
         # For 4 tags, get lowest Nchi for 3
@@ -110,10 +113,6 @@ def getNchiSum(pcs_filter, stage):
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination4t(score_list)
-
-    if len(tensors) == 1:
-        # Discourage single tag scoring by returning high score
-        snchi = 999.999
 
     return snchi
 
