@@ -108,7 +108,7 @@ def getNchiSum(pcs_filter, stage):
         return 999.999 #discourage double tag score only for 4 tags
     """
 
-    if len(tensors) >= 4 and stage == 3:
+    if len(tensors) >= 4 and stage >= 3:
         # For 4 tags, get lowest Nchi for 3
         score_list = []
         for tensor in tensors:
