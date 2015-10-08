@@ -353,7 +353,7 @@ def clahses(coo_arrays):
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
                     dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                    if dist < 3.5:
+                    if dist < 3.0:
                         return False
 
     for i in range(0, len(coo_arrays)-1):
@@ -363,7 +363,7 @@ def clahses(coo_arrays):
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
                     dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                    if dist < 3.5:
+                    if dist < 3.0:
                         return False
 
     return True

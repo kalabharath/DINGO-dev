@@ -166,6 +166,18 @@ for i in range(0,len(map_route)):
             res_sofar = res_sofar + ss_combi[s1][0][1]
             percent = (res_sofar/float(total_ss_res))*100
             print percent
+            if percent > 25.0 and percent < 50.0:
+                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                print outline
+                fout.write(outline)
+            if percent > 50.0 and percent < 75.0:
+                outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                print outline
+                fout.write(outline)
+            if percent > 75.0 :
+                outline = 'Executable="mpirun -np 128 python stage4x_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                print outline
+                fout.write(outline)
 fout.close()
 run= 'cat submit0.sh concat.txt > submitX.sh'
 os.system(run)
