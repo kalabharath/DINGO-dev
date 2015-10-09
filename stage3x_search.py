@@ -101,14 +101,11 @@ def SmotifSearch(index_array):
 
         rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
 
-        no_clashes = qcp.clahses(transformed_coos)
+        no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
 
-        if rmsd <= 2.0 and no_clashes :
-
-        #if csmotif_data[i][0][0] == '2z2iA00':
+        if rmsd <= exp_data['rmsd'] and no_clashes:
 
             pcs_tensor_fits = []
-
             #print csmotif_data[i]
             tlog = []
             tlog.append(['smotif', csmotif_data[i]])

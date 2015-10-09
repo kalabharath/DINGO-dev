@@ -106,9 +106,11 @@ def SmotifSearch(index_array):
 
         # QCP RMSD
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
-        no_clashes = qcp.clahses(transformed_coos)
+        #no_clashes = qcp.clahses(transformed_coos)
+        no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
 
-        if rmsd <= 2.0 and no_clashes:
+
+        if rmsd <= exp_data['rmsd'] and no_clashes:
             tlog = []
             pcs_tensor_fits = []
 
