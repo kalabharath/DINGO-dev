@@ -91,6 +91,8 @@ def SmotifSearch(index_array):
 
     dump_log = []
 
+    no_clashes = False
+
     stime = time.time()
 
     for i in range(0, len(csmotif_data)):
@@ -107,7 +109,9 @@ def SmotifSearch(index_array):
         # QCP RMSD
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
         #no_clashes = qcp.clahses(transformed_coos)
-        no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
+
+        if rmsd <= exp_data['rmsd']:
+            no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
 
 
         if rmsd <= exp_data['rmsd'] and no_clashes:
