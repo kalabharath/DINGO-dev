@@ -48,8 +48,7 @@ def dumpPDBCoo2(coo_array, i):
     outfile.close()
     return True
 
-
-smotif_db = glob.glob("/home/kalabharath/zinr/smotif_database/*.db")
+smotif_db = glob.glob("/home/kalabharath/zinr/final_smotif_database/*.db")
 print len(smotif_db)
 
 for i in range(0, len(smotif_db)):
@@ -59,7 +58,7 @@ for i in range(0, len(smotif_db)):
     smotif = io.readPickle(smotif_db[i])
     print smotif_db[i]
     print len(smotif)
-    print smotif_db[i][39:]
+    print smotif_db[i][45:]
     for j in range(0, len(smotif)):
     #for j in range(0, 1):
         #print smotif[j][0]
@@ -85,4 +84,4 @@ for i in range(0, len(smotif_db)):
         smotif_def = smotif[j][0][0]
         #add the modified Smotifs to temp array
         temp_smotif.append([smotif_def, tr_ss1, tr_ss2])
-    io.dumpPickle('./smotif_cen_db/'+smotif_db[i][39:], temp_smotif)
+    io.dumpPickle('./smotif_cen_db/'+smotif_db[i][45:], temp_smotif)
