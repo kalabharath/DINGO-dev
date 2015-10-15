@@ -182,7 +182,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
     :param chisqr:
     :return:
     """
-    if (chisqr/total_pcs) > 0.0125 :
+    if (chisqr/total_pcs) > 0.02 :
         return 1.0e+30
     for metal in axrh:
         for parameter in metal:
