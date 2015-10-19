@@ -421,7 +421,6 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
 
     for tag in range(0, ntags):
 
-        # for tag in range(0,1):
         xyz_HN, smotif_pcs = matchPCS(nh_dict, pcs_data[tag])
 
         total_pcs, pcs_bool = usuablePCS(smotif_pcs)
@@ -464,16 +463,26 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
             # ****
 
             saupe_array = []
+
             for kk in range(nsets):
                 temp_saupe = []
                 for j in range(3, 8):
                     temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
                 saupe_array.append(temp_saupe)
 
+            metal_pos =[]
+            for kk in range(nsets):
+                temp_metal = []
+                for j in range(0, 3):
+                    temp_metal.append(fastT1FM.GetDArray(kk, j, tensor))
+                metal_pos.append(temp_metal)
+
+
+
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-            chisqr = checkAxRh(AxRh,chisqr, total_pcs, stage = 1) # modifies the values of chisqr
-
+            chisqr = checkAxRh(AxRh,chisqr, total_pcs, stage = 2) # modifies the values of chisqr
+            AxRh.append(metal_pos) # add metal pos
 
             # Free memory
             fastT1FM.FreeDMatrix(xyz)
@@ -484,10 +493,11 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
-            #print total_pcs, nsets, nsets*5, chisqr / float (total_pcs - (nsets * 5))
-            temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
 
+            temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
             #temp_tensor.append([tag, chisqr / total_pcs, AxRh])
+            if len(temp_tensor) < tag+1:
+                return False
 
     fastT1FM.FreeDArray(rMx)
     fastT1FM.FreeDArray(rMy)
