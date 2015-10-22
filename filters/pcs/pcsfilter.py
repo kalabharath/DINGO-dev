@@ -496,13 +496,13 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
 
             temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
             #temp_tensor.append([tag, chisqr / total_pcs, AxRh])
-            if len(temp_tensor) < tag+1:
-                #free memory and return
-                fastT1FM.FreeDArray(rMx)
-                fastT1FM.FreeDArray(rMy)
-                fastT1FM.FreeDArray(rMz)
-                tfalse = []
-                return tfalse
+        if len(temp_tensor) < tag+1:
+            #free memory and return
+            fastT1FM.FreeDArray(rMx)
+            fastT1FM.FreeDArray(rMy)
+            fastT1FM.FreeDArray(rMz)
+            tfalse = []
+            return tfalse
 
     fastT1FM.FreeDArray(rMx)
     fastT1FM.FreeDArray(rMy)
