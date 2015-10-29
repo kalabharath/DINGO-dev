@@ -267,7 +267,7 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     :param direction:
     :return:
     """
-
+    presse = []
     for entry in previous_smotif:
         if 'qcp_rmsd' == entry[0]:
             temp_holder = entry[1]
