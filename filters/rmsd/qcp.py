@@ -267,7 +267,7 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     :param direction:
     :return:
     """
-    presse = []
+
     for entry in previous_smotif:
         if 'qcp_rmsd' == entry[0]:
             temp_holder = entry[1]
@@ -280,9 +280,12 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
         frag_a = copy.deepcopy(presse[0])
 
     else:
-        frag_a = copy.deepcopy(presse[-1])
-        frag_b = getcoo(csmotif[1])
-        native_fragb_2ndsse = copy.copy(csmotif[2])
+        try:
+            frag_a = copy.deepcopy(presse[-1])
+            frag_b = getcoo(csmotif[1])
+            native_fragb_2ndsse = copy.copy(csmotif[2])
+        except:
+            print previous_smotif
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)

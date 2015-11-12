@@ -182,7 +182,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
     :param chisqr:
     :return:
     """
-    if (chisqr/total_pcs) > 0.04 :
+    if (chisqr/total_pcs) > 0.04:
         return 1.0e+30
     for metal in axrh:
         for parameter in metal:
@@ -190,7 +190,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
                 if abs(parameter) > 150:
                     return 1.0e+30
             else:
-                if abs(parameter) > 80:
+                if abs(parameter) > 100:
                     return 1.0e+30
 
     return chisqr
@@ -282,9 +282,9 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             Xaxrh_range = fastT1FM.MakeDMatrix(nsets, 4)
             for i in range(0, nsets):
                 fastT1FM.SetDArray(i, 0, Xaxrh_range, 0.05)
-                fastT1FM.SetDArray(i, 1, Xaxrh_range, 100.0)
+                fastT1FM.SetDArray(i, 1, Xaxrh_range, 200.0)
                 fastT1FM.SetDArray(i, 2, Xaxrh_range, 0.05)
-                fastT1FM.SetDArray(i, 3, Xaxrh_range, 100.0)
+                fastT1FM.SetDArray(i, 3, Xaxrh_range, 200.0)
             # ****
             chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
             # ****
@@ -297,9 +297,18 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
                     temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
                 saupe_array.append(temp_saupe)
 
+
+            x = fastT1FM.GetDArray(0, 0, tensor)
+            y = fastT1FM.GetDArray(0, 1, tensor)
+            z = fastT1FM.GetDArray(0, 2, tensor)
+            metal_pos = [x + cm[0], y + cm[1], z + cm[2]]
+
+
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
+           #print tag, chisqr, AxRh, metal_pos
             chisqr = checkAxRh(AxRh,chisqr, total_pcs, stage = 1) # modifies the values of chisqr
+            AxRh.append(metal_pos) # add metal pos
 
             # Free memory for the variables
             fastT1FM.FreeDMatrix(xyz)
@@ -455,9 +464,9 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
             Xaxrh_range = fastT1FM.MakeDMatrix(nsets, 4)
             for i in range(0, nsets):
                 fastT1FM.SetDArray(i, 0, Xaxrh_range, 0.05)
-                fastT1FM.SetDArray(i, 1, Xaxrh_range, 100.0)
+                fastT1FM.SetDArray(i, 1, Xaxrh_range, 200.0)
                 fastT1FM.SetDArray(i, 2, Xaxrh_range, 0.05)
-                fastT1FM.SetDArray(i, 3, Xaxrh_range, 100.0)
+                fastT1FM.SetDArray(i, 3, Xaxrh_range, 200.0)
             # ****
             chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
             # ****
@@ -470,17 +479,15 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data):
                     temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
                 saupe_array.append(temp_saupe)
 
-            metal_pos =[]
-            for kk in range(nsets):
-                temp_metal = []
-                for j in range(0, 3):
-                    temp_metal.append(fastT1FM.GetDArray(kk, j, tensor))
-                metal_pos.append(temp_metal)
 
-
+            x = fastT1FM.GetDArray(0, 0, tensor)
+            y = fastT1FM.GetDArray(0, 1, tensor)
+            z = fastT1FM.GetDArray(0, 2, tensor)
+            metal_pos = [x + cm[0], y + cm[1], z + cm[2]]
 
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
+            #print tag, chisqr, AxRh, metal_pos
             chisqr = checkAxRh(AxRh,chisqr, total_pcs, stage = 2) # modifies the values of chisqr
             AxRh.append(metal_pos) # add metal pos
 

@@ -100,7 +100,15 @@ def getNchiSum(pcs_filter, stage):
             score_list.append(tensor[1])
         snchi = scoreCombination(score_list)
 
-    if len(tensors) >= 4 and stage >= 4: #stage 4
+    if len(tensors) >= 4 and stage <= 3: #stage 2,3 & 4
+        # For 4 tags, get lowest Nchi for 3
+        score_list = []
+        for tensor in tensors:
+            score_list.append(tensor[1])
+        snchi = scoreCombination4t(score_list)
+        snchi = snchi/10.0 #artificially icrease the priority
+
+    if len(tensors) >= 4 and stage == 4: #stage 4
         # For 4 tags, get lowest Nchi for 3
         score_list = []
         for tensor in tensors:
@@ -108,7 +116,6 @@ def getNchiSum(pcs_filter, stage):
         snchi = scoreCombination4t(score_list)
 
     return snchi
-
 
 def makeTopPickle(previous_smotif_index, num_hits, stage):
     hits = []
