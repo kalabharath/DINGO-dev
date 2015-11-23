@@ -127,7 +127,7 @@ def SmotifSearch(index_array):
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
             if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
-                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage = 3)
+                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage = 4)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
             if pcs_tensor_fits :
@@ -145,3 +145,4 @@ def SmotifSearch(index_array):
     if len(dump_log) > 0:
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
     return True
+__author__ = 'kalabharath'
