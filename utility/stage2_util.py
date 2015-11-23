@@ -106,7 +106,7 @@ def getNchiSum(pcs_filter, stage):
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination4t(score_list)
-        snchi = snchi/10.0 #artificially increase the priority
+        snchi = snchi/100.0 #artificially increase the priority
 
     if len(tensors) >= 4 and stage == 4: #stage 4
         # For 4 tags, get lowest Nchi for 3

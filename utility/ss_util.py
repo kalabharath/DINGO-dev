@@ -193,3 +193,54 @@ def genSSCombinations(ss_seq):
                         if arr:
                             ss_combi.setdefault(k, []).append(arr)
     return exn_ss, ss_combi
+
+def genSSCombinationsshort(ss_seq):
+    """
+	:param ss_seq:
+	:return exn_ss, ss_combi
+	"""
+    exn_ss, last_loop = genSSDef(ss_seq)
+    print exn_ss
+    ss_combi = {}
+    for k in range(0, len(exn_ss)):
+        if k != len(exn_ss) - 1:
+            ss_type = exn_ss[k][0]
+            len_ss = exn_ss[k][1]
+            l_loop = exn_ss[k][2]
+            r_loop = exn_ss[k + 1][2]
+            start = exn_ss[k][3]
+            end = exn_ss[k][4]
+            arr_0 = [ss_type, len_ss, l_loop, r_loop, start, end]
+            ss_combi.setdefault(k, []).append(arr_0)
+            for i in range(0, 2):
+                if i == 0:
+                    for j in range(-2, 3):
+                        arr = check_profile(ss_type, len_ss, l_loop, r_loop, start, end, i, j)
+                        if arr:
+                            ss_combi.setdefault(k, []).append(arr)
+                else:
+                    for j in range(-2, 3):
+                        arr = check_profile(ss_type, len_ss, l_loop, r_loop, start, end, i, j)
+                        if arr:
+                            ss_combi.setdefault(k, []).append(arr)
+        else:
+            ss_type = exn_ss[k][0]
+            len_ss = exn_ss[k][1]
+            l_loop = exn_ss[k][2]
+            r_loop = last_loop
+            start = exn_ss[k][3]
+            end = exn_ss[k][4]
+            arr_0 = [ss_type, len_ss, l_loop, r_loop, start, end]
+            ss_combi.setdefault(k, []).append(arr_0)
+            for i in range(0, 2):
+                if i == 0:
+                    for j in range(-2, 3):
+                        arr = check_profile(ss_type, len_ss, l_loop, r_loop, start, end, i, j)
+                        if arr:
+                            ss_combi.setdefault(k, []).append(arr)
+                else:
+                    for j in range(-2, 3):
+                        arr = check_profile(ss_type, len_ss, l_loop, r_loop, start, end, i, j)
+                        if arr:
+                            ss_combi.setdefault(k, []).append(arr)
+    return exn_ss, ss_combi
