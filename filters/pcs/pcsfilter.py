@@ -8,6 +8,8 @@ Date: 24/04/15 , Time: 01:30 PM
 fit PCS and apply Ax,Rh filters
 """
 
+import math
+
 import fastT1FM
 
 
@@ -54,7 +56,7 @@ def match_pcss_HN(rh1, rh2, pcs_data):
     smotif_pcs = []
 
     for entry in rh1:
-        res_no = (entry[-1]) - 1 #because python numbering starts from '0'
+        res_no = (entry[-1]) - 1  # because python numbering starts from '0'
         smotif_pcs.append(pcs_data[res_no])
     for entry in rh2:
         res_no = (entry[-1]) - 1
@@ -94,6 +96,7 @@ def PointsOnSpheres(M, N, rMx, rMy, rMz):
             fastT1FM.SetDvector(j, rMz, i * node[k][2])
             j += 1
 
+
 def newPointsOnSpheres(M, sN, rMx, rMy, rMz):
     """
     quick way from wikipedia
@@ -106,12 +109,12 @@ def newPointsOnSpheres(M, sN, rMx, rMy, rMz):
     Hardcoded increments from 200 pts innershell * number of shells
     """
 
-    import math
+    # import math
     j = 0
     for i in range(M[0], M[1]):
         N = i * sN
         node = []
-        #dlong = math.pi * (3 - math.sqrt(5))  # ~2.39996323
+        # dlong = math.pi * (3 - math.sqrt(5))  # ~2.39996323
         dlong = 2.39996322973
         dz = 2.0 / N
         xlong = 0
@@ -150,7 +153,6 @@ def usuablePCS(pcs_array):
             if counter <= 5:
                 return total_pcs, False
 
-
     return float(total_pcs), True
 
 
@@ -174,6 +176,7 @@ def calcAxRh(saupe_matrices):
         axrh.append([w[2] - 0.5 * (w[0] + w[1]), w[0] - w[1]])
     return axrh
 
+
 def checkAxRh(axrh, chisqr, total_pcs, stage):
     """
     Check whether axial and rhombic are within reasonable
@@ -182,11 +185,11 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
     :param chisqr:
     :return:
     """
-    if (chisqr/total_pcs) > 0.01: #10 times the standard error limit
+    if (chisqr / total_pcs) > 0.01:  # 10 times the standard error limit
         return 1.0e+30
     for metal in axrh:
         for parameter in metal:
-            if stage ==1:
+            if stage == 1:
                 if abs(parameter) > 150:
                     return 1.0e+30
             else:
@@ -194,6 +197,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
                     return 1.0e+30
 
     return chisqr
+
 
 def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     """
@@ -236,10 +240,10 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     """
 
     npts = 198000
-    rMx = fastT1FM.MakeDvector(npts)  #   allocate memmory
+    rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
-    #PointsOnSpheres(M, nM, rMx, rMy, rMz)
+    # PointsOnSpheres(M, nM, rMx, rMy, rMz)
     newPointsOnSpheres(M, nM, rMx, rMy, rMz)
 
     # Temp storage of tensor values
@@ -297,7 +301,6 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
                     temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
                 saupe_array.append(temp_saupe)
 
-
             x = fastT1FM.GetDArray(0, 0, tensor)
             y = fastT1FM.GetDArray(0, 1, tensor)
             z = fastT1FM.GetDArray(0, 2, tensor)
@@ -306,9 +309,9 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
 
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-           #print tag, chisqr, AxRh, metal_pos
-            chisqr = checkAxRh(AxRh,chisqr, total_pcs, stage = 1) # modifies the values of chisqr
-            AxRh.append(metal_pos) # add metal pos
+            # print tag, chisqr, AxRh, metal_pos
+            chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage=1)  # modifies the values of chisqr
+            AxRh.append(metal_pos)  # add metal pos
 
             # Free memory for the variables
             fastT1FM.FreeDMatrix(xyz)
@@ -319,21 +322,21 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
+            nchisqr = chisqr / float(total_pcs - (nsets * 5))
 
-            nchisqr = chisqr/ float (total_pcs - (nsets * 5)
-
-            snchisqr = nchisqr / float(math.pow(total_pcs, 1/3.0))
+            snchisqr = nchisqr / float(math.pow(total_pcs, 1 / 3.0))
 
             temp_tensor.append([tag, snchisqr, AxRh])
 
-            #temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
-            #temp_tensor.append([tag, chisqr / total_pcs, AxRh])
+            # temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
+            # temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)
     fastT1FM.FreeDArray(rMy)
     fastT1FM.FreeDArray(rMz)
 
     return temp_tensor
+
 
 ###For stage 2
 
@@ -345,7 +348,7 @@ def getAtomCoo(coo_array, atom_type):
     :return:
     """
 
-    xt, yt, zt = [],[],[]
+    xt, yt, zt = [], [], []
     for i in range(0, len(coo_array[0])):
         x = coo_array[0][i]
         y = coo_array[1][i]
@@ -360,7 +363,6 @@ def getAtomCoo(coo_array, atom_type):
     return [xt, yt, zt]
 
 
-
 def coorNHdict(coo_arrays, sse_list):
     """
     link to contacts_filter.py
@@ -369,11 +371,11 @@ def coorNHdict(coo_arrays, sse_list):
     :param sse_list:
     :return:
     """
-    nh_dict={}
-    for i in range(0,len(sse_list)):
+    nh_dict = {}
+    for i in range(0, len(sse_list)):
         sse_def = sse_list[i]
         nh_array = getAtomCoo(coo_arrays[i], atom_type='H')
-        sse_range = range(sse_def[4], sse_def[5]+1)
+        sse_range = range(sse_def[4], sse_def[5] + 1)
 
         for j in range(0, len(sse_range)):
             try:
@@ -384,21 +386,21 @@ def coorNHdict(coo_arrays, sse_list):
 
 
 def matchPCS(nh_dict, pcs_data):
-
     smotif_pcs = []
-    xyz_HN =[]
+    xyz_HN = []
 
     residues = nh_dict.keys()
     residues.sort()
-    for res in residues:        
-        smotif_pcs.append(pcs_data[res-1])
+    for res in residues:
+        smotif_pcs.append(pcs_data[res - 1])
         xyz = nh_dict[res]
         xyz.append(res)
         xyz_HN.append(xyz)
 
     return xyz_HN, smotif_pcs
 
-def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage ):
+
+def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     """
 
     :param s1_def:
@@ -408,15 +410,15 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage ):
     :return:
     """
 
-    #print sse_ordered
-    #print transformed_coos
+    # print sse_ordered
+    # print transformed_coos
 
-    #print sse_ordered
+    # print sse_ordered
     nh_dict = coorNHdict(transformed_coos, sse_ordered)
 
     pcs_data = exp_data['pcs_data']
 
-    #print "pcs_data", pcs_data
+    # print "pcs_data", pcs_data
     ntags = len(pcs_data)
 
     # Define Thomas's implementaion of hollow concentric shells
@@ -424,12 +426,12 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage ):
     nM = 200  # 200 pts in starting sphere
     M = [1, 45]  # 40 spheres 10-50 Angstrom
 
-    #npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
+    # npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
     npts = 198000
     rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
-    #PointsOnSpheres(M, nM, rMx, rMy, rMz)
+    # PointsOnSpheres(M, nM, rMx, rMy, rMz)
     newPointsOnSpheres(M, nM, rMx, rMy, rMz)
 
     # Temp storage of tensor values
@@ -448,7 +450,6 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage ):
             nsets = len(smotif_pcs[0])
             xyz = fastT1FM.MakeDMatrix(frag_len, 3)
             pcs = fastT1FM.MakeDMatrix(nsets, frag_len)
-
 
             for k in range(nsets):
                 for j in range(frag_len):
@@ -486,7 +487,6 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage ):
                     temp_saupe.append(fastT1FM.GetDArray(kk, j, tensor))
                 saupe_array.append(temp_saupe)
 
-
             x = fastT1FM.GetDArray(0, 0, tensor)
             y = fastT1FM.GetDArray(0, 1, tensor)
             z = fastT1FM.GetDArray(0, 2, tensor)
@@ -494,9 +494,9 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage ):
 
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-            #print tag, chisqr, AxRh, metal_pos
-            chisqr = checkAxRh(AxRh,chisqr, total_pcs, stage) # modifies the values of chisqr
-            AxRh.append(metal_pos) # add metal pos
+            # print tag, chisqr, AxRh, metal_pos
+            chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage)  # modifies the values of chisqr
+            AxRh.append(metal_pos)  # add metal pos
 
             # Free memory
             fastT1FM.FreeDMatrix(xyz)
@@ -507,33 +507,30 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage ):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
+            nchisqr = chisqr / float(total_pcs - (nsets * 5))
 
-            nchisqr = chisqr/ float (total_pcs - (nsets * 5)
-
-            snchisqr = nchisqr / float(math.pow(total_pcs, 1/3.0))
+            snchisqr = nchisqr / float(math.pow(total_pcs, 1 / 3.0))
 
             temp_tensor.append([tag, snchisqr, AxRh])
 
-            #temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
-            #temp_tensor.append([tag, chisqr / total_pcs, AxRh])
+            # temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
+            # temp_tensor.append([tag, chisqr / total_pcs, AxRh])
         if stage <= 3:
             if len(temp_tensor) < tag:
-                #free memory and return
+                # free memory and return
                 fastT1FM.FreeDArray(rMx)
                 fastT1FM.FreeDArray(rMy)
                 fastT1FM.FreeDArray(rMz)
                 tfalse = []
                 return tfalse
         if stage == 4:
-            if len(temp_tensor) < tag+1:
-                #free memory and return
+            if len(temp_tensor) < tag + 1:
+                # free memory and return
                 fastT1FM.FreeDArray(rMx)
                 fastT1FM.FreeDArray(rMy)
                 fastT1FM.FreeDArray(rMz)
                 tfalse = []
                 return tfalse
-
-
 
     fastT1FM.FreeDArray(rMx)
     fastT1FM.FreeDArray(rMy)
