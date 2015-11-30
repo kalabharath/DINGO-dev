@@ -12,6 +12,7 @@ import utility.smotif_util as sm
 import utility.io_util as io
 import filters.sequence.sequence_similarity as Sfilter
 import filters.pcs.pcsfilter as Pfilter
+import filters.constraints.looplengthConstraint as llc
 import filters.rmsd.qcp as qcp
 import time
 
@@ -104,7 +105,13 @@ def SmotifSearch(index_array):
         rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
 
         if rmsd <= exp_data['rmsd']:
-            no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
+            loopconstraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
+
+            if loopconstraint:
+                no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
+            else:
+                no_clashes = False
+
 
         if rmsd <= exp_data['rmsd'] and no_clashes:
 
