@@ -35,7 +35,7 @@ def loopConstraint(coo_arrays, sseorder, direction):
     if direction == 'right':
         csse = sseorder[-1]
         psse = sseorder[-2]
-        loop_length = csse[-2] - psse[-1] -1
+        loop_length = csse[-2] - psse[-1]
         c_coo = getCAcoo(coo_arrays[-1])
         p_coo = getCAcoo(coo_arrays[-2])
         c_CA = [c_coo[0][0],c_coo[1][0],c_coo[2][0]]
