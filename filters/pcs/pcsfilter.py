@@ -185,8 +185,20 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
     :param chisqr:
     :return:
     """
-    if (chisqr / total_pcs) > 0.005:  # 10 times the standard error limit
-        return 1.0e+30
+    if stage <=2:
+
+        if (chisqr / total_pcs) > 0.0025:  # no error limit
+            return 1.0e+30
+
+    if stage == 3:
+
+        if (chisqr / total_pcs) > 0.01:  # 4 times the standard error limit
+            return 1.0e+30
+    if stage == 4:
+
+        if (chisqr / total_pcs) > 0.015:  # 6 times the standard error limit
+            return 1.0e+30
+
     for metal in axrh:
         for parameter in metal:
             if stage == 1:
