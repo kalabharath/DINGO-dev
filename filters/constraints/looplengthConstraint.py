@@ -56,7 +56,8 @@ def loopConstraint(coo_arrays, sseorder, direction):
 
     dist = get_dist(c_CA, p_CA)
 
-    max_dist = loop_length * 3.8 #3.8 Angstrom is the length between CA-CA in a linear polypeptide chain
+    max_dist = loop_length * 3.4 #3.8 Angstrom is the length between CA-CA in a linear polypeptide chain
+                                 # however in a trianglular like arrangement the shortest distance is 3.4 A
 
     if dist > max_dist:
         #print "Current distance: ", dist, max_dist
