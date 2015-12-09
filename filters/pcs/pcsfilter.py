@@ -187,7 +187,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
     """
     if stage <=2:
 
-        if (chisqr / total_pcs) > 0.0025:  # no error
+        if (chisqr / total_pcs) > 0.0025:  # no error limit
             return 1.0e+30
 
     if stage == 3:
@@ -528,15 +528,7 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
 
             # temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
             # temp_tensor.append([tag, chisqr / total_pcs, AxRh])
-        if stage < 3:
-            if len(temp_tensor) < tag -1:
-                # free memory and return
-                fastT1FM.FreeDArray(rMx)
-                fastT1FM.FreeDArray(rMy)
-                fastT1FM.FreeDArray(rMz)
-                tfalse = []
-                return tfalse
-        if stage == 3:
+        if stage <= 3:
             if len(temp_tensor) < tag:
                 # free memory and return
                 fastT1FM.FreeDArray(rMx)
