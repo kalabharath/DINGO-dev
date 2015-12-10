@@ -338,10 +338,10 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
 
             snchisqr = nchisqr / float(math.pow(total_pcs, 1 / 3.0))
 
-            #temp_tensor.append([tag, snchisqr, AxRh])
+            temp_tensor.append([tag, snchisqr, AxRh])
 
             # temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
-            temp_tensor.append([tag, chisqr / total_pcs, AxRh])
+            # temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)
     fastT1FM.FreeDArray(rMy)
@@ -524,10 +524,10 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
 
             snchisqr = nchisqr / float(math.pow(total_pcs, 1 / 3.0))
 
-            #temp_tensor.append([tag, snchisqr, AxRh])
+            temp_tensor.append([tag, snchisqr, AxRh])
 
             # temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
-            temp_tensor.append([tag, chisqr / total_pcs, AxRh])
+            # temp_tensor.append([tag, chisqr / total_pcs, AxRh])
         if stage <= 3:
             if len(temp_tensor) < tag:
                 # free memory and return

@@ -79,7 +79,7 @@ def SmotifSearch(index_array):
                 Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
-        if 'pcs_data' in exp_data_types and seq_identity <= 30.0:
+        if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
