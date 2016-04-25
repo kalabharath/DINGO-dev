@@ -53,8 +53,8 @@ def readSmotifDatabase(smotif):
 
     return smotif_data
 
-def orderSeq(previous_smotif, current_seq, direction):
 
+def orderSeq(previous_smotif, current_seq, direction):
     """
     :param previous_seq:
     :param current_seq:
@@ -74,6 +74,7 @@ def orderSeq(previous_smotif, current_seq, direction):
         concat_seq = previous_seq + current_seq
 
     return concat_seq
+
 
 def orderCATH(previous_smotif, current_smotif, direction):
     """
