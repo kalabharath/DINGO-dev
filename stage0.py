@@ -16,7 +16,7 @@ import utility.ContactMap as contact
 
 data = io.readInputDataFiles('input_data.txt', ['fasta_file'])
 
-print data
+print data, data
 
 
 # TODO refactor of reading input files to readInputDataFiles
