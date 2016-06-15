@@ -9,14 +9,14 @@ Prepare all the relavant files for stage1 & 2
 
 """
 
+import utility.ContactMap as contact
+import utility.PCSmap     as PCSmap
 import utility.io_util    as io
 import utility.ss_util    as ss
-import utility.PCSmap     as PCSmap
-import utility.ContactMap as contact
 
 data = io.readInputDataFiles('input_data.txt', ['fasta_file'])
 
-print data, data
+print data
 
 
 # TODO refactor of reading input files to readInputDataFiles

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import pickle, os
+import os
+import pickle
 
 """
 Project_Name: setup, File_name: util.py
@@ -29,9 +30,12 @@ def readFile(filename):
 	:param filename:
 	:return:
 	"""
-    with open(filename, 'r') as fin:
-        lines = fin.readlines()
-    return lines
+    if os.path.isfile(filename):
+        with open(filename, 'r') as fin:
+            return fin.readlines()
+    else:
+        return False
+
 
 
 def writeFile(array_of_lines, filename):

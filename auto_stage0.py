@@ -8,13 +8,13 @@ Date: 31/03/15 , Time:10:56 AM
 Prepare all the relavant files for stage1 & 2
 
 """
-import sys, os
+import os
+import sys
+
 sys.path.append("../../zinr/main")
 import utility.io_util    as io
 import utility.ss_util    as ss
 import utility.PCSmap     as PCSmap
-import utility.ContactMap as contact
-
 
 
 def matchSeq2SS(aa_seq, ssfile):
@@ -95,9 +95,7 @@ if 'contacts_file' in datatypes:
 
 
 native_pdbs = data['native_pdbs']
-
 native_pdbs = native_pdbs.lower()
-
 native_pdbs = native_pdbs.split()
 
 print native_pdbs

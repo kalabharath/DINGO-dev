@@ -41,7 +41,7 @@ def SearchPcs(ss_array, pcs_data):
 def get_ij(pcs_array):
     """
         return the index of SS carrying largest PCSs/SS
-        """
+    """
     ntpcs = 0
 
     for i in xrange(0, len(pcs_array) - 1):

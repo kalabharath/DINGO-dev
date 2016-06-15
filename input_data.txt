@@ -1,0 +1,23 @@
+#list all the relavant input data files in the appropriate types
+# notice the appropriate spaces
+
+#broker file format as used as input for GPS-Rosetta
+native_pdbs = 1ORM 1Q9F 1Q9G 1QJ8 1QJ9 2M06 2M07
+
+
+#RMSD cutoff for smotif SSE superposition
+rmsd = 3.0
+
+#clash cutoff dist
+# Least distance between neighbouring SSEs
+
+clash_distance = 3.0
+
+#Specific to readin data generated from EVFold server
+
+evfold_ss = /home/kalabharath/projects/boss-evo/tm_targets/1SOR_A/EVFold/residue_numbering/1SOR_A_1SOR_A.indextable
+evfold_plm = /home/kalabharath/projects/boss-evo/tm_targets/1SOR_A/EVFold/ev_couplings/1SOR_A_PLM.txt
+
+#database cutoff to use
+# Available options are 0.5, 1.0, 1.5, 9999 (uses redundant database)
+database_cutoff = 1.0
