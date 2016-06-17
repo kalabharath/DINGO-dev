@@ -8,12 +8,14 @@ Date: 14/04/15 , Time:01:05 PM
 stage 1 in parallel
 """
 
-import utility.stage1_util as uts1
-import utility.smotif_util as sm
-import utility.io_util as io
-import filters.sequence.sequence_similarity as Sfilter
-import filters.pcs.pcsfilter as Pfilter
 import time
+
+import filters.contacts.evfoldContacts as Evofilter
+import filters.pcs.pcsfilter as Pfilter
+import filters.sequence.sequence_similarity as Sfilter
+import utility.io_util as io
+import utility.smotif_util as sm
+import utility.stage1_util as uts1
 
 
 def getSSdef(index_array):
@@ -38,30 +40,28 @@ def SmotifSearch(index_array):
     # print index_array
     s1_def, s2_def = getSSdef(index_array)
     smotif_def = sm.getSmotif(s1_def, s2_def)
-    print s1_def, s2_def
-
-    smotif_data = sm.readSmotifDatabase(smotif_def)
-
-    if not smotif_data:
-        # If the smotif library doesn't exist
-        # Terminate further execution
-        return True
+    # print s1_def, s2_def
 
     exp_data = io.readPickle("exp_data.pickle")
-    exp_data_types = exp_data.keys() #['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+
+    smotif_data = sm.readSmotifDatabase(smotif_def, exp_data['database_cutoff'])
+
+    if not smotif_data:
+        # If the smotif library doesn't exist, terminate further execution.
+        return True
 
     dump_log=[]
     stime = time.time()
 
     for i in range(0, len(smotif_data)):
-
         # Excluding natives if needed
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
             tpdbid = smotif_data[i][0][0]
             pdbid = tpdbid[0:4]
             if pdbid in natives:
-                #Stop further execution and iterate
+                #Stop further execution, but, iterate.
                 continue
         tlog = []
         pcs_tensor_fits = []
@@ -79,11 +79,24 @@ def SmotifSearch(index_array):
                 Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
+        if 'contact_matrix' in exp_data_types:
+            contact_fmeasure, plm_score = Evofilter.s1EVcouplings(s1_def, s2_def, smotif_data[i],
+                                                                  exp_data['contact_matrix'],
+                                                                  exp_data['plm_scores'])
+            if contact_fmeasure and plm_score:
+
+                if contact_fmeasure > 0.6:
+                    contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
+                else:
+                    contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
+
+                tlog.append(['Evofilter', contact_score])
+
         if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
-        if pcs_tensor_fits:
+        if pcs_tensor_fits or contact_fmeasure:
             #print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             dump_log.append(tlog)
                 #Time bound search
@@ -96,5 +109,6 @@ def SmotifSearch(index_array):
     if dump_log:
         print "num of hits", len(dump_log)
         io.dumpPickle('0_'+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)
+
 
     return True

@@ -8,11 +8,11 @@ Date: 13/04/15 , Time:10:05 AM
 Perform stage 2 in parallel
 """
 
-from   mpi4py import  MPI
-import utility.stage2_util as util
-import stage2_search as S2search
 import time
+from   mpi4py import  MPI
 
+import stage2_search as S2search
+import utility.stage2_util as util
 
 # Define MPI messaage tags
 tags = util.enum('READY', 'DONE', 'EXIT', 'START')
@@ -34,7 +34,7 @@ if rank == 0:
         # only makes sense for self submitting jobs
         for i in range(0, size-1):
             source = status.Get_source()
-            comm.send(None, dest = source, tag = tags.EXIT)
+            # comm.send(None, dest = source, tag = tags.EXIT)
         exit()
 
     # tasks = [[5,6]]

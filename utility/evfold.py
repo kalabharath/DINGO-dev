@@ -64,7 +64,7 @@ def parseContacts(filename, ss_combi, nor):
     for line in data:
         r1, a1, r2, a2, pl, score = line.split()
 
-        if round(float(score), 1) > 0.0:
+        if round(float(score), 1) > 0.5:
             plm_contacts[int(r1)].append([int(r2), float(score)])
 
     for resi in plm_contacts.keys():

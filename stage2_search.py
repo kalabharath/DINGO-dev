@@ -7,17 +7,19 @@ Date: 7/05/15 , Time:10:05 PM
 
 Perform stage 2 in parallel
 """
-import utility.stage2_util as uts2
-import utility.smotif_util as sm
-import utility.io_util as io
-import filters.sequence.sequence_similarity as Sfilter
-import filters.pcs.pcsfilter as Pfilter
-import filters.constraints.looplengthConstraint as llc
-import filters.rmsd.qcp as qcp
 import time
 
+import filters.constraints.looplengthConstraint as llc
+import filters.contacts.evfoldContacts as Evofilter
+import filters.pcs.pcsfilter as Pfilter
+import filters.rmsd.qcp as qcp
+import filters.sequence.sequence_similarity as Sfilter
+import utility.io_util as io
+import utility.smotif_util as sm
+import utility.stage2_util as uts2
 
-def getfromDB(previous_smotif, current_ss, direction):
+
+def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
     """
     :param previous_smotif:
     :param current_ss:
@@ -40,7 +42,7 @@ def getfromDB(previous_smotif, current_ss, direction):
     else:
         smotif_def = sm.getSmotif(previous_ss, current_ss)
 
-    return sm.readSmotifDatabase(smotif_def)
+    return sm.readSmotifDatabase(smotif_def, database_cutoff)
 
 
 def orderSSE(previous_smotif, current_sse, direction):
@@ -70,19 +72,18 @@ def orderSSE(previous_smotif, current_sse, direction):
 def SmotifSearch(index_array):
     # print index_array
 
-    psmotif = uts2.getPreviousSmotif(index_array[0])
+    exp_data = io.readPickle("exp_data.pickle")
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
-    current_ss, direction = uts2.getSS2(index_array[1])
-    csmotif_data = getfromDB(psmotif, current_ss, direction)
+    psmotif = uts2.getPreviousSmotif(index_array[0])  # TODO refactor these to be more general in reading the route
+    current_ss, direction = uts2.getSS2(index_array[1])  # TODO refactor these to be more general in reading the route
+
+    csmotif_data = getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'])
 
     if not csmotif_data:
         # If the smotif library doesn't exist
         # Terminate further execution
         return True
-
-
-    exp_data = io.readPickle("exp_data.pickle")
-    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
     """
     always narrow down to previous sse and current sse and operate on them individually
@@ -109,17 +110,20 @@ def SmotifSearch(index_array):
 
         # QCP RMSD
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
-        #no_clashes = qcp.clahses(transformed_coos)
+        # no_clashes = qcp.clahses(transformed_coos)
 
         if rmsd <= exp_data['rmsd']:
+
             loopconstraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
 
             if loopconstraint:
+
                 no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
             else:
                 no_clashes = False
 
         if rmsd <= exp_data['rmsd'] and no_clashes:
+
             tlog = []
             pcs_tensor_fits = []
 
@@ -127,31 +131,46 @@ def SmotifSearch(index_array):
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
             cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
-
-
             tlog.append(['cathcodes', cathcodes])
 
             ## Sequence filter, align native and smotif aa_seq as a measure of sequence similarity = structure similarity
 
             csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
                 = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
+
             # concat current to previous seq
             concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
 
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
             if 'pcs_data' in exp_data_types and seq_identity >= 10.0:
-                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage = 2)
+                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
+            if 'contact_matrix' in exp_data_types:
+
+                contact_fmeasure, plm_score = Evofilter.s2EVcouplings(transformed_coos, sse_ordered,
+                                                                      exp_data['contact_matrix'],
+                                                                      exp_data['plm_scores'])
+                if contact_fmeasure and plm_score:
+
+                    if contact_fmeasure > 0.6:
+
+                        contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
+                    else:
+
+                        contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
+
+                    tlog.append(['Evofilter', contact_score])
+
             if pcs_tensor_fits:
-                #print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
-                #Time bound search
+                # Time bound search
                 ctime = time.time()
-                elapsed = ctime-stime
-                if (elapsed/60.0)> 120.0: #stop execution after 2 hrs
+                elapsed = ctime - stime
+                if (elapsed / 60.0) > 120.0:  # stop execution after 2 hrs
                     print "Breaking further execution"
                     break
 

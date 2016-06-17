@@ -6,8 +6,9 @@ Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 8/05/15 , Time:4:27 AM
 """
 
-import qcprot
 import copy
+
+import qcprot
 
 
 def dumpPDBCoo(coo_array):

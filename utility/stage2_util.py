@@ -1,4 +1,4 @@
-import glob, os
+import glob
 
 import io_util as io
 
@@ -132,6 +132,8 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     """
 
     new_dict = {}
+    pcsfilter = False
+    contactfilter = False
 
     for hit in hits:
         for entry in hit:
@@ -143,13 +145,18 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
             if entry[0] == 'contacts_filter':
                 contacts_filter = entry
             if entry[0] == 'PCS_filter':
+                pcsfilter = True
                 pcs_data = entry
                 Nchi = getNchiSum(pcs_data, stage)
                 new_dict.setdefault(Nchi, []).append(hit)
+            if entry[0] == 'Evofilter':
+                contactfilter = True
+                new_dict.setdefault(entry[1], []).append(hit)
 
     keys = new_dict.keys()
     keys.sort()
-
+    if contactfilter and not pcsfilter:
+        keys.reverse()
     non_redundant = {}
     seqs = []
     for i in range(0, len(keys)):
@@ -162,6 +169,8 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
             if entry[0] == 'PCS_filter':
                 pcs_data = entry
                 Nchi = getNchiSum(pcs_data, stage)
+            if entry[0] == 'Evofilter':
+                Nchi = entry[1]
         if smotif_seq not in seqs:
             seqs.append(smotif_seq)
             print name, Nchi
@@ -191,7 +200,8 @@ def getRunSeq(num_hits, stage):
     """
 
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    map_route = io.readPickle("pcs_route.pickle")
+    # map_route = io.readPickle("pcs_route.pickle")
+    map_route = io.readPickle("contacts_route.pickle")
 
     try:
         next_index, next_smotif = getNextSmotif(map_route)
@@ -209,9 +219,11 @@ def getRunSeq(num_hits, stage):
     #delete two stages down pickled files
     check_pickle = str(next_index - 2)+str("_*_*.pickle")
     file_list = glob.glob(check_pickle)
+    """
     if len(file_list) > 10:
         remove = "rm "+check_pickle
         os.system(remove)
+    """
     if top_hits:
         run_seq = []
         for i in range(len(top_hits)):
@@ -220,16 +232,19 @@ def getRunSeq(num_hits, stage):
         return run_seq, next_index
 
 def getPreviousSmotif(index):
-    map_route = io.readPickle("pcs_route.pickle")
+    # map_route = io.readPickle("pcs_route.pickle")
+    map_route = io.readPickle("contacts_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
     top_hits = io.readPickle(str(next_index - 1) + "_tophits.pickle")  # Read in previous index hits
     # print len(top_hits)
     return top_hits[index][0]
 
 def getSS2(index):
+
     ss_profiles = io.readPickle("ss_profiles.pickle")
     # map_route = io.readPickle("contact_route.pickle")
-    map_route = io.readPickle("pcs_route.pickle")
+    # map_route = io.readPickle("pcs_route.pickle")
+    map_route = io.readPickle("contacts_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
     direction = next_smotif[-1]
     if direction == 'left':

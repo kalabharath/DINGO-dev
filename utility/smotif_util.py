@@ -33,7 +33,7 @@ def getSmotif(s1, s2):
     return smotif
 
 
-def readSmotifDatabase(smotif):
+def readSmotifDatabase(smotif, *database_cutoff):
     """
 
     :param smotif:
@@ -41,16 +41,30 @@ def readSmotifDatabase(smotif):
     """
     # TODO option to parse in database path
     import os
-    smotif_db_path = "/short/xc4/kbp502/zinr/main/smotif_cen_db/"
-    if os.path.exists(smotif_db_path):
-        pass
+
+    if database_cutoff:
+        # ['', 'home', 'kalabharath', 'projects', 'boss-evo', 'zinr', 'utility']
+        cwd = (os.path.dirname(os.path.realpath(__file__))).split("/")
+        root_dir = ''
+        for entry in cwd[:-2]:
+            if entry == '':
+                pass
+            else:
+                root_dir = root_dir + '/' + entry
+        smotif_db_path = root_dir + '/databases/database_cutoff_' + database_cutoff[0] + '/'
     else:
-        smotif_db_path = "/home/kalabharath/zinr/main/smotif_cen_db/"
+        # Backwards compatible with my old code
+        # I should retire this soon and keep everything clean
+
+        smotif_db_path = "/short/xc4/kbp502/zinr/main/smotif_cen_db/"
+        if os.path.exists(smotif_db_path):
+            pass
+        else:
+            smotif_db_path = "/home/kalabharath/zinr/main/smotif_cen_db/"
 
     file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db"
     fin = smotif_db_path + file_name
     smotif_data = io.readPickle(fin)
-
     return smotif_data
 
 

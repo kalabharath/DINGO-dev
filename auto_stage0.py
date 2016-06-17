@@ -67,10 +67,6 @@ def matchSeq2SS(aa_seq, ssfile):
         print t_ss, len(t_ss)
         return t_ss
 
-
-
-
-
 data = io.readInputDataFiles('input_data.txt')
 
 print data

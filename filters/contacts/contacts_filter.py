@@ -31,11 +31,11 @@ def ContactPredicition(s1_def, s2_def, smotif, exp_data):
     """
     #     print s1_def, s2_def ['strand', 9, 4, 4, 89, 97] ['strand', 9, 4, 4, 102, 110]
 
-    ss1_list = range(s1_def[4], s1_def[5]+1)
-    ss2_list = range(s2_def[4], s2_def[5]+1)
+    ss1_list = range(s1_def[4], s1_def[5] + 1)
+    ss2_list = range(s2_def[4], s2_def[5] + 1)
 
-    smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2])+1 )
-    smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4])+1 )
+    smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
+    smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
 
     # print ss1_list, ss2_list
     # print smotif_ss1, smotif_ss2
@@ -57,8 +57,8 @@ def ContactPredicition(s1_def, s2_def, smotif, exp_data):
             #print smotif_res1, smotif_res2
 
             for res in smotif[1]:
-                if res[2] == 'CA' and res[0] == smotif_res1 :
-                   coo1 = [res[3], res[4], res[5]]
+                if res[2] == 'CA' and res[0] == smotif_res1:
+                    coo1 = [res[3], res[4], res[5]]
 
             for res in smotif[2]:
                 if res[2] == 'CA' and res[0] == smotif_res2 :

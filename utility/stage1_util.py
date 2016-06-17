@@ -30,9 +30,11 @@ def getRunSeq():
     generate run seq, a seq list of pairs of
     indexes of profiles for job scheduling
     """
+    # TODO needed to generalize based on input data type
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    #map_route = io.readPickle("contact_route.pickle")
-    map_route = io.readPickle("pcs_route.pickle")
+    map_route = io.readPickle("contacts_route.pickle")
+    # map_route = io.readPickle("pcs_route.pickle")
+    print map_route
     s1, s2 = map_route[0][0], map_route[0][1]
     s1_list, s2_list = getPairSSProfiles(s1, s2, ss_profiles)
 
@@ -45,7 +47,8 @@ def getRunSeq():
 
 def getSSlist():
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    map_route = io.readPickle("pcs_route.pickle")
+    # map_route = io.readPickle("pcs_route.pickle")
+    map_route = io.readPickle("contacts_route.pickle")
     s1, s2 = map_route[0][0], map_route[0][1]
     s1_list, s2_list = getPairSSProfiles(s1, s2, ss_profiles)
     return s1_list, s2_list

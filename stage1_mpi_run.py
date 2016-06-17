@@ -7,12 +7,13 @@ Date: 13/04/15 , Time:10:05 AM
 
 Perform stage 1 in perfect parallel
 """
-#TODO write detailed comments
 
-from   mpi4py import  MPI
-import utility.stage1_util as util
-import stage1_search as S1search
 import time
+from   mpi4py import  MPI
+
+import stage1_search as S1search
+import utility.stage1_util as util
+
 #Define MPI messaage tags
 
 tags = util.enum('READY', 'DONE', 'EXIT', 'START')
