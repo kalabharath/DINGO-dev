@@ -131,6 +131,7 @@ def newPointsOnSpheres(M, sN, rMx, rMy, rMz):
             fastT1FM.SetDvector(j, rMy, i * node[k][1])
             fastT1FM.SetDvector(j, rMz, i * node[k][2])
             j += 1
+    return True
 
 
 def usuablePCS(pcs_array):

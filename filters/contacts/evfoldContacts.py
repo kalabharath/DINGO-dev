@@ -9,7 +9,7 @@ Score evolutionary couplings retrieved from EVFold server
 """
 
 import contacts_filter
-
+from filters.constraints.looplengthConstraint import get_dist
 
 def calcFmeasure(gbar, ganoe):
     tp, fp, fn = 0.0, 0.0, 0.0
@@ -100,12 +100,50 @@ def s1EVcouplings(s1_def, s2_def, smotif, contact_matrix, plm_score_matrix):
         return 0.0, 0.0
 
 
-def s2EVcouplings(smotif_coors, ordered_sse, contact_matrix, plm_score_matrix):
-    print ordered_sse
-    print len(smotif_coors)
-    # print smotif_coors[0]
-    for entry in smotif_coors[0]:
-        print entry
+def getCAandresi(frag):
+    x, y, z = [], [], []
+    resi = []
+    for i in range(0, len(frag[0])):
+        if frag[3][i] == 'CA':
+            x.append(frag[0][i])
+            y.append(frag[1][i])
+            z.append(frag[2][i])
+            resi.append(frag[4][i])
+    return resi, [x, y, z]
 
-    die
-    return True
+
+def s2EVcouplings(sse_coors, native_sse_order, contact_matrix, plm_score_matrix):
+    # print native_sse_order
+
+    contacts_found = []
+    total_contacts = []
+    for i in range(0, len(sse_coors) - 1):
+
+        res_c, ca1 = getCAandresi(sse_coors[i])
+        res_n, ca2 = getCAandresi(sse_coors[i + 1])
+        ss1_list = range(native_sse_order[i][4], native_sse_order[i][5] + 1)
+        ss2_list = range(native_sse_order[i + 1][4], native_sse_order[i + 1][5] + 1)
+
+        for res1 in ss1_list:
+            # print ss1_list, res1, res_c, res_c[ss1_list.index(res1)]
+            # print ss1_list.index(res1)
+            ca_res1 = [ca1[0][ss1_list.index(res1)], ca1[1][ss1_list.index(res1)], ca1[2][ss1_list.index(res1)]]
+            for res2 in ss2_list:
+                ca_res2 = [ca2[0][ss2_list.index(res2)], ca2[1][ss2_list.index(res2)], ca2[2][ss2_list.index(res2)]]
+                dist = get_dist(ca_res1, ca_res2)
+
+                if contact_matrix[res1, res2] or contact_matrix[res2, res1]:
+                    total_contacts.append((res1, res2))
+
+                if dist < 8.0:
+                    contacts_found.append((res1, res2))
+
+    # print len(total_contacts), total_contacts
+    # print len(contacts_found), contacts_found
+
+    fmeasure = calcFmeasure(contacts_found, total_contacts)
+    if fmeasure:
+        plm_score = calcPLMscore(contacts_found, plm_score_matrix)
+        return fmeasure, plm_score
+    else:
+        return 0.0, 0.0

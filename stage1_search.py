@@ -52,6 +52,7 @@ def SmotifSearch(index_array):
         return True
 
     dump_log=[]
+    contact_fmeasure = []
     stime = time.time()
 
     for i in range(0, len(smotif_data)):

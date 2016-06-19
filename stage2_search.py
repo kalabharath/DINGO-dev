@@ -126,6 +126,7 @@ def SmotifSearch(index_array):
 
             tlog = []
             pcs_tensor_fits = []
+            contact_fmeasure = []
 
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
@@ -163,8 +164,9 @@ def SmotifSearch(index_array):
 
                     tlog.append(['Evofilter', contact_score])
 
-            if pcs_tensor_fits:
+            if pcs_tensor_fits or contact_fmeasure:
                 # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                print csmotif_data[i][0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
                 # Time bound search
