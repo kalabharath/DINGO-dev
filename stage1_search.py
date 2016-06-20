@@ -19,7 +19,6 @@ import utility.stage1_util as uts1
 
 
 def getSSdef(index_array):
-
     """
 
     :param index_array:
@@ -28,8 +27,8 @@ def getSSdef(index_array):
     s1_list, s2_list = uts1.getSSlist()
     return s1_list[index_array[0]], s2_list[index_array[1]]
 
-def SmotifSearch(index_array):
 
+def SmotifSearch(index_array):
     """
     Main ()
     :param index_array:
@@ -51,7 +50,7 @@ def SmotifSearch(index_array):
         # If the smotif library doesn't exist, terminate further execution.
         return True
 
-    dump_log=[]
+    dump_log = []
     contact_fmeasure = []
     stime = time.time()
 
@@ -62,35 +61,37 @@ def SmotifSearch(index_array):
             tpdbid = smotif_data[i][0][0]
             pdbid = tpdbid[0:4]
             if pdbid in natives:
-                #Stop further execution, but, iterate.
+                # Stop further execution, but, iterate.
                 continue
         tlog = []
         pcs_tensor_fits = []
-        tlog.append(['smotif',smotif_data[i]])
-        tlog.append(['smotif_def',[s1_def, s2_def]])
-        tlog.append(['cathcodes',[smotif_data[i][0]]])
+        tlog.append(['smotif', smotif_data[i]])
+        tlog.append(['smotif_def', [s1_def, s2_def]])
+        tlog.append(['cathcodes', [smotif_data[i][0]]])
 
         ### Filters
         # TODO clever use of variable names
         # Add new modules here
 
-        #Calculate Sequence identity first
+        # Calculate Sequence identity first
 
-        smotif_seq, seq_identity, blosum62_score  = \
-                Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
+        smotif_seq, seq_identity, blosum62_score = \
+            Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
         if 'contact_matrix' in exp_data_types:
             contact_fmeasure, plm_score = Evofilter.s1EVcouplings(s1_def, s2_def, smotif_data[i],
                                                                   exp_data['contact_matrix'],
-                                                                  exp_data['plm_scores'])
+                                                                  exp_data['plm_scores'],
+                                                                  contacts_cutoff=9.0)
             if contact_fmeasure and plm_score:
 
-                if contact_fmeasure > 0.6:
+                if contact_fmeasure >= 0.6:
                     contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
-                else:
+                elif contact_fmeasure > 0.3 and contact_fmeasure < 0.6:
                     contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
-
+                else:
+                    continue
                 tlog.append(['Evofilter', contact_score])
 
         if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
@@ -98,18 +99,17 @@ def SmotifSearch(index_array):
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
         if pcs_tensor_fits or contact_fmeasure:
-            #print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
+            # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             dump_log.append(tlog)
-                #Time bound search
+            # Time bound search
             ctime = time.time()
-            elapsed = ctime-stime
-            if (elapsed/60.0)> 120.0: #stop execution after 2 hrs
-                print elapsed/60, "Breaking further execution"
+            elapsed = ctime - stime
+            if (elapsed / 60.0) > 120.0:  # stop execution after 2 hrs
+                print elapsed / 60, "Breaking further execution"
                 break
 
     if dump_log:
         print "num of hits", len(dump_log)
-        io.dumpPickle('0_'+str(index_array[0])+"_"+str(index_array[1])+".pickle",dump_log)
-
+        io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
 
     return True

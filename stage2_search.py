@@ -130,6 +130,7 @@ def SmotifSearch(index_array):
 
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
+
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
             cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
             tlog.append(['cathcodes', cathcodes])
@@ -152,21 +153,25 @@ def SmotifSearch(index_array):
 
                 contact_fmeasure, plm_score = Evofilter.s2EVcouplings(transformed_coos, sse_ordered,
                                                                       exp_data['contact_matrix'],
-                                                                      exp_data['plm_scores'])
+                                                                      exp_data['plm_scores'],
+                                                                      contacts_cutoff=9.0)
                 if contact_fmeasure and plm_score:
 
-                    if contact_fmeasure > 0.6:
+                    if contact_fmeasure >= 0.6:
 
                         contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
-                    else:
+
+                    elif contact_fmeasure > 0.3 and contact_fmeasure < 0.6:
 
                         contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
-
+                    else:
+                        continue
                     tlog.append(['Evofilter', contact_score])
 
             if pcs_tensor_fits or contact_fmeasure:
                 # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
-                print csmotif_data[i][0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                #               # print csmotif_data[i][0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                # print "no_of_sses", len(transformed_coos)
                 dump_log.append(tlog)
 
                 # Time bound search

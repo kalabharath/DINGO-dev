@@ -7,17 +7,19 @@ Date: 7/05/15 , Time:10:05 PM
 
 Perform stage 3x in parallel
 """
-import utility.stage2_util as uts2
-import utility.smotif_util as sm
-import utility.io_util as io
-import filters.sequence.sequence_similarity as Sfilter
-import filters.pcs.pcsfilter as Pfilter
-import filters.constraints.looplengthConstraint as llc
-import filters.rmsd.qcp as qcp
 import time
 
+import filters.constraints.looplengthConstraint as llc
+import filters.contacts.evfoldContacts as Evofilter
+import filters.pcs.pcsfilter as Pfilter
+import filters.rmsd.qcp as qcp
+import filters.sequence.sequence_similarity as Sfilter
+import utility.io_util as io
+import utility.smotif_util as sm
+import utility.stage2_util as uts2
 
-def getfromDB(previous_smotif, current_ss, direction):
+
+def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
     # print "previous_smotif: ", previous_smotif
 
     searched_smotifs = []
@@ -41,7 +43,7 @@ def getfromDB(previous_smotif, current_ss, direction):
     else:
         smotif_def = sm.getSmotif(previous_ss, current_ss)
 
-    return sm.readSmotifDatabase(smotif_def)
+    return sm.readSmotifDatabase(smotif_def, database_cutoff)
 
 
 def orderSSE(previous_smotif, current_sse, direction):
@@ -71,7 +73,9 @@ def SmotifSearch(index_array):
     current_ss, direction = uts2.getSS2(index_array[1])
     print current_ss, direction
 
-    csmotif_data = getfromDB(preSSE, current_ss, direction)
+    exp_data = io.readPickle("exp_data.pickle")
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts', 'natives']
+    csmotif_data = getfromDB(preSSE, current_ss, direction, exp_data['database_cutoff'])
 
     if not csmotif_data:
         # If the smotif library doesn't exist
@@ -79,8 +83,7 @@ def SmotifSearch(index_array):
         return True
 
 
-    exp_data = io.readPickle("exp_data.pickle")
-    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts', 'natives']
+
     sse_ordered = orderSSE(preSSE, current_ss, direction)
     #print sse_ordered
     dump_log = []
@@ -115,9 +118,12 @@ def SmotifSearch(index_array):
 
         if rmsd <= exp_data['rmsd'] and no_clashes:
 
-            pcs_tensor_fits = []
+
             #print csmotif_data[i]
             tlog = []
+            pcs_tensor_fits = []
+            contact_fmeasure = []
+
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
@@ -137,8 +143,30 @@ def SmotifSearch(index_array):
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage = 3)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
-            if pcs_tensor_fits :
+            if 'contact_matrix' in exp_data_types:
+
+                contact_fmeasure, plm_score = Evofilter.s2EVcouplings(transformed_coos, sse_ordered,
+                                                                      exp_data['contact_matrix'],
+                                                                      exp_data['plm_scores'],
+                                                                      contacts_cutoff=9.0)
+                if contact_fmeasure and plm_score:
+
+                    if contact_fmeasure >= 0.6:
+
+                        contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
+
+                    elif contact_fmeasure > 0.3 and contact_fmeasure < 0.6:
+
+                        contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
+                    else:
+                        continue
+
+                    tlog.append(['Evofilter', contact_score])
+
+            if pcs_tensor_fits or contact_fmeasure:
                 #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                # print csmotif_data[i][0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                # print "no_of_sses", len(transformed_coos)
                 dump_log.append(tlog)
 
             #Time bound search

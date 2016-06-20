@@ -39,7 +39,7 @@ def calcPLMscore(gbar, plm_score_matrix):
     return score
 
 
-def s1EVcouplings(s1_def, s2_def, smotif, contact_matrix, plm_score_matrix):
+def s1EVcouplings(s1_def, s2_def, smotif, contact_matrix, plm_score_matrix, contacts_cutoff=9.0):
     """
 
     :param s1_def:
@@ -71,7 +71,7 @@ def s1EVcouplings(s1_def, s2_def, smotif, contact_matrix, plm_score_matrix):
                     if entry2[2] == 'CA':
                         coo2 = [entry2[3], entry2[4], entry2[5]]
                         dist = contacts_filter.get_distance(coo1, coo2)
-                        if dist < 8.0:
+                        if dist < contacts_cutoff:
                             contacts_found.append(
                                 (ss1_list[smotif_ss1.index(entry1[0])], ss2_list[smotif_ss2.index(entry2[0])]))
                             """
@@ -112,8 +112,10 @@ def getCAandresi(frag):
     return resi, [x, y, z]
 
 
-def s2EVcouplings(sse_coors, native_sse_order, contact_matrix, plm_score_matrix):
+def s2EVcouplings(transformed_coors, native_sse_order, contact_matrix, plm_score_matrix, contacts_cutoff=9.0):
     # print native_sse_order
+    import copy
+    sse_coors = copy.deepcopy(transformed_coors)
 
     contacts_found = []
     total_contacts = []
@@ -135,7 +137,7 @@ def s2EVcouplings(sse_coors, native_sse_order, contact_matrix, plm_score_matrix)
                 if contact_matrix[res1, res2] or contact_matrix[res2, res1]:
                     total_contacts.append((res1, res2))
 
-                if dist < 8.0:
+                if dist < contacts_cutoff:
                     contacts_found.append((res1, res2))
 
     # print len(total_contacts), total_contacts

@@ -47,9 +47,10 @@ def scoreCombination(score_list):
         c1 = combi[0]
         c2 = combi[1]
         if c1 and c2:
-            if c1+c2 < min_score:
+            if c1 + c2 < min_score:
                 min_score = c1 + c2
     return min_score
+
 
 def scoreCombination4t(score_list):
     """
@@ -67,12 +68,12 @@ def scoreCombination4t(score_list):
         c2 = combi[1]
         c3 = combi[2]
         if c1 and c2 and c3:
-            if c1+c2+c3 < min_score:
+            if c1 + c2 + c3 < min_score:
                 min_score = c1 + c2 + c3
     return min_score
 
-def getNchiSum(pcs_filter, stage):
 
+def getNchiSum(pcs_filter, stage):
     """
 
     :param pcs_filter:
@@ -80,35 +81,35 @@ def getNchiSum(pcs_filter, stage):
     """
     snchi = 999.999
     tensors = pcs_filter[1]
-    #print len(tensors)
+    # print len(tensors)
 
     if len(tensors) == 1:
         # Discourage single tag scoring by returning high score
-        return 999.999 #discourage double tag score only for 4 tags
+        return 999.999  # discourage double tag score only for 4 tags
 
-    if len(tensors) == 2 and stage == 2: #stage 2
+    if len(tensors) == 2 and stage == 2:  # stage 2
         snchi = 0
         for tensor in tensors:
             nchi = tensor[1]
             snchi += nchi
-        #return 999.999 #discourage double tag score only for 4 tags
+            # return 999.999 #discourage double tag score only for 4 tags
 
-    if len(tensors) == 3 and stage <= 3: #stage 2 & 3
+    if len(tensors) == 3 and stage <= 3:  # stage 2 & 3
         # Scoring three tags, get lowest Nchi for 2
         score_list = []
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination(score_list)
 
-    if len(tensors) >= 4 and stage <= 3: #stage 2,3 & 4
+    if len(tensors) >= 4 and stage <= 3:  # stage 2,3 & 4
         # For 4 tags, get lowest Nchi for 3
         score_list = []
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination4t(score_list)
-        snchi = snchi/100.0 #artificially increase the priority
+        snchi = snchi / 100.0  # artificially increase the priority
 
-    if len(tensors) >= 4 and stage == 4: #stage 4
+    if len(tensors) >= 4 and stage == 4:  # stage 4
         # For 4 tags, get lowest Nchi for 3
         score_list = []
         for tensor in tensors:
@@ -117,11 +118,12 @@ def getNchiSum(pcs_filter, stage):
 
     return snchi
 
+
 def makeTopPickle(previous_smotif_index, num_hits, stage):
     hits = []
     regex = str(previous_smotif_index) + "_*_*.pickle"
     file_list = glob.glob(regex)
-    #print file_list
+    # print file_list
     for f in file_list:
         thits = io.readPickle(f)
         for thit in thits:
@@ -151,7 +153,10 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 new_dict.setdefault(Nchi, []).append(hit)
             if entry[0] == 'Evofilter':
                 contactfilter = True
+                print entry
                 new_dict.setdefault(entry[1], []).append(hit)
+            if entry[0] == 'qcp_rmsd':
+                print "no_of_sses", len(entry[1]), entry[2]
 
     keys = new_dict.keys()
     keys.sort()
@@ -160,29 +165,64 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     non_redundant = {}
     seqs = []
     for i in range(0, len(keys)):
-        for entry in new_dict[keys[i]][0]:
-            if entry[0] == 'smotif':
-                name = entry[1][0]
-            if entry[0] == 'seq_filter':
-                seq_filter = entry
-                smotif_seq = seq_filter[1]
-            if entry[0] == 'PCS_filter':
-                pcs_data = entry
-                Nchi = getNchiSum(pcs_data, stage)
-            if entry[0] == 'Evofilter':
-                Nchi = entry[1]
-        if smotif_seq not in seqs:
-            seqs.append(smotif_seq)
-            print name, Nchi
-            non_redundant.setdefault(Nchi, []).append(new_dict[keys[i]][0])
+
+        entries = new_dict[keys[i]]
+        print "no of entries per fmeasure", len(entries)
+        for entry in entries:
+            for ent in entry:
+                if ent[0] == 'smotif':
+                    name = ent[1][0]
+                if ent[0] == 'seq_filter':
+                    seq_filter = ent
+                    smotif_seq = seq_filter[1]
+                if ent[0] == 'PCS_filter':
+                    pcs_data = ent
+                    Nchi = getNchiSum(pcs_data, stage)
+                if ent[0] == 'Evofilter':
+                    Nchi = ent[1]
+            if smotif_seq not in seqs:
+                print smotif_seq
+                seqs.append(smotif_seq)
+                print name, Nchi
+                non_redundant.setdefault(Nchi, []).append(entry)
+    """
+
+    for entry in new_dict[keys[i]][0]:
+        if entry[0] == 'smotif':
+            name = entry[1][0]
+        if entry[0] == 'seq_filter':
+            seq_filter = entry
+            smotif_seq = seq_filter[1]
+        if entry[0] == 'PCS_filter':
+            pcs_data = entry
+            Nchi = getNchiSum(pcs_data, stage)
+        if entry[0] == 'Evofilter':
+            Nchi = entry[1]
+    if smotif_seq not in seqs:
+        seqs.append(smotif_seq)
+        print name, Nchi
+        non_redundant.setdefault(Nchi, []).append(new_dict[keys[i]][0])
+    """
+
 
     keys = non_redundant.keys()
+    if contactfilter and not pcsfilter:
+        keys.reverse()
     keys.sort()
     dump_pickle = []
+    print "total number of entries", len(keys)
     try:
         for i in range(0, num_hits):
-            dump_pickle.append(non_redundant[keys[i]])
-            print "final sele", non_redundant[keys[i]][0][0][1][0]
+
+            if len(non_redundant[keys[i]]) == 1:
+                dump_pickle.append(non_redundant[keys[i]])
+                print "final sele", non_redundant[keys[i]][0][0][1][0]
+            else:
+                entries = non_redundant[keys[i]]
+                for entry in entry:
+                    # print entry
+                    dump_pickle.append(entry)
+                    print "multiple final sele", entry[0][0][1][0]
     except:
         print "Could only extract ", i
         num_hits = i
@@ -216,8 +256,8 @@ def getRunSeq(num_hits, stage):
     # get and make a list of top 10(n) of the previous run
     top_hits = makeTopPickle(next_index - 1, num_hits, stage)  # send the previous Smotif index
 
-    #delete two stages down pickled files
-    check_pickle = str(next_index - 2)+str("_*_*.pickle")
+    # delete two stages down pickled files
+    check_pickle = str(next_index - 2) + str("_*_*.pickle")
     file_list = glob.glob(check_pickle)
     """
     if len(file_list) > 10:
@@ -231,6 +271,7 @@ def getRunSeq(num_hits, stage):
                 run_seq.append([i, j])
         return run_seq, next_index
 
+
 def getPreviousSmotif(index):
     # map_route = io.readPickle("pcs_route.pickle")
     map_route = io.readPickle("contacts_route.pickle")
@@ -239,8 +280,8 @@ def getPreviousSmotif(index):
     # print len(top_hits)
     return top_hits[index][0]
 
-def getSS2(index):
 
+def getSS2(index):
     ss_profiles = io.readPickle("ss_profiles.pickle")
     # map_route = io.readPickle("contact_route.pickle")
     # map_route = io.readPickle("pcs_route.pickle")

@@ -36,7 +36,7 @@ def parseNatives(native_pdbs):
     return native_pdbs.split()
 
 
-def parseContacts(filename, ss_combi, nor):
+def parseContacts(filename, ss_combi, nor, cutoff_score=0.25):
     """
     Parse the ev_couplings generated using plm method into contact data arrays
     :param filename, ss_combi:
@@ -64,7 +64,7 @@ def parseContacts(filename, ss_combi, nor):
     for line in data:
         r1, a1, r2, a2, pl, score = line.split()
 
-        if round(float(score), 1) > 0.25:
+        if round(float(score), 1) > cutoff_score:
             plm_contacts[int(r1)].append([int(r2), float(score)])
 
     for resi in plm_contacts.keys():
