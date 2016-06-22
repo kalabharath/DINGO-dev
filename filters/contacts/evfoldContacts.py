@@ -39,7 +39,7 @@ def calcPLMscore(gbar, plm_score_matrix):
     return score
 
 
-def s1EVcouplings(s1_def, s2_def, smotif, contact_matrix, plm_score_matrix, contacts_cutoff=9.0):
+def s1EVcouplings(s1_def, s2_def, smotif, contact_matrix, plm_score_matrix, contacts_cutoff):
     """
 
     :param s1_def:
@@ -112,7 +112,7 @@ def getCAandresi(frag):
     return resi, [x, y, z]
 
 
-def s2EVcouplings(transformed_coors, native_sse_order, contact_matrix, plm_score_matrix, contacts_cutoff=9.0):
+def s2EVcouplings(transformed_coors, native_sse_order, contact_matrix, plm_score_matrix, contacts_cutoff):
     # print native_sse_order
     import copy
     sse_coors = copy.deepcopy(transformed_coors)
