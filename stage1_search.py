@@ -34,7 +34,6 @@ def SmotifSearch(index_array):
     :param index_array:
     :return:
     """
-    # TODO list the complete details for how this function works
 
     # print index_array
     s1_def, s2_def = getSSdef(index_array)
@@ -63,50 +62,64 @@ def SmotifSearch(index_array):
             if pdbid in natives:
                 # Stop further execution, but, iterate.
                 continue
+
+        # ************************************************
+        # Applying different filters to Smotifs
+        # Prepare temp log array to save data at the end
+        # ************************************************
+
         tlog = []
         pcs_tensor_fits = []
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
         tlog.append(['cathcodes', [smotif_data[i][0]]])
 
-        ### Filters
-        # TODO clever use of variable names
-        # Add new modules here
-
-        # Calculate Sequence identity first
+        # ************************************************
+        # Sequence filter
+        # Aligns the smotif seq to target seq and calculates
+        # sequence identity and the alignment score
+        # ************************************************
 
         smotif_seq, seq_identity, blosum62_score = \
             Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
+        # ************************************************
+        # Contacts filter
+        # uses the contact data obtained from EVfold server
+        # tp score a given smotif
+        # ************************************************
+
+
         if 'contact_matrix' in exp_data_types:
             contact_fmeasure, plm_score = Evofilter.s1EVcouplings(s1_def, s2_def, smotif_data[i],
                                                                   exp_data['contact_matrix'],
                                                                   exp_data['plm_scores'],
-                                                                  contacts_cutoff=9.0)
+                                                                  contacts_cutoff=7.0)
             if contact_fmeasure and plm_score:
 
                 if contact_fmeasure >= 0.6:
-                    contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
-                elif contact_fmeasure > 0.3 and contact_fmeasure < 0.6:
-                    contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
+                    contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                elif contact_fmeasure > 0.5 and contact_fmeasure < 0.6:
+                    contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
                 else:
                     continue
                 tlog.append(['Evofilter', contact_score])
+
+        # ************************************************
+        # Pseudocontact Shift filter
+        # uses experimental PCS data to filter Smotifs
+        # scoring based on normalised chisqr
+        # ************************************************
 
         if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
+        # Dump the data to the disk
         if pcs_tensor_fits or contact_fmeasure:
             # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             dump_log.append(tlog)
-            # Time bound search
-            ctime = time.time()
-            elapsed = ctime - stime
-            if (elapsed / 60.0) > 120.0:  # stop execution after 2 hrs
-                print elapsed / 60, "Breaking further execution"
-                break
 
     if dump_log:
         print "num of hits", len(dump_log)

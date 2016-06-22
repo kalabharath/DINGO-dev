@@ -8,8 +8,6 @@ Date: 14/04/15 , Time: 04:52 PM
 Globally align the amino acid sequences in smotifs against the target sequence
 """
 
-import utility.io_util as io
-
 
 def getSmotifAASeq(ss1, ss2):
     one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q',
@@ -46,7 +44,7 @@ def getSmotifAASeq_v2(sse):
     return seq
 
 
-def SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold=50):
+def SequenceSimilarity(s1_def, s2_def, smotif, exp_data):
     """
     return sequence identity for given unique seqs and
     new queried sequences
@@ -94,7 +92,7 @@ def SequenceSimilarity(s1_def, s2_def, smotif, exp_data, threshold=50):
     return smotif_seq, seq_id, score
 
 
-def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
+def S2SequenceSimilarity(ss_def, smotif, direction, exp_data):
     """
     return sequence identity for given unique seqs and
     new queried sequences
@@ -147,10 +145,4 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data, threshold):
     # seq_id = (k/j)*100
     seq_id = (k / len(smotif_seq)) * 100
 
-    if seq_id >= threshold and score > 0:
-        return smotif_seq, seq_id, score, True
-    else:
-        return smotif_seq, seq_id, score, False
-
-
-
+    return smotif_seq, seq_id, score

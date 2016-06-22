@@ -1,7 +1,7 @@
+import collections
 import glob
 
 import io_util as io
-
 
 def enum(*sequential, **named):
     """
@@ -120,54 +120,61 @@ def getNchiSum(pcs_filter, stage):
 
 
 def makeTopPickle(previous_smotif_index, num_hits, stage):
+    """
+    Concatenate data from all of the threads, organize, remove redundancies, rank
+     and extract top hits as defined
+    :param previous_smotif_index:
+    :param num_hits:
+    :param stage:
+    :return:
+    """
     hits = []
     regex = str(previous_smotif_index) + "_*_*.pickle"
     file_list = glob.glob(regex)
-    # print file_list
     for f in file_list:
-        thits = io.readPickle(f)
-        for thit in thits:
-            hits.append(thit)
+        t_hits = io.readPickle(f)
+        for t_hit in t_hits:
+            hits.append(t_hit)
     """
-    identifiers: smotif, smotif_def, seq_filter, contacts_filter, PCS_filter,
-
+    identifiers: smotif, smotif_def, seq_filter, contacts_filter, PCS_filter, qcp_rmsd, Evofilter.
     """
 
-    new_dict = {}
-    pcsfilter = False
-    contactfilter = False
+    new_dict = collections.defaultdict(list)
+    pcs_filter = False
+    contact_filter = False
 
     for hit in hits:
-        for entry in hit:
-            if entry[0] == 'smotif':
-                name = entry[1][0]
-            if entry[0] == 'seq_filter':
-                seq_filter = entry
-                smotif_seq = seq_filter[1]
-            if entry[0] == 'contacts_filter':
-                contacts_filter = entry
-            if entry[0] == 'PCS_filter':
-                pcsfilter = True
-                pcs_data = entry
+        # thread_data contains data from each search and filter thread.
+        for data_filter in hit:
+            if data_filter[0] == 'PCS_filter':
+                pcs_filter = True
+                pcs_data = data_filter
                 Nchi = getNchiSum(pcs_data, stage)
-                new_dict.setdefault(Nchi, []).append(hit)
-            if entry[0] == 'Evofilter':
-                contactfilter = True
-                print entry
-                new_dict.setdefault(entry[1], []).append(hit)
-            if entry[0] == 'qcp_rmsd':
-                print "no_of_sses", len(entry[1]), entry[2]
+                # new_dict.setdefault(Nchi, []).append(entry)
+                new_dict[Nchi].append(hit)
+            if data_filter[0] == 'Evofilter':
+                contact_filter = True
+                new_dict[data_filter[1]].append(hit)
+
+    # ************************************************
+    # Exclude the redundant entries and rank top hits
+    # ************************************************
 
     keys = new_dict.keys()
     keys.sort()
-    if contactfilter and not pcsfilter:
+    if contact_filter and not pcs_filter:
+        # Contact filter data should be as high as possible
         keys.reverse()
-    non_redundant = {}
-    seqs = []
-    for i in range(0, len(keys)):
 
+    # Exclude the redundant data.
+
+    # non_redundant = {}
+    non_redundant = collections.defaultdict(list)
+    seqs = []
+    smotif_seq = ''
+    Nchi = 0.0
+    for i in range(0, len(keys)):
         entries = new_dict[keys[i]]
-        print "no of entries per fmeasure", len(entries)
         for entry in entries:
             for ent in entry:
                 if ent[0] == 'smotif':
@@ -181,57 +188,36 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 if ent[0] == 'Evofilter':
                     Nchi = ent[1]
             if smotif_seq not in seqs:
-                print smotif_seq
                 seqs.append(smotif_seq)
-                print name, Nchi
-                non_redundant.setdefault(Nchi, []).append(entry)
-    """
+                # non_redundant.setdefault(Nchi, []).append(entry)
+                non_redundant[Nchi].append(entry)
 
-    for entry in new_dict[keys[i]][0]:
-        if entry[0] == 'smotif':
-            name = entry[1][0]
-        if entry[0] == 'seq_filter':
-            seq_filter = entry
-            smotif_seq = seq_filter[1]
-        if entry[0] == 'PCS_filter':
-            pcs_data = entry
-            Nchi = getNchiSum(pcs_data, stage)
-        if entry[0] == 'Evofilter':
-            Nchi = entry[1]
-    if smotif_seq not in seqs:
-        seqs.append(smotif_seq)
-        print name, Nchi
-        non_redundant.setdefault(Nchi, []).append(new_dict[keys[i]][0])
-    """
-
-
+    # Rank top hits and dump the data
     keys = non_redundant.keys()
-    if contactfilter and not pcsfilter:
-        keys.reverse()
     keys.sort()
+    if contact_filter and not pcs_filter:
+        keys.reverse()
     dump_pickle = []
-    print "total number of entries", len(keys)
-    try:
-        for i in range(0, num_hits):
+    print "Dumping data to disk"
+    count_top_hits = 0
+    while (True):
+        for key in keys:
+            entries = non_redundant[key]
+            for entry in entries:
+                dump_pickle.append(entry)
+                print "final sele", entry[0][1][0][0], key
+                count_top_hits += 1
+            if count_top_hits >= num_hits:
+                break
+        if count_top_hits >= num_hits:
+            break
+        else:
+            print "could only extract ", count_top_hits
+            break
 
-            if len(non_redundant[keys[i]]) == 1:
-                dump_pickle.append(non_redundant[keys[i]])
-                print "final sele", non_redundant[keys[i]][0][0][1][0]
-            else:
-                entries = non_redundant[keys[i]]
-                for entry in entry:
-                    # print entry
-                    dump_pickle.append(entry)
-                    print "multiple final sele", entry[0][0][1][0]
-    except:
-        print "Could only extract ", i
-        num_hits = i
     io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
-
     print "actual number in top hits ", len(dump_pickle)
-    dump_pickle = []
-    return range(num_hits)
-
+    return range(count_top_hits)
 
 def getRunSeq(num_hits, stage):
     """
@@ -278,7 +264,7 @@ def getPreviousSmotif(index):
     next_index, next_smotif = getNextSmotif(map_route)
     top_hits = io.readPickle(str(next_index - 1) + "_tophits.pickle")  # Read in previous index hits
     # print len(top_hits)
-    return top_hits[index][0]
+    return top_hits[index]
 
 
 def getSS2(index):
@@ -288,6 +274,7 @@ def getSS2(index):
     map_route = io.readPickle("contacts_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
     direction = next_smotif[-1]
+
     if direction == 'left':
         next_ss_list = ss_profiles[next_smotif[0]]
     else:

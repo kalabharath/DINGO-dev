@@ -7,7 +7,6 @@ Date: 7/05/15 , Time:10:05 PM
 
 Perform stage 2 in parallel
 """
-import time
 
 import filters.constraints.looplengthConstraint as llc
 import filters.contacts.evfoldContacts as Evofilter
@@ -70,7 +69,11 @@ def orderSSE(previous_smotif, current_sse, direction):
 
 
 def SmotifSearch(index_array):
-    # print index_array
+    """
+    Main()
+    :param index_array:
+    :return:
+    """
 
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
@@ -87,17 +90,15 @@ def SmotifSearch(index_array):
 
     """
     always narrow down to previous sse and current sse and operate on them individually
-
     """
     sse_ordered = orderSSE(psmotif, current_ss, direction)
-
     dump_log = []
-
     no_clashes = False
-
-    stime = time.time()
-
     for i in range(0, len(csmotif_data)):
+
+        # ************************************************
+        # Applying different filters for the Smotif assembly
+        # ************************************************
 
         # Exclude natives if needed
         if 'natives' in exp_data_types:
@@ -108,22 +109,24 @@ def SmotifSearch(index_array):
                 # Stop further execution and
                 continue
 
-        # QCP RMSD
+        # ************************************************
+        # RMSD filter using QCP method
+        # quickly filters non-overlapping smotifs
+        # ************************************************
+
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
-        # no_clashes = qcp.clahses(transformed_coos)
 
         if rmsd <= exp_data['rmsd']:
-
-            loopconstraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
-
-            if loopconstraint:
-
+            # Loop constraint restricts the overlapping smotifs is not drifted far away.
+            loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
+            if loop_constraint:
+                # Check whether the SSEs with in the assembled smotifs are clashing to one another
                 no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
             else:
                 no_clashes = False
 
         if rmsd <= exp_data['rmsd'] and no_clashes:
-
+            # Prepare temp log array to save data at the end
             tlog = []
             pcs_tensor_fits = []
             contact_fmeasure = []
@@ -135,52 +138,60 @@ def SmotifSearch(index_array):
             cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
             tlog.append(['cathcodes', cathcodes])
 
-            ## Sequence filter, align native and smotif aa_seq as a measure of sequence similarity = structure similarity
+            # ************************************************
+            # Sequence filter
+            # Aligns the smotif seq to target seq and calculates
+            # sequence identity and the alignment score
+            # ************************************************
 
-            csse_seq, seq_identity, blosum62_score, bool_sequence_similarity \
-                = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i], direction, exp_data, threshold=40)
+            csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],
+                                                                                  direction, exp_data)
 
             # concat current to previous seq
             concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
 
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
+            # ************************************************
+            # Pseudocontact Shift filter
+            # uses experimental PCS data to filter Smotifs
+            # scoring based on normalised chisqr
+            # ************************************************
+
             if 'pcs_data' in exp_data_types and seq_identity >= 10.0:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
+            # ************************************************
+            # Contacts filter
+            # uses the contact data obtained from EVfold server
+            # tp score a given smotif
+            # ************************************************
             if 'contact_matrix' in exp_data_types:
 
                 contact_fmeasure, plm_score = Evofilter.s2EVcouplings(transformed_coos, sse_ordered,
                                                                       exp_data['contact_matrix'],
                                                                       exp_data['plm_scores'],
-                                                                      contacts_cutoff=9.0)
+                                                                      contacts_cutoff=7.0)
                 if contact_fmeasure and plm_score:
 
                     if contact_fmeasure >= 0.6:
-
-                        contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
-
-                    elif contact_fmeasure > 0.3 and contact_fmeasure < 0.6:
-
-                        contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (2))
+                        contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                        # print csmotif_data[i][
+                        #    0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                    elif contact_fmeasure > 0.5 and contact_fmeasure < 0.6:
+                        contact_score = (contact_fmeasure) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                        # continue
                     else:
                         continue
                     tlog.append(['Evofilter', contact_score])
 
             if pcs_tensor_fits or contact_fmeasure:
+                #dump data to the disk
                 # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
-                #               # print csmotif_data[i][0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
-                # print "no_of_sses", len(transformed_coos)
                 dump_log.append(tlog)
 
-                # Time bound search
-                ctime = time.time()
-                elapsed = ctime - stime
-                if (elapsed / 60.0) > 120.0:  # stop execution after 2 hrs
-                    print "Breaking further execution"
-                    break
-
+    # prevent dumping empty arrays with no data
     if len(dump_log) > 0:
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
 

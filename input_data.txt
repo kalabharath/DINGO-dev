@@ -18,6 +18,9 @@ clash_distance = 3.0
 evfold_ss = /home/kalabharath/projects/boss-evo/tm_targets/1SOR_A/EVFold/residue_numbering/1SOR_A_1SOR_A.indextable
 evfold_plm = /home/kalabharath/projects/boss-evo/tm_targets/1SOR_A/EVFold/ev_couplings/1SOR_A_PLM.txt
 
+#contacts cutoff, std is 8A
+
+
 #database cutoff to use
 # Available options are 0.5, 1.0, 1.5, 9999 (uses redundant database)
 database_cutoff = 1.0

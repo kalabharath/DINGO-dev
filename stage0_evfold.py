@@ -29,7 +29,7 @@ data_dict = {'ss_seq': ss_seq, 'contact_matrix': contact_matrix, 'plm_scores': p
              'clash_distance': float(clash_distance)}
 
 """
-Dump all of the data in relavant pickle foiles
+
 however, have to streamline this to a much better way of doing it
 """
 io.dumpPickle("exp_data.pickle", data_dict)

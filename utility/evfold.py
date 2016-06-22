@@ -70,8 +70,8 @@ def parseContacts(filename, ss_combi, nor, cutoff_score=0.25):
     for resi in plm_contacts.keys():
         plm_contacts[resi] = sorted(plm_contacts[resi], key=itemgetter(1), reverse=True)
 
-    contact_matrix = zeros((nor, nor + 1))
-    plm_score_matrix = zeros((nor, nor + 1))
+    contact_matrix = zeros((nor, nor + 2))
+    plm_score_matrix = zeros((nor, nor + 2))
     for pair in list(combinations(ss_combi.keys(), 2)):
         sse1 = ss_combi[pair[0]]
         sse2 = ss_combi[pair[1]]
