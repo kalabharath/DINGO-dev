@@ -53,31 +53,21 @@ def SequenceSimilarity(s1_def, s2_def, smotif, exp_data):
     from Bio.SubsMat import MatrixInfo as matlist
 
     matrix = matlist.blosum62
-    # matrix = matlist.pam120
     gap_open = -10
     gap_extend = -0.5
-    hit = True
-
 
     aa_seq = exp_data['aa_seq']
-    # print s1_def
-    # print s2_def
-    # print aa_seq
+
+    # get the target and smotif seq information alone and exclude the loop regions
     native_seq = aa_seq[s1_def[4] - 1:s1_def[5]] + aa_seq[s2_def[4] - 1:s2_def[5]]  # -1 to fix residue numbering
+    smotif_seq = getSmotifAASeq(smotif[1], smotif[2])
 
-
-    smotif_def = smotif[0]
-    smotif_ss1 = smotif[1]
-    smotif_ss2 = smotif[2]
-    smotif_seq = getSmotifAASeq(smotif_ss1, smotif_ss2)
-    # print smotif_def
-    # print native_seq, len(native_seq)
-    # print smotif_seq, len(smotif_seq)
-
-
+    # Perform the alignment
     alns = pairwise2.align.globalds(native_seq, smotif_seq, matrix, gap_open, gap_extend)
+    # the top alignment is in the first entry of the array
     top_aln = alns[0]
 
+    # Compute teh sequence identity
     seqa, qseqa, score, begin, end = top_aln
     j, k = 0.0, 0.0
     for i in range(0, len(qseqa)):
@@ -87,7 +77,6 @@ def SequenceSimilarity(s1_def, s2_def, smotif, exp_data):
                 k += 1
     # seq_id = (k/j)*100
     seq_id = (k / len(smotif_seq)) * 100
-
 
     return smotif_seq, seq_id, score
 
@@ -101,40 +90,30 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data):
     from Bio.SubsMat import MatrixInfo as matlist
 
     matrix = matlist.blosum62
-    # matrix = matlist.pam120
     gap_open = -10
     gap_extend = -0.5
     hit = True
 
-    #print ss_def
-    #print smotif
-
     aa_seq = exp_data['aa_seq']
 
-    #print aa_seq
-    # print s1_def
-    # print s2_def
-    # print aa_seq
+
     # change below such that previous and current sses are chosen for the native seq
     # NO, only current sse , based on the direction should be chosen and only one SSE seq is aligned
     native_seq = aa_seq[ss_def[4] - 1:ss_def[5]]
 
-
-    smotif_def = smotif[0]
     if direction == 'left':
         smotif_sse = smotif[1]
     else:
         smotif_sse = smotif[2]
 
     smotif_seq = getSmotifAASeq_v2(smotif_sse)
-    # print smotif_def
-    #print native_seq, len(native_seq)
-    #print smotif_seq, len(smotif_seq)
 
-
+    # Perform alignment
     alns = pairwise2.align.globalds(native_seq, smotif_seq, matrix, gap_open, gap_extend)
+    # the best alignment is in the first entry
     top_aln = alns[0]
 
+    # Calculate the sequence identity
     seqa, qseqa, score, begin, end = top_aln
     j, k = 0.0, 0.0
     for i in range(0, len(qseqa)):
