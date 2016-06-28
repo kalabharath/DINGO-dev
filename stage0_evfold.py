@@ -21,11 +21,11 @@ aa_seq, ss_seq = evfold.parseSS(data['evfold_ss'])
 database_cutoff = data['database_cutoff']
 rmsd = data['rmsd']
 clash_distance = data['clash_distance']
-ss_seq = 'CCHHHHHHHHHHHHHHHHHHHHHHHHHCCCCCCCCHHHHHHHHHHHHHHHHHHHHCCCCCCCCCHHHHHHHHHHCCCCHHHHHHHHHHHHHHHHHHHHHHHHCCCCCCCCCCCCCCCCCCCCHHHHHHHHHHHHHHHHHCCCCCCCCCCCCCCCCHHHHHHHHHHHHHHHCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCHHHHHHHHHHHHHCCCCCCCCCCHHHHHHHHCC'
+
 
 ss_def, ss_combi = ss.genSSCombinations(ss_seq)
 native_pdbs = evfold.parseNatives(data['native_pdbs'])
-contact_matrix, plm_score_matrix = evfold.parseContacts(data['evfold_plm'], ss_combi, len(ss_seq), cutoff_score=0.3)
+contact_matrix, plm_score_matrix = evfold.parseContacts(data['evfold_plm'], ss_combi, len(ss_seq), cutoff_score=0.25)
 map_route = evfold.getRoute(ss_def, contact_matrix)
 data_dict = {'ss_seq': ss_seq, 'contact_matrix': contact_matrix, 'plm_scores': plm_score_matrix, 'aa_seq': aa_seq,
              'natives': native_pdbs, 'database_cutoff': database_cutoff, 'rmsd': float(rmsd),

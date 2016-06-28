@@ -8,8 +8,6 @@ Date: 14/04/15 , Time:01:05 PM
 stage 1 in parallel
 """
 
-import time
-
 import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
 import filters.sequence.sequence_similarity as Sfilter
@@ -51,10 +49,14 @@ def SmotifSearch(index_array):
 
     dump_log = []
     contact_fmeasure = []
-    stime = time.time()
 
     for i in range(0, len(smotif_data)):
-        # Excluding natives if needed
+        # loop over for all of the entries in the smotif_db file
+
+        # ************************************************
+        # Excluding the natives
+        # ************************************************
+
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
             tpdbid = smotif_data[i][0][0]
@@ -96,6 +98,7 @@ def SmotifSearch(index_array):
                                                                   exp_data['contact_matrix'],
                                                                   exp_data['plm_scores'],
                                                                   contacts_cutoff=7.0)
+            print contact_fmeasure
             if contact_fmeasure and plm_score:
 
                 if contact_fmeasure >= 0.6:
@@ -121,6 +124,7 @@ def SmotifSearch(index_array):
             # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             dump_log.append(tlog)
 
+    # Save all of the hits in pickled arrays
     if dump_log:
         print "num of hits", len(dump_log)
         io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)

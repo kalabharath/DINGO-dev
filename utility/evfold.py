@@ -36,7 +36,7 @@ def parseNatives(native_pdbs):
     return native_pdbs.split()
 
 
-def parseContacts(filename, ss_combi, nor, cutoff_score=0.25):
+def parseContacts(filename, ss_combi, nor, cutoff_score):
     """
     Parse the ev_couplings generated using plm method into contact data arrays
     :param filename, ss_combi:
@@ -70,8 +70,8 @@ def parseContacts(filename, ss_combi, nor, cutoff_score=0.25):
     for resi in plm_contacts.keys():
         plm_contacts[resi] = sorted(plm_contacts[resi], key=itemgetter(1), reverse=True)
     print "matrix order :", nor
-    contact_matrix = zeros((nor + 2, nor + 2))
-    plm_score_matrix = zeros((nor + 2, nor + 2))
+    contact_matrix = zeros((nor + 1, nor + 1))  # correct for indicies numbering
+    plm_score_matrix = zeros((nor + 1, nor + 1))  # keep residue numbering as it is
     for pair in list(combinations(ss_combi.keys(), 2)):
         sse1 = ss_combi[pair[0]]
         sse2 = ss_combi[pair[1]]
@@ -81,6 +81,7 @@ def parseContacts(filename, ss_combi, nor, cutoff_score=0.25):
                     for l in range(sse2[j][4], sse2[j][5] + 1):
                         for entry in plm_contacts[k]:
                             if entry[0] == l:
+                                print k, l, sse1[i], sse2[j]
                                 contact_matrix[k, l] = 1.0
                                 contact_matrix[l, k] = 1.0
                                 plm_score_matrix[k, l] = entry[1]
@@ -98,14 +99,20 @@ def parseContacts(filename, ss_combi, nor, cutoff_score=0.25):
 
 
 def extractContacts(ss_def, contact_matrix):
-    conatacts_def = []
+    """
+    get total number of contacts that a secondary structure element makes with others
+    :param ss_def:
+    :param contact_matrix:
+    :return:
+    """
+    contacts_def = []
     for ss in ss_def:
         start, end = ss[3], ss[4]
         temp = 0
         for i in range(start, end + 1):
             temp = temp + sum(contact_matrix[i])
-        conatacts_def.append(temp)
-    return conatacts_def
+        contacts_def.append(temp)
+    return contacts_def
 
 
 def get_ij(contacts_perss):
