@@ -36,7 +36,7 @@ def parseNatives(native_pdbs):
     return native_pdbs.split()
 
 
-def parseContacts(filename, ss_combi, nor, cutoff_score):
+def parseContacts(filename, ss_combi, ss_def, nor, cutoff_score):
     """
     Parse the ev_couplings generated using plm method into contact data arrays
     :param filename, ss_combi:
@@ -64,14 +64,18 @@ def parseContacts(filename, ss_combi, nor, cutoff_score):
     for line in data:
         r1, a1, r2, a2, pl, score = line.split()
 
-        if round(float(score), 1) > cutoff_score:
-            plm_contacts[int(r1)].append([int(r2), float(score)])
+        if round(float(score), 2) > cutoff_score:
+            # plm_contacts[int(r1)].append([int(r2), float(score)])
+            # this new modification for the Cell paper dataset only
+            plm_contacts[int(r1)].append([int(r2), float(pl)])
 
     for resi in plm_contacts.keys():
         plm_contacts[resi] = sorted(plm_contacts[resi], key=itemgetter(1), reverse=True)
-    print "matrix order :", nor
+    #print "matrix order :", nor
     contact_matrix = zeros((nor + 1, nor + 1))  # correct for indicies numbering
     plm_score_matrix = zeros((nor + 1, nor + 1))  # keep residue numbering as it is
+    contact_ss_matrix = zeros((nor + 1, nor + 1))
+
     for pair in list(combinations(ss_combi.keys(), 2)):
         sse1 = ss_combi[pair[0]]
         sse2 = ss_combi[pair[1]]
@@ -81,21 +85,24 @@ def parseContacts(filename, ss_combi, nor, cutoff_score):
                     for l in range(sse2[j][4], sse2[j][5] + 1):
                         for entry in plm_contacts[k]:
                             if entry[0] == l:
-                                print k, l, sse1[i], sse2[j]
+                                #print k, l, sse1[i], sse2[j]
                                 contact_matrix[k, l] = 1.0
                                 contact_matrix[l, k] = 1.0
                                 plm_score_matrix[k, l] = entry[1]
                                 plm_score_matrix[l, k] = entry[1]
-    """
-    print plm_contacts[8]
-    print contact_matrix[8][49], len(contact_matrix[8])
-    print plm_score_matrix[8][49], len(plm_score_matrix[8])
 
-    print contact_matrix[8], len(contact_matrix[8])
-    print plm_score_matrix[8], len(plm_score_matrix[8])
-    """
+    for i in range(0, len(ss_def) - 1):
+        print ss_def[i], ss_def[i + 1]
+        for j in range(ss_def[i][3], ss_def[i][4] + 1):
+            for k in range(ss_def[i + 1][3], ss_def[i + 1][4] + 1):
+                # print plm_contacts[j], j, k
+                for entry in plm_contacts[j]:
+                    if entry[0] == k:
+                        print j, k
+                        contact_ss_matrix[j, k] = 1.0
+                        contact_ss_matrix[k, j] = 1.0
 
-    return contact_matrix, plm_score_matrix
+    return contact_matrix, plm_score_matrix, contact_ss_matrix
 
 
 def extractContacts(ss_def, contact_matrix):
@@ -105,14 +112,14 @@ def extractContacts(ss_def, contact_matrix):
     :param contact_matrix:
     :return:
     """
-    contacts_def = []
+    contacts_per_ss = []
     for ss in ss_def:
         start, end = ss[3], ss[4]
         temp = 0
         for i in range(start, end + 1):
             temp = temp + sum(contact_matrix[i])
-        contacts_def.append(temp)
-    return contacts_def
+        contacts_per_ss.append(temp)
+    return contacts_per_ss
 
 
 def get_ij(contacts_perss):
@@ -125,7 +132,6 @@ def get_ij(contacts_perss):
     for i in xrange(0, len(contacts_perss) - 1):
         if i == 0:
             tpcs = contacts_perss[i] + contacts_perss[i + 1]
-
             ti = i
             tj = i + 1
         else:
@@ -147,8 +153,8 @@ def getRoute(ss_def, contact_matrix):
     :return:
     """
 
-    map_route = []
     contacts_perss = extractContacts(ss_def, contact_matrix)
+    print contacts_perss, len(contacts_perss), len(ss_def)
     map_route = []
     control, i, j = 0, 0, 0
 
@@ -188,3 +194,23 @@ def getRoute(ss_def, contact_matrix):
                     control += 1
                     direction = 'right'
     return map_route
+
+
+def getRoute2(ss_def, contact_matrix):
+    """
+
+    :param ss_def:
+    :param contact_matrix:
+    :return:
+    """
+
+    contacts_perss = extractContacts(ss_def, contact_matrix)
+    print contacts_perss, len(contacts_perss), len(ss_def)
+    map_route = []
+    control = 0
+    tsum = 0
+
+    import numpy as np
+
+    sort_index = np.argsort(np.array(contacts_perss))
+    print sort_index

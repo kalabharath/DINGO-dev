@@ -97,8 +97,7 @@ def SmotifSearch(index_array):
             contact_fmeasure, plm_score = Evofilter.s1EVcouplings(s1_def, s2_def, smotif_data[i],
                                                                   exp_data['contact_matrix'],
                                                                   exp_data['plm_scores'],
-                                                                  contacts_cutoff=7.0)
-            print contact_fmeasure
+                                                                  contacts_cutoff=9.0)
             if contact_fmeasure and plm_score:
 
                 if contact_fmeasure >= 0.6:
@@ -106,7 +105,8 @@ def SmotifSearch(index_array):
                 elif contact_fmeasure > 0.5 and contact_fmeasure < 0.6:
                     contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
                 else:
-                    continue
+                    contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                    # continue
                 tlog.append(['Evofilter', contact_score])
 
         # ************************************************
