@@ -13,5 +13,3 @@ Create a hype by adding more and more comments and statements
 from pkgutil import extend_path
 
 __path__ = extend_path(__path__, __name__)
-
-cd
