@@ -226,8 +226,8 @@ def getRunSeq(num_hits, stage):
     """
 
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    # map_route = io.readPickle("pcs_route.pickle")
-    map_route = io.readPickle("contacts_route.pickle")
+    map_route = io.readPickle("pcs_route.pickle")
+    #map_route = io.readPickle("contacts_route.pickle")
 
     try:
         next_index, next_smotif = getNextSmotif(map_route)
@@ -259,8 +259,8 @@ def getRunSeq(num_hits, stage):
 
 
 def getPreviousSmotif(index):
-    # map_route = io.readPickle("pcs_route.pickle")
-    map_route = io.readPickle("contacts_route.pickle")
+    map_route = io.readPickle("pcs_route.pickle")
+    #map_route = io.readPickle("contacts_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
     top_hits = io.readPickle(str(next_index - 1) + "_tophits.pickle")  # Read in previous index hits
     # print len(top_hits)
@@ -270,8 +270,8 @@ def getPreviousSmotif(index):
 def getSS2(index):
     ss_profiles = io.readPickle("ss_profiles.pickle")
     # map_route = io.readPickle("contact_route.pickle")
-    # map_route = io.readPickle("pcs_route.pickle")
-    map_route = io.readPickle("contacts_route.pickle")
+    map_route = io.readPickle("pcs_route.pickle")
+    #map_route = io.readPickle("contacts_route.pickle")
     next_index, next_smotif = getNextSmotif(map_route)
     direction = next_smotif[-1]
 
