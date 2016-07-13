@@ -117,11 +117,11 @@ def getNchiSum(pcs_filter, stage):
         snchi = scoreCombination4t(score_list)
 
     if len(tensors) ==3 and stage == 4:
-        score_list = np.array()
+        score_list = []
         for tensor in tensors:
             score_list.append(tensor[1])
-        snchi = sum(score_list)
-
+        smat = np.array(score_list)
+        snchi = sum(smat)
     return snchi
 
 

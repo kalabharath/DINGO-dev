@@ -97,7 +97,7 @@ def PointsOnSpheres(M, N, rMx, rMy, rMz):
             j += 1
 
 
-def newPointsOnSpheres(M, sN, rMx, rMy, rMz):
+def fixedPointsOnSpheres(M, sN, rMx, rMy, rMz):
     """
     quick way from wikipedia
     :param M:
@@ -201,10 +201,10 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
 
     for metal in axrh:
         for parameter in metal:
-            if stage <= 2:
+            if stage == 1:
                 if abs(parameter) > 80:
                     return 1.0e+30
-            if stage == 3:
+            if stage == 2 or stage == 3:
                 if abs(parameter) > 60:
                     return 1.0e+30
             if stage == 4:
@@ -259,7 +259,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
     # PointsOnSpheres(M, nM, rMx, rMy, rMz)
-    newPointsOnSpheres(M, nM, rMx, rMy, rMz)
+    fixedPointsOnSpheres(M, nM, rMx, rMy, rMz)
 
     # Temp storage of tensor values
     temp_tensor = []
@@ -447,7 +447,7 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
     # PointsOnSpheres(M, nM, rMx, rMy, rMz)
-    newPointsOnSpheres(M, nM, rMx, rMy, rMz)
+    fixedPointsOnSpheres(M, nM, rMx, rMy, rMz)
 
     # Temp storage of tensor values
     temp_tensor = []
