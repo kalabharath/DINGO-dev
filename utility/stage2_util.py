@@ -1,6 +1,5 @@
 import collections
 import glob
-import numpy as np
 import io_util as io
 
 def enum(*sequential, **named):
@@ -120,8 +119,7 @@ def getNchiSum(pcs_filter, stage):
         score_list = []
         for tensor in tensors:
             score_list.append(tensor[1])
-        smat = np.array(score_list)
-        snchi = sum(smat)
+        snchi = score_list[0]+score_list[1]+score_list[3]
     return snchi
 
 
