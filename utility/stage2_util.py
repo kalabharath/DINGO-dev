@@ -1,6 +1,6 @@
 import collections
 import glob
-
+import numpy as np
 import io_util as io
 
 def enum(*sequential, **named):
@@ -115,6 +115,12 @@ def getNchiSum(pcs_filter, stage):
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination4t(score_list)
+
+    if len(tensors) ==3 and stage == 4:
+        score_list = np.array()
+        for tensor in tensors:
+            score_list.append(tensor[1])
+        snchi = sum(score_list)
 
     return snchi
 
