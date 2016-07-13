@@ -18,6 +18,7 @@ import utility.io_util as io
 import utility.smotif_util as sm
 import utility.stage2_util as uts2
 
+# Stage3 and stage4 should be merged, there is no difference except for one of the args in pcsfilter is stage4
 
 def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
     # print "previous_smotif: ", previous_smotif
