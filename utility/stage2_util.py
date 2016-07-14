@@ -206,6 +206,9 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     count_top_hits = 0
     while (True):
         for key in keys:
+            if key ==  999.999:
+                # Do not work on these entries
+                continue
             entries = non_redundant[key]
             for entry in entries:
                 dump_pickle.append(entry)

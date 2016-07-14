@@ -193,10 +193,11 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
 
     if stage == 3:
 
-        if (chisqr / total_pcs) > (0.0025 * 2):  # 4 times the standard error limit
+        #if (chisqr / total_pcs) > (0.05 * 0.05 * 4):  # 4 times the standard error limit
+        if (chisqr / total_pcs) > (0.01):  # 4 times the standard error limit
             return 1.0e+30
     if stage == 4:
-        if (chisqr / total_pcs) > (0.0025 * 3):  # 5 times the standard error limit
+        if (chisqr / total_pcs) > (0.015 ): #6 times the standard limit
             return 1.0e+30
 
     for metal in axrh:
