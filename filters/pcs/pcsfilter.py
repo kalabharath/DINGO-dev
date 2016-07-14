@@ -206,7 +206,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
                 if abs(parameter) > 80:
                     return 1.0e+30
             if stage == 2 or stage == 3:
-                if abs(parameter) > 60:
+                if abs(parameter) > 40:
                     return 1.0e+30
             if stage == 4:
                 if abs(parameter) > 40:
