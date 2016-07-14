@@ -202,13 +202,10 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
 
     for metal in axrh:
         for parameter in metal:
-            if stage == 1:
+            if stage == 1 or stage == 2:
                 if abs(parameter) > 80:
                     return 1.0e+30
-            if stage == 2 or stage == 3:
-                if abs(parameter) > 40:
-                    return 1.0e+30
-            if stage == 4:
+            if stage == 3 or stage == 4:
                 if abs(parameter) > 40:
                     return 1.0e+30
 
