@@ -1,6 +1,7 @@
 import collections
 import glob
 import io_util as io
+import os
 
 def enum(*sequential, **named):
     """
