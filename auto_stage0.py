@@ -8,13 +8,15 @@ Date: 31/03/15 , Time:10:56 AM
 Prepare all the relavant files for stage1 & 2
 
 """
-import os
-import sys
+import sys, os
+#sys.path.append("../../zinr/main")
+sys.path.append('/short/xc4/kbp502/BOSS/zinr')
 
-sys.path.append("../../zinr/main")
 import utility.io_util    as io
 import utility.ss_util    as ss
 import utility.PCSmap     as PCSmap
+import utility.ContactMap as contact
+
 
 
 def matchSeq2SS(aa_seq, ssfile):
@@ -39,13 +41,13 @@ def matchSeq2SS(aa_seq, ssfile):
     diff = len(raw_ss)-len(aa_seq)
     print 'diff', diff
     if diff > 0:
-        for i in range(0,diff):
+        for i in range(0,diff+1):
             t_aa=''
             t_ss=''
             for j in range(i,i+len(aa_seq)):
                 t_aa=t_aa+raw_ss[j][1]
                 t_ss=t_ss+raw_ss[j][-1]
-            #print t_aa, t_ss
+            print t_aa, t_ss
             if t_aa == aa_seq:
                 print t_aa, len(t_aa)
                 #REMARK     h-Helix    e-Strand   c-Coil (Sequence based)
@@ -67,6 +69,10 @@ def matchSeq2SS(aa_seq, ssfile):
         print t_ss, len(t_ss)
         return t_ss
 
+
+
+
+
 data = io.readInputDataFiles('input_data.txt')
 
 print data
@@ -76,11 +82,13 @@ handle, aa_seq = io.readFasta(data['fasta_file'])
 
 
 ss_seq = matchSeq2SS(aa_seq, data['ss_file'])
-#ss_seq = io.readPsiPred(psipred_file)
-
 print ss_seq
 
-ss_def, ss_combi = ss.genSSCombinations(ss_seq)
+
+#ss_seq = io.readPsiPred(psipred_file)
+
+#ss_def, ss_combi = ss.genSSCombinations(ss_seq)
+ss_def, ss_combi = ss.genSSCombinations2(ss_seq)
 
 print ss_combi
 io.dumpPickle("ss_profiles.pickle", ss_combi)
@@ -91,22 +99,52 @@ if 'contacts_file' in datatypes:
 
 
 native_pdbs = data['native_pdbs']
+
 native_pdbs = native_pdbs.lower()
+
 native_pdbs = native_pdbs.split()
 
 print native_pdbs
+
+axrh_cutoff = data['axrh_cutoff']
+axrh_cutoff = axrh_cutoff.split()
+[float(i) for i in axrh_cutoff]
+
+chisqr_cutoff = data['chisqr_cutoff']
+chisqr_cutoff = chisqr_cutoff.split()
+[float(i) for i in chisqr_cutoff]
+
+if len(chisqr_cutoff) != 4) or len(axrh_cutoff) != 4:
+    print "The number of specified cutoffs should be exactly 4"
+
+
+
+clash_distance = float(data['clash_distance'])
+
+print 'clash_distance: ', clash_distance
+
+smotif_rmsd_cutoff = float(data['rmsd'])
+
+print  'smotif_rmsd_cutoff', smotif_rmsd_cutoff
 
 # read in PCS data from .npc file from Rosetta's broker file format
 pcsdata = io.getPcsTagInfo(ss_seq, data['pcs_broker'])
 
 map_route = PCSmap.getRoute(ss_seq, pcsdata)
-#print map_route
 
+print map_route, '1'
+
+#map_route = [[1, 2, 'start'],[0, 1, 'left'], [2, 3, 'right'], [3, 4, 'right'] ]
+
+print map_route, '2'
 
 io.dumpPickle("pcs_route.pickle", map_route)
 #io.dumpPickle("contact_route.pickle", rank_ss)
+database_cutoff = data['database_cutoff']
 
-data_dict = {'ss_seq': ss_seq, 'pcs_data': pcsdata, 'aa_seq': aa_seq, 'natives': native_pdbs}
+data_dict = {'ss_seq': ss_seq, 'pcs_data': pcsdata, 'aa_seq': aa_seq, 'natives': native_pdbs, \
+             'clash_distance':clash_distance, 'rmsd': smotif_rmsd_cutoff,'database_cutoff':database_cutoff\
+             'axrh_cutoff' = axrh_cutoff, 'chisqr_cutoff' = chisqr_cutoff}
 
 
 io.dumpPickle("exp_data.pickle", data_dict)
@@ -143,6 +181,12 @@ for i in range(0,len(map_route)):
             res_sofar = res_sofar + ss_combi[s2][0][1]
             percent = (res_sofar/float(total_ss_res))*100
             print percent
+            if i == 1:
+                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                print outline
+                fout.write(outline)
+                continue
+
             if percent > 25.0 and percent < 50.0:
                 outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
@@ -160,11 +204,16 @@ for i in range(0,len(map_route)):
             res_sofar = res_sofar + ss_combi[s1][0][1]
             percent = (res_sofar/float(total_ss_res))*100
             print percent
-            if percent > 25.0 and percent < 50.0:
+            if i == 1:
                 outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
-            if percent > 50.0 and percent < 75.0:
+                continue
+            if percent > 25.0 and percent <= 50.0:
+                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                print outline
+                fout.write(outline)
+            if percent > 50.0 and percent <= 75.0:
                 outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)

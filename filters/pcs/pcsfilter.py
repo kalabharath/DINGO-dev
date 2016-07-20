@@ -180,10 +180,11 @@ def calcAxRh(saupe_matrices):
 
 def checkAxRh(axrh, chisqr, total_pcs, stage):
     """
-    Check whether axial and rhombic are within reasonable
-    values
+
     :param axrh:
     :param chisqr:
+    :param total_pcs:
+    :param stage:
     :return:
     """
     if stage <=2:
@@ -193,7 +194,6 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
 
     if stage == 3:
 
-        #if (chisqr / total_pcs) > (0.05 * 0.05 * 4):  # 4 times the standard error limit
         if (chisqr / total_pcs) > (0.01):  # 4 times the standard error limit
             return 1.0e+30
     if stage == 4:
@@ -207,6 +207,55 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
                     return 1.0e+30
             if stage == 3 or stage == 4:
                 if abs(parameter) > 40:
+                    return 1.0e+30
+
+    return chisqr
+
+
+def checkAxRhCutoffs(axrh, chisqr, total_pcs, stage, exp_data):
+    """
+
+    :param axrh:
+    :param chisqr:
+    :param total_pcs:
+    :param stage:
+    :param exp_data:
+    :return:
+    """
+    # get the user specified cutoffs for chisqr, axial and rhombic parameters
+    chisqr_cutoffs = exp_data['chisqr_cutoff']
+    axrh_cutoffs = exp_data['axrh_cutoff']
+
+    # Apply chisqr cutoffs
+    if stage == 1:
+        if (chisqr / total_pcs) > chisqr_cutoffs[0]:  # no error limit
+            return 1.0e+30
+    elif stage == 2:
+        if (chisqr / total_pcs) > chisqr_cutoffs[1]:  # no error limit
+            return 1.0e+30
+    elif stage == 3:
+        if (chisqr / total_pcs) > chisqr_cutoffs[2]:  # no error limit
+            return 1.0e+30
+    else
+        if (chisqr / total_pcs) > chisqr_cutoffs[3]:  # no error limit
+            return 1.0e+30
+
+
+
+    # Apply Axial and Rhombic cutoffs
+    for metal in axrh:
+        for parameter in metal:
+            if stage == 1 :
+                if abs(parameter) > axrh_cutoffs[0]:
+                    return 1.0e+30
+            elif stage == 2:
+                if abs(parameter) > axrh_cutoffs[1]:
+                    return 1.0e+30
+            elif stage == 3:
+                if abs(parameter) > axrh_cutoffs[2]:
+                    return 1.0e+30
+            else stage == 4:
+                if abs(parameter) > axrh_cutoffs[3]:
                     return 1.0e+30
 
     return chisqr
@@ -323,7 +372,8 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
             # print tag, chisqr, AxRh, metal_pos
-            chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage=1)  # modifies the values of chisqr
+            #chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage=1)  # modifies the values of chisqr
+            chisqr = checkAxRhCutoffs(AxRh, chisqr, total_pcs, stage=1, exp_data)  # modifies the values of chisqr
             AxRh.append(metal_pos)  # add metal pos
 
             # Free memory for the variables
@@ -508,7 +558,8 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
             # print tag, chisqr, AxRh, metal_pos
-            chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage)  # modifies the values of chisqr
+            #chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage)  # modifies the values of chisqr
+            chisqr = checkAxRhCutoffs(AxRh, chisqr, total_pcs, stage, exp_data)  # modifies the values of chisqr
             AxRh.append(metal_pos)  # add metal pos
 
             # Free memory

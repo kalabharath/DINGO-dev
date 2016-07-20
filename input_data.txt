@@ -23,4 +23,16 @@ evfold_plm = /home/kalabharath/projects/boss-evo/tm_targets/1SOR_A/EVFold/ev_cou
 
 #database cutoff to use
 # Available options are 0.5, 1.0, 1.5, 9999 (uses redundant database)
-database_cutoff = 1.0
+database_cutoff = 0.25
+
+#Axial and rhombic cutoffs for different stages
+#specify abs(cutoff) for each of the four stages
+# four differnt stages are stage1 (First smotif), stage2(second smotif), stage3(<75% of the data), stage4(>75% data)
+axrh_cutoff =  100 100 60 40
+
+
+ #chisqr cutoff for different stages
+ #PCS error threshold for the 4 different stages
+# four differnt stages are stage1 (First smotif), stage2(second smotif), stage3(<75% of the data), stage4(>75% data)
+# 0.0025 (0.05 * 0.05) std error, 0.0025 *2 = 0.005, 0.0025 * 4 = 0.01
+chisqr_cutoff = 0.0025 0.0025 0.005 0.01
