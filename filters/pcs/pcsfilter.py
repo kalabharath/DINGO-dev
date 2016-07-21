@@ -212,7 +212,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
     return chisqr
 
 
-def checkAxRhCutoffs(axrh, chisqr, total_pcs, stage, exp_data):
+def checkAxRhCutoffs(axrh, chisqr, total_pcs, exp_data, stage):
     """
 
     :param axrh:
@@ -239,8 +239,6 @@ def checkAxRhCutoffs(axrh, chisqr, total_pcs, stage, exp_data):
     else
         if (chisqr / total_pcs) > chisqr_cutoffs[3]:  # no error limit
             return 1.0e+30
-
-
 
     # Apply Axial and Rhombic cutoffs
     for metal in axrh:
@@ -274,13 +272,6 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)
 
-    # smotif_ss1 = range(int(smotif[0][0][1]), int(smotif[0][0][2]) + 1)
-    # smotif_ss2 = range(int(smotif[0][0][3]), int(smotif[0][0][4]) + 1)
-
-
-    # print ss1_list, ss2_list
-    # print smotif_ss1, smotif_ss2
-    # print smotif[0][0]
 
     rH1, rH2 = getHN(ss1_list, ss2_list, smotif, atom_type='H')
     pcs_data = exp_data['pcs_data']
@@ -290,16 +281,6 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
 
     nM = 200  # 1000 pts in each sphere
     M = [1, 45]  # 40 spheres 10-50 Angstrom
-
-    """
-    npts = 0
-    for i in range(M[0],M[1]):
-        t = i*200
-        npts = npts + t
-
-    #npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
-    print npts
-    """
 
     npts = 198000
     rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
@@ -355,7 +336,6 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisqr = fastT1FM.rfastT1FM_multi(npts, rMx, rMy, rMz, nsets, frag_len, xyz, pcs, tensor, Xaxrh_range)
             # ****
 
-
             saupe_array = []
             for kk in range(nsets):
                 temp_saupe = []
@@ -371,9 +351,9 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
 
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-            # print tag, chisqr, AxRh, metal_pos
+
             #chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage=1)  # modifies the values of chisqr
-            chisqr = checkAxRhCutoffs(AxRh, chisqr, total_pcs, stage=1, exp_data)  # modifies the values of chisqr
+            chisqr = checkAxRhCutoffs(AxRh, chisqr, total_pcs, exp_data, stage=1)  # modifies the values of chisqr
             AxRh.append(metal_pos)  # add metal pos
 
             # Free memory for the variables
@@ -385,14 +365,10 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
+
             nchisqr = chisqr / float(total_pcs - (nsets * 5))
-
             snchisqr = nchisqr / float(math.pow(total_pcs, 1 / 3.0))
-
             temp_tensor.append([tag, snchisqr, AxRh])
-
-            # temp_tensor.append([tag, chisqr / (total_pcs - (nsets * 5)), AxRh])
-            # temp_tensor.append([tag, chisqr / total_pcs, AxRh])
 
     fastT1FM.FreeDArray(rMx)
     fastT1FM.FreeDArray(rMy)
@@ -473,10 +449,6 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     :return:
     """
 
-    # print sse_ordered
-    # print transformed_coos
-
-    # print sse_ordered
     nh_dict = coorNHdict(transformed_coos, sse_ordered)
 
     pcs_data = exp_data['pcs_data']
@@ -557,9 +529,9 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
 
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
-            # print tag, chisqr, AxRh, metal_pos
+
             #chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage)  # modifies the values of chisqr
-            chisqr = checkAxRhCutoffs(AxRh, chisqr, total_pcs, stage, exp_data)  # modifies the values of chisqr
+            chisqr = checkAxRhCutoffs(AxRh, chisqr, total_pcs, exp_data, stage)  # modifies the values of chisqr
             AxRh.append(metal_pos)  # add metal pos
 
             # Free memory
@@ -573,13 +545,10 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
         if chisqr < 1.0e+30:
 
             nchisqr = chisqr / float(total_pcs - (nsets * 5))
-
             snchisqr = nchisqr / float(math.pow(total_pcs, 1 / 3.0))
-
             temp_tensor.append([tag, snchisqr, AxRh])
 
-            # temp_tensor.append([tag, chisqr / float (total_pcs - (nsets * 5)), AxRh])
-            # temp_tensor.append([tag, chisqr / total_pcs, AxRh])
+
         if stage <= 3:
             if len(temp_tensor) < tag:
                 # free memory and return
