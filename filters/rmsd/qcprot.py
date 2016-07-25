@@ -9,7 +9,6 @@
 
 
 from sys import version_info
-
 if version_info >= (2, 6, 0):
     def swig_import_helper():
         from os.path import dirname
@@ -71,7 +70,6 @@ def _swig_getattr_nondynamic(self, class_type, name, static=1):
     else:
         raise AttributeError(name)
 
-
 def _swig_getattr(self, class_type, name):
     return _swig_getattr_nondynamic(self, class_type, name, 0)
 
@@ -92,65 +90,54 @@ except AttributeError:
     _newclass = 0
 
 
+
 def MakeDMatrix(i, j):
     return _qcprot.MakeDMatrix(i, j)
 MakeDMatrix = _qcprot.MakeDMatrix
-
 
 def FreeDMatrix(a):
     return _qcprot.FreeDMatrix(a)
 FreeDMatrix = _qcprot.FreeDMatrix
 
-
 def FreeDArray(a):
     return _qcprot.FreeDArray(a)
 FreeDArray = _qcprot.FreeDArray
-
 
 def GetDArray(i, j, a):
     return _qcprot.GetDArray(i, j, a)
 GetDArray = _qcprot.GetDArray
 
-
 def SetDArray(i, j, a, v):
     return _qcprot.SetDArray(i, j, a, v)
 SetDArray = _qcprot.SetDArray
-
 
 def GetDvector(i, a):
     return _qcprot.GetDvector(i, a)
 GetDvector = _qcprot.GetDvector
 
-
 def SetDvector(i, a, v):
     return _qcprot.SetDvector(i, a, v)
 SetDvector = _qcprot.SetDvector
-
 
 def MakeDvector(n):
     return _qcprot.MakeDvector(n)
 MakeDvector = _qcprot.MakeDvector
 
-
 def MakeIvector(n):
     return _qcprot.MakeIvector(n)
 MakeIvector = _qcprot.MakeIvector
-
 
 def GetIvector(i, a):
     return _qcprot.GetIvector(i, a)
 GetIvector = _qcprot.GetIvector
 
-
 def SetIvector(i, a, v):
     return _qcprot.SetIvector(i, a, v)
 SetIvector = _qcprot.SetIvector
 
-
 def CalcRMSDRotationalMatrix(coords1, coords2, len, rot_matrix):
     return _qcprot.CalcRMSDRotationalMatrix(coords1, coords2, len, rot_matrix)
 CalcRMSDRotationalMatrix = _qcprot.CalcRMSDRotationalMatrix
-
 
 def FastCalcRMSDAndRotation(rot, A, rmsd, E0, len, minScore):
     return _qcprot.FastCalcRMSDAndRotation(rot, A, rmsd, E0, len, minScore)

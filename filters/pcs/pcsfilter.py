@@ -236,7 +236,7 @@ def checkAxRhCutoffs(axrh, chisqr, total_pcs, exp_data, stage):
     elif stage == 3:
         if (chisqr / total_pcs) > chisqr_cutoffs[2]:  # no error limit
             return 1.0e+30
-    else
+    else:
         if (chisqr / total_pcs) > chisqr_cutoffs[3]:  # no error limit
             return 1.0e+30
 
@@ -252,7 +252,7 @@ def checkAxRhCutoffs(axrh, chisqr, total_pcs, exp_data, stage):
             elif stage == 3:
                 if abs(parameter) > axrh_cutoffs[2]:
                     return 1.0e+30
-            else stage == 4:
+            else:
                 if abs(parameter) > axrh_cutoffs[3]:
                     return 1.0e+30
 

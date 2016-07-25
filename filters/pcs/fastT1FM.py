@@ -9,7 +9,6 @@
 
 
 from sys import version_info
-
 if version_info >= (2, 6, 0):
     def swig_import_helper():
         from os.path import dirname
@@ -71,7 +70,6 @@ def _swig_getattr_nondynamic(self, class_type, name, static=1):
     else:
         raise AttributeError(name)
 
-
 def _swig_getattr(self, class_type, name):
     return _swig_getattr_nondynamic(self, class_type, name, 0)
 
@@ -92,65 +90,54 @@ except AttributeError:
     _newclass = 0
 
 
+
 def MakeDMatrix(i, j):
     return _fastT1FM.MakeDMatrix(i, j)
 MakeDMatrix = _fastT1FM.MakeDMatrix
-
 
 def FreeDMatrix(a):
     return _fastT1FM.FreeDMatrix(a)
 FreeDMatrix = _fastT1FM.FreeDMatrix
 
-
 def FreeDArray(a):
     return _fastT1FM.FreeDArray(a)
 FreeDArray = _fastT1FM.FreeDArray
-
 
 def GetDArray(i, j, a):
     return _fastT1FM.GetDArray(i, j, a)
 GetDArray = _fastT1FM.GetDArray
 
-
 def SetDArray(i, j, a, v):
     return _fastT1FM.SetDArray(i, j, a, v)
 SetDArray = _fastT1FM.SetDArray
-
 
 def GetDvector(i, a):
     return _fastT1FM.GetDvector(i, a)
 GetDvector = _fastT1FM.GetDvector
 
-
 def SetDvector(i, a, v):
     return _fastT1FM.SetDvector(i, a, v)
 SetDvector = _fastT1FM.SetDvector
-
 
 def MakeDvector(n):
     return _fastT1FM.MakeDvector(n)
 MakeDvector = _fastT1FM.MakeDvector
 
-
 def MakeIvector(n):
     return _fastT1FM.MakeIvector(n)
 MakeIvector = _fastT1FM.MakeIvector
-
 
 def GetIvector(i, a):
     return _fastT1FM.GetIvector(i, a)
 GetIvector = _fastT1FM.GetIvector
 
-
 def SetIvector(i, a, v):
     return _fastT1FM.SetIvector(i, a, v)
 SetIvector = _fastT1FM.SetIvector
 
-
 def Saupe2X(s, X):
     return _fastT1FM.Saupe2X(s, X)
 Saupe2X = _fastT1FM.Saupe2X
-
 
 def rfastT1FM_multi(nM, rMx, rMy, rMz, nsets, npcs, xyz, pcs, tensor, Xaxrh_range):
     return _fastT1FM.rfastT1FM_multi(nM, rMx, rMy, rMz, nsets, npcs, xyz, pcs, tensor, Xaxrh_range)

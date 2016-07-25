@@ -9,8 +9,8 @@ Prepare all the relavant files for stage1 & 2
 
 """
 import sys, os
-#sys.path.append("../../zinr/main")
-sys.path.append('/short/xc4/kbp502/BOSS/zinr')
+sys.path.append("../../zinr/main")
+#sys.path.append('/short/xc4/kbp502/BOSS/zinr')
 
 import utility.io_util    as io
 import utility.ss_util    as ss
@@ -114,7 +114,7 @@ chisqr_cutoff = data['chisqr_cutoff']
 chisqr_cutoff = chisqr_cutoff.split()
 [float(i) for i in chisqr_cutoff]
 
-if len(chisqr_cutoff) != 4) or len(axrh_cutoff) != 4:
+if (len(chisqr_cutoff) != 4) or (len(axrh_cutoff) != 4):
     print "The number of specified cutoffs should be exactly 4"
 
 
@@ -143,8 +143,8 @@ io.dumpPickle("pcs_route.pickle", map_route)
 database_cutoff = data['database_cutoff']
 
 data_dict = {'ss_seq': ss_seq, 'pcs_data': pcsdata, 'aa_seq': aa_seq, 'natives': native_pdbs, \
-             'clash_distance':clash_distance, 'rmsd': smotif_rmsd_cutoff,'database_cutoff':database_cutoff\
-             'axrh_cutoff' = axrh_cutoff, 'chisqr_cutoff' = chisqr_cutoff}
+             'clash_distance':clash_distance, 'rmsd': smotif_rmsd_cutoff,'database_cutoff':database_cutoff, \
+             'axrh_cutoff': axrh_cutoff, 'chisqr_cutoff' : chisqr_cutoff}
 
 
 io.dumpPickle("exp_data.pickle", data_dict)

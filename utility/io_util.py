@@ -16,7 +16,7 @@ def readInputDataFiles(filename):
     for line in lines:
         if line[0] != '#' and line != '\n':
             data_type, data_file = line.split('=')
-            # print data_type.strip(), data_file.strip()
+            #print data_type.strip(), data_file.strip()
             data_dict[data_type.strip()] = data_file.strip()
     if len(data_dict.keys()) == 1:
         return data_dict
