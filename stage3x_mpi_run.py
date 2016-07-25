@@ -5,7 +5,7 @@ Project_Name: main, File_name: stage_1_mpi_run.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 13/04/15 , Time:10:05 AM
 
-Perform stage 2 in parallel
+Perform stage 3x in parallel
 """
 
 import time
@@ -31,7 +31,7 @@ if rank == 0:
     tasks, sse_index = util.getRunSeq(num_hits=20, stage=3)
 
     if sse_index == 999:
-        # kill all slaves if there is there is EOL
+        # kill all slaves if there is an EOL
         # only makes sense for self submitting jobs
         for i in range(0, size - 1):
             data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)

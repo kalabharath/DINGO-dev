@@ -94,6 +94,14 @@ def SmotifSearch(index_array):
     sse_ordered = orderSSE(psmotif, current_ss, direction)
     dump_log = []
     no_clashes = False
+
+    # ************************************************************************************************
+    # Main
+    # The 'for' loop below iterates over all of the Smotifs and applies various filters
+    # This is the place to add new filters as you desire. For starters, look at Sequence filter.
+    # ************************************************************************************************
+
+
     for i in range(0, len(csmotif_data)):
 
         # ************************************************
@@ -194,6 +202,7 @@ def SmotifSearch(index_array):
 
     # prevent dumping empty arrays with no data
     if len(dump_log) > 0:
+        print "num of hits", len(dump_log),
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
 
     return True

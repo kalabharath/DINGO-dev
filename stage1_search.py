@@ -10,6 +10,8 @@ stage 1 in parallel
 
 import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
+import filters.rdc.rdcfilter as Rfilter
+
 import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
 import utility.smotif_util as sm
@@ -49,6 +51,12 @@ def SmotifSearch(index_array):
 
     dump_log = []
     contact_fmeasure = []
+
+    # ************************************************************************************************
+    # Main
+    # The 'for' loop below iterates over all of the Smotifs and applies various filters
+    # This is the place to add new filters as you desire. For starters, look at Sequence filter.
+    # ************************************************************************************************
 
     for i in range(0, len(smotif_data)):
         # loop over for all of the entries in the smotif_db file
@@ -115,9 +123,19 @@ def SmotifSearch(index_array):
         # scoring based on normalised chisqr
         # ************************************************
 
-        if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
+        if 'pcs_data' in exp_data_types:
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
+
+        # ************************************************
+        # Residual dipolar coupling filter
+        # uses experimental RDC data to filter Smotifs
+        # scoring based on normalised chisqr
+        # ************************************************
+
+        if 'rdc_data' in exp_data_types:
+            rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['RDC_filter', rdc_tensor_fits])
 
         # Dump the data to the disk
         if pcs_tensor_fits or contact_fmeasure:

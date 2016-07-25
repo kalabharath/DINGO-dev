@@ -93,6 +93,12 @@ def SmotifSearch(index_array):
     no_clashes = False
     stime = time.time()
 
+    # ************************************************************************************************
+    # Main
+    # The 'for' loop below iterates over all of the Smotifs and applies various filters
+    # This is the place to add new filters as you desire. For starters, look at Sequence filter.
+    # ************************************************************************************************
+
     for i in range(0, len(csmotif_data)):
         # ************************************************
         # Applying different filters for the Smotif assembly
@@ -194,5 +200,6 @@ def SmotifSearch(index_array):
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:
+        print "num of hits", len(dump_log)
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
     return True
