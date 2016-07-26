@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Project_Name: main, File_name: stage2_search.py
+Project_Name: main, File_name: stage3x_search.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 7/05/15 , Time:10:05 PM
 
@@ -120,7 +120,8 @@ def SmotifSearch(index_array):
 
         rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
 
-        if rmsd <= exp_data['rmsd']:
+        #if rmsd <= exp_data['rmsd']:
+        if rmsd <= exp_data['rmsd_cutoff'][2]:
 
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
@@ -130,7 +131,8 @@ def SmotifSearch(index_array):
             else:
                 no_clashes = False
 
-        if rmsd <= exp_data['rmsd'] and no_clashes:
+        #if rmsd <= exp_data['rmsd'] and no_clashes:
+        if rmsd <= exp_data['rmsd_cutoff'][2] and no_clashes:
             # Prepare temp log array to save data at the end
             tlog = []
             pcs_tensor_fits = []

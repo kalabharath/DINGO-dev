@@ -114,6 +114,12 @@ chisqr_cutoff = data['chisqr_cutoff']
 chisqr_cutoff = chisqr_cutoff.split()
 [float(i) for i in chisqr_cutoff]
 
+rmsd_cutoff = data['rmsd_cutoff']
+rmsd_cutoff = rmsd_cutoff.split()
+rmsd_cutoff = [float(i) for i in rmsd_cutoff]
+
+print rmsd_cutoff
+
 if (len(chisqr_cutoff) != 4) or (len(axrh_cutoff) != 4):
     print "The number of specified cutoffs should be exactly 4"
 
@@ -144,7 +150,7 @@ database_cutoff = data['database_cutoff']
 
 data_dict = {'ss_seq': ss_seq, 'pcs_data': pcsdata, 'aa_seq': aa_seq, 'natives': native_pdbs, \
              'clash_distance':clash_distance, 'rmsd': smotif_rmsd_cutoff,'database_cutoff':database_cutoff, \
-             'axrh_cutoff': axrh_cutoff, 'chisqr_cutoff' : chisqr_cutoff}
+             'axrh_cutoff': axrh_cutoff, 'chisqr_cutoff' : chisqr_cutoff, 'rmsd_cutoff': rmsd_cutoff}
 
 
 io.dumpPickle("exp_data.pickle", data_dict)

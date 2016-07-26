@@ -6,7 +6,10 @@ native_pdbs = 1ORM 1Q9F 1Q9G 1QJ8 1QJ9 2M06 2M07
 
 
 #RMSD cutoff for smotif SSE superposition
+#specify abs(cutoff) for each of the four stages
+# four differnt stages are stage1 (First smotif), stage2(second smotif), stage3(<75% of the data), stage4(>75% data)
 rmsd = 3.0
+rmsd_cutoff = 3.0 3.0 3.0 3.0
 
 #clash cutoff dist
 # Least distance between neighbouring SSEs

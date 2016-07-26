@@ -27,10 +27,14 @@ def get_dist(r1, r2):
     return math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))
 
 def loopConstraint(coo_arrays, sseorder, direction):
-
-    #  ['helix', 28, 3, 1, 78, 105] right
-    # [['helix', 9, 4, 6, 5, 13], ['helix', 16, 4, 3, 20, 35], ['helix', 17, 3, 6, 39, 55], ['helix', 12, 5, 5, 63, 74], ['helix', 28, 4, 0, 79, 106]] right
-
+    """
+    Determine whether the assembled Smotif is too far away
+    3.4 A * number of loop residues
+    :param coo_arrays:
+    :param sseorder:
+    :param direction:
+    :return:
+    """
 
     if direction == 'right':
         csse = sseorder[-1]
@@ -40,7 +44,6 @@ def loopConstraint(coo_arrays, sseorder, direction):
         p_coo = getCAcoo(coo_arrays[-2])
         c_CA = [c_coo[0][0],c_coo[1][0],c_coo[2][0]]
         p_CA = [p_coo[0][-1],p_coo[1][-1],p_coo[2][-1]]
-
 
     else:
         csse = sseorder[0]
@@ -52,16 +55,12 @@ def loopConstraint(coo_arrays, sseorder, direction):
         p_CA = [p_coo[0][0],p_coo[1][0],p_coo[2][0]]
 
 
-    #print c_CA, p_CA
-
     dist = get_dist(c_CA, p_CA)
 
     max_dist = loop_length * 3.4 #3.8 Angstrom is the length between CA-CA in a linear polypeptide chain
     # however on a peptide triangular like arrangement the avg distance is 3.4 A
 
     if dist > max_dist:
-        #print "Current distance: ", dist, max_dist
         return False
     else:
         return True
-
