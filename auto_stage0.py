@@ -87,8 +87,8 @@ print ss_seq
 
 #ss_seq = io.readPsiPred(psipred_file)
 
-#ss_def, ss_combi = ss.genSSCombinations(ss_seq)
-ss_def, ss_combi = ss.genSSCombinations2(ss_seq)
+ss_def, ss_combi = ss.genSSCombinations(ss_seq)
+#ss_def, ss_combi = ss.genSSCombinations2(ss_seq)
 
 print ss_combi
 io.dumpPickle("ss_profiles.pickle", ss_combi)
@@ -108,11 +108,11 @@ print native_pdbs
 
 axrh_cutoff = data['axrh_cutoff']
 axrh_cutoff = axrh_cutoff.split()
-[float(i) for i in axrh_cutoff]
+axrh_cutoff = [float(i) for i in axrh_cutoff]
 
 chisqr_cutoff = data['chisqr_cutoff']
 chisqr_cutoff = chisqr_cutoff.split()
-[float(i) for i in chisqr_cutoff]
+chisqr_cutoff = [float(i) for i in chisqr_cutoff]
 
 rmsd_cutoff = data['rmsd_cutoff']
 rmsd_cutoff = rmsd_cutoff.split()

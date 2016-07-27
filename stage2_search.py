@@ -135,6 +135,7 @@ def SmotifSearch(index_array):
 
         #if rmsd <= exp_data['rmsd'] and no_clashes:
         if rmsd <= exp_data['rmsd_cutoff'][1] and no_clashes:
+
             # Prepare temp log array to save data at the end
             tlog = []
             pcs_tensor_fits = []

@@ -123,6 +123,7 @@ def SmotifSearch(index_array):
 
         #if rmsd <= exp_data['rmsd']:
         if rmsd <= exp_data['rmsd_cutoff'][3]:
+
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
             if loop_constraint:
@@ -133,6 +134,7 @@ def SmotifSearch(index_array):
 
         #if rmsd <= exp_data['rmsd'] and no_clashes:
         if rmsd <= exp_data['rmsd_cutoff'][3] and no_clashes:
+            print 'rmsd_cutoff',exp_data['rmsd_cutoff'][3]
             # Prepare temp log array to save data at the end
             tlog = []
             pcs_tensor_fits = []
