@@ -124,7 +124,6 @@ def SmotifSearch(index_array):
         rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
 
         if rmsd <= exp_data['rmsd_cutoff'][1]:
-        #if rmsd <= exp_data['rmsd']:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
             if loop_constraint:
@@ -133,9 +132,8 @@ def SmotifSearch(index_array):
             else:
                 no_clashes = False
 
-        #if rmsd <= exp_data['rmsd'] and no_clashes:
-        if rmsd <= exp_data['rmsd_cutoff'][1] and no_clashes:
 
+        if rmsd <= exp_data['rmsd_cutoff'][1] and no_clashes:
             # Prepare temp log array to save data at the end
             tlog = []
             pcs_tensor_fits = []

@@ -7,8 +7,6 @@ Date: 7/05/15 , Time:10:05 PM
 
 Perform stage 3x in parallel
 """
-import time
-
 import filters.constraints.looplengthConstraint as llc
 import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
@@ -21,25 +19,18 @@ import utility.stage2_util as uts2
 # Stage3 and stage4 should be merged, there is no difference except for one of the args in pcsfilter is stage4
 
 def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
-    # print "previous_smotif: ", previous_smotif
 
     searched_smotifs = []
     for entry in previous_smotif:
         if 'smotif_def' == entry[0]:
             searched_smotifs = entry[-1]
 
-    # ['smotif_def', [['helix', 6, 7, 5, 145, 150], ['helix', 23, 5, 1, 156, 178], ['strand', 5, 7, 8, 133, 137]]]
-
     if direction == 'left':
         previous_ss = searched_smotifs[0]
     else:
         previous_ss = searched_smotifs[-1]
 
-    # print "previous_ss: ", previous_ss
-    # print "current_ss : ", current_ss
-
-    if direction == 'left':  # double check this implementation
-
+    if direction == 'left':
         smotif_def = sm.getSmotif(current_ss, previous_ss)
     else:
         smotif_def = sm.getSmotif(previous_ss, current_ss)
@@ -89,10 +80,8 @@ def SmotifSearch(index_array):
         return True
 
     sse_ordered = orderSSE(preSSE, current_ss, direction)
-    #print sse_ordered
     dump_log = []
     no_clashes = False
-    stime = time.time()
 
     # ************************************************************************************************
     # Main
@@ -121,9 +110,7 @@ def SmotifSearch(index_array):
 
         rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
 
-        #if rmsd <= exp_data['rmsd']:
         if rmsd <= exp_data['rmsd_cutoff'][3]:
-
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
             if loop_constraint:
@@ -132,9 +119,7 @@ def SmotifSearch(index_array):
             else:
                 no_clashes = False
 
-        #if rmsd <= exp_data['rmsd'] and no_clashes:
         if rmsd <= exp_data['rmsd_cutoff'][3] and no_clashes:
-            print 'rmsd_cutoff',exp_data['rmsd_cutoff'][3]
             # Prepare temp log array to save data at the end
             tlog = []
             pcs_tensor_fits = []
@@ -145,7 +130,6 @@ def SmotifSearch(index_array):
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
             cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
-            #print cathcodes
             tlog.append(['cathcodes', cathcodes])
 
             # ************************************************
@@ -156,9 +140,7 @@ def SmotifSearch(index_array):
 
             csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],
                                                                                   direction, exp_data)
-
             concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
-
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
             # ************************************************
@@ -183,24 +165,15 @@ def SmotifSearch(index_array):
                                                                       exp_data['plm_scores'],
                                                                       contacts_cutoff=9.0)
                 if contact_fmeasure and plm_score:
-
                     if contact_fmeasure >= 0.6:
-
                         contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
-                        # print csmotif_data[i][
-                        #    0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
-
                     elif contact_fmeasure > 0.5 and contact_fmeasure < 0.6:
-
-                        # continue
                         contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
                     else:
                         contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
-                        # continue
                     tlog.append(['Evofilter', contact_score])
 
             if pcs_tensor_fits or contact_fmeasure:
-                #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:

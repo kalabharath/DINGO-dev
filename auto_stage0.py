@@ -70,9 +70,6 @@ def matchSeq2SS(aa_seq, ssfile):
         return t_ss
 
 
-
-
-
 data = io.readInputDataFiles('input_data.txt')
 
 print data
@@ -129,9 +126,6 @@ clash_distance = float(data['clash_distance'])
 
 print 'clash_distance: ', clash_distance
 
-smotif_rmsd_cutoff = float(data['rmsd'])
-
-print  'smotif_rmsd_cutoff', smotif_rmsd_cutoff
 
 # read in PCS data from .npc file from Rosetta's broker file format
 pcsdata = io.getPcsTagInfo(ss_seq, data['pcs_broker'])
@@ -149,7 +143,7 @@ io.dumpPickle("pcs_route.pickle", map_route)
 database_cutoff = data['database_cutoff']
 
 data_dict = {'ss_seq': ss_seq, 'pcs_data': pcsdata, 'aa_seq': aa_seq, 'natives': native_pdbs, \
-             'clash_distance':clash_distance, 'rmsd': smotif_rmsd_cutoff,'database_cutoff':database_cutoff, \
+             'clash_distance':clash_distance, 'database_cutoff':database_cutoff, \
              'axrh_cutoff': axrh_cutoff, 'chisqr_cutoff' : chisqr_cutoff, 'rmsd_cutoff': rmsd_cutoff}
 
 
