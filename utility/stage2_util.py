@@ -253,11 +253,11 @@ def getRunSeq(num_hits, stage):
     # delete two stages down pickled files
     check_pickle = str(next_index - 2) + str("_*_*.pickle")
     file_list = glob.glob(check_pickle)
-    """
+
     if len(file_list) > 10:
         remove = "rm "+check_pickle
         os.system(remove)
-    """
+    
     if top_hits:
         run_seq = []
         for i in range(len(top_hits)):
