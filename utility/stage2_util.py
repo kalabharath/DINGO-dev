@@ -115,12 +115,13 @@ def getNchiSum(pcs_filter, stage):
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination4t(score_list)
-
+    """
     if len(tensors) ==3 and stage == 4:
         score_list = []
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = score_list[0]+score_list[1]+score_list[2]
+    """
     return snchi
 
 
@@ -257,7 +258,7 @@ def getRunSeq(num_hits, stage):
     if len(file_list) > 10:
         remove = "rm "+check_pickle
         os.system(remove)
-    
+
     if top_hits:
         run_seq = []
         for i in range(len(top_hits)):
