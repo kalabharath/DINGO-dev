@@ -184,7 +184,7 @@ for i in range(0,len(map_route)):
             percent = (res_sofar/float(total_ss_res))*100
             print percent
             if i == 1:
-                num_of_models = (len(smotif)-i)*125
+                num_of_models = (len(map_route)-i)*125
                 print num_of_models
                 outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
@@ -192,11 +192,12 @@ for i in range(0,len(map_route)):
                 continue
 
             if percent > 25.0 and percent < 50.0:
-                num_of_models = (len(map_route)-i)*125
-                print "num_of_models", num_of_models
-                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
-                print outline
-                fout.write(outline)
+                if i >=2:
+                    num_of_models = (len(map_route)-i)*125
+                    print "num_of_models", num_of_models
+                    outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
+                    print outline
+                    fout.write(outline)
             if percent > 50.0 and percent < 75.0:
                 num_of_models = (len(map_route)-i)*125
                 print "num_of_models", num_of_models
@@ -222,11 +223,12 @@ for i in range(0,len(map_route)):
                 fout.write(outline)
                 continue
             if percent > 25.0 and percent <= 50.0:
-                num_of_models = (len(map_route)-i)*125
-                print "num_of_models", num_of_models
-                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
-                print outline
-                fout.write(outline)
+                if i >=2:
+                    num_of_models = (len(map_route)-i)*125
+                    print "num_of_models", num_of_models
+                    outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
+                    print outline
+                    fout.write(outline)
             if percent > 50.0 and percent <= 75.0:
                 num_of_models = (len(map_route)-i)*125
                 print "num_of_models", num_of_models
