@@ -8,6 +8,8 @@ Date: 13/04/15 , Time:10:05 AM
 Perform stage 1 in perfect parallel
 """
 
+import sys
+sys.path.append('../../main/')
 import time
 from   mpi4py import  MPI
 
@@ -30,6 +32,8 @@ if rank == 0:
 
     tasks = util.getRunSeq()
     stime = time.time()
+
+    #print tasks, len(tasks) # this will be the new tasks
     task_index =0 # control the number of processes with this index number
     finished_task = 0
     num_workers = size -1 # 1 processor is reserved for master.
@@ -76,18 +80,14 @@ else:
         tag = status.Get_tag()
 
         if tag == tags.START:
-            # ****************************************************
-            # On start signal, this is where you actually do something
-            # ****************************************************
+            #TODO this is where you actually do something
             result = S1search.SmotifSearch(task)
-            # ****************************************************
-            # send result back to the main process, send Done signal
-            # ****************************************************
+
             comm.send( result, dest=0, tag = tags.DONE)
 
         elif tag ==tags.EXIT:
-            # On exit signal from the master process, break the infinite loop
+            # break the infinite loop because there is no more work that can be assigned
             break
 
-    # Confirm exit signal from the master process
+    # Tell the master respectfully that you are exiting
     comm.send(None, dest = 0, tag = tags.EXIT)

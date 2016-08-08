@@ -9,7 +9,7 @@ Prepare all the relavant files for stage1 & 2
 
 """
 import sys, os
-sys.path.append("../../zinr/main")
+sys.path.append("../../main")
 #sys.path.append('/short/xc4/kbp502/BOSS/zinr')
 
 import utility.io_util    as io
@@ -70,9 +70,12 @@ def matchSeq2SS(aa_seq, ssfile):
         return t_ss
 
 
+
+
+
 data = io.readInputDataFiles('input_data.txt')
 
-print data
+
 
 datatypes = data.keys()
 handle, aa_seq = io.readFasta(data['fasta_file'])
@@ -127,16 +130,15 @@ clash_distance = float(data['clash_distance'])
 print 'clash_distance: ', clash_distance
 
 
+
+
+
 # read in PCS data from .npc file from Rosetta's broker file format
 pcsdata = io.getPcsTagInfo(ss_seq, data['pcs_broker'])
 
 map_route = PCSmap.getRoute(ss_seq, pcsdata)
 
 print map_route, '1'
-
-#map_route = [[1, 2, 'start'],[0, 1, 'left'], [2, 3, 'right'], [3, 4, 'right'] ]
-
-print map_route, '2'
 
 io.dumpPickle("pcs_route.pickle", map_route)
 #io.dumpPickle("contact_route.pickle", rank_ss)
@@ -182,21 +184,29 @@ for i in range(0,len(map_route)):
             percent = (res_sofar/float(total_ss_res))*100
             print percent
             if i == 1:
-                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                num_of_models = (len(smotif)-i)*125
+                print num_of_models
+                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
                 continue
 
             if percent > 25.0 and percent < 50.0:
-                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                num_of_models = (len(map_route)-i)*125
+                print "num_of_models", num_of_models
+                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
             if percent > 50.0 and percent < 75.0:
-                outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                num_of_models = (len(map_route)-i)*125
+                print "num_of_models", num_of_models
+                outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
             if percent > 75.0 :
-                outline = 'Executable="mpirun -np 128 python stage4x_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                num_of_models = (len(map_route)-i)*125
+                print "num_of_models", num_of_models
+                outline = 'Executable="mpirun -np 128 python stage4x_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
         else:
@@ -205,20 +215,28 @@ for i in range(0,len(map_route)):
             percent = (res_sofar/float(total_ss_res))*100
             print percent
             if i == 1:
-                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                num_of_models = (len(map_route)-i)*125
+                print "num_of_models", num_of_models
+                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
                 continue
             if percent > 25.0 and percent <= 50.0:
-                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                num_of_models = (len(map_route)-i)*125
+                print "num_of_models", num_of_models
+                outline = 'Executable="mpirun -np 128 python stage2_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
             if percent > 50.0 and percent <= 75.0:
-                outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                num_of_models = (len(map_route)-i)*125
+                print "num_of_models", num_of_models
+                outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
             if percent > 75.0 :
-                outline = 'Executable="mpirun -np 128 python stage4x_mpi_run.py"\nrun="$Executable"\necho $run\n$run\n'
+                num_of_models = (len(map_route)-i)*125
+                print "num_of_models", num_of_models
+                outline = 'Executable="mpirun -np 128 python stage4x_mpi_run.py '+str(num_of_models)+'"\nrun="$Executable"\necho $run\n$run\n'
                 print outline
                 fout.write(outline)
 fout.close()

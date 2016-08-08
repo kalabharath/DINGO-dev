@@ -5,9 +5,10 @@ Project_Name: main, File_name: stage_1_mpi_run.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 13/04/15 , Time:10:05 AM
 
-Perform stage 3x in parallel
+Perform stage 3 in parallel
 """
-
+import sys
+sys.path.append('../../main/')
 import time
 from   mpi4py import MPI
 
@@ -28,9 +29,21 @@ status = MPI.Status()
 ##
 
 if rank == 0:
-    tasks, sse_index = util.getRunSeq(num_hits=20, stage=3)
+    num_hits = int(sys.argv[1])
+    print num_hits
+    try:
+        tasks, sse_index = util.getRunSeq(num_hits, stage=3)
+    except:
+        print "Couldn't extract top hits within the specified cutoffs: Exiting..."
+        for i in range(0, size - 1):
+            data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+            source = status.Get_source()
+            tag = status.Get_tag()
+            if tag == tags.READY:
+                comm.send(None, dest=source, tag=tags.EXIT)
+
     if sse_index == 999:
-        # kill all slaves if there is an EOL
+        # kill all slaves if there is there is EOL
         # only makes sense for self submitting jobs
         for i in range(0, size - 1):
             data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
@@ -40,6 +53,8 @@ if rank == 0:
                 comm.send(None, dest=source, tag=tags.EXIT)
         exit()
 
+    # print tasks, sse_index
+    # tasks = [[0,0]]
     stime = time.time()
 
     # print tasks, len(tasks) # this will be the new tasks
@@ -48,19 +63,20 @@ if rank == 0:
     num_workers = size - 1  # 1 processor is reserved for master.
     closed_workers = 0  # control the workers with no more work that can be assigned
 
-    # Master starting with {} workers
+    # print ("Master starting with {} workers".format(num_workers))
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop
         data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
         source = status.Get_source()
         tag = status.Get_tag()
         if tag == tags.READY:
-            # worker is ready, send something to do
+            # worker is ready, send her something to do
             if task_index < len(tasks):
                 comm.send(tasks[task_index], dest=source, tag=tags.START)
+                # print ("Sending task {} to worker {}".format(task_index, source))
                 task_index += 1  # increment its
             else:
-                # everything is done, send exit signal
+                # everything is done, lets grant freedom to all
                 comm.send(None, dest=source, tag=tags.EXIT)
         elif tag == tags.DONE:
             # take the result from the worker
@@ -69,8 +85,11 @@ if rank == 0:
             elapsed = ctime - stime
             finished_task += 1
             print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed) / (60), 0), "mins"
+            # print ("Got data from  worker {}".format(source))
         elif tag == tags.EXIT:
+            # print ("Worker {} exited".format(source))
             closed_workers += 1
+
     print "All Done, Master exiting"
     util.rename_pickle(sse_index)
     exit()
@@ -78,25 +97,21 @@ if rank == 0:
 # On the worker processes
 else:
     # print ("I am a worker with rank {} on {}".format(rank, name))
-    while True:  # initiate infinite loop
+    while True:  # initiaite infinite loop
         comm.send(None, dest=0, tag=tags.READY)
-        # tell the master process that you are ready and waiting for new task
+        # tell the master that you are ready and waiting for new assignment
         task = comm.recv(source=0, tag=MPI.ANY_SOURCE, status=status)
         tag = status.Get_tag()
 
         if tag == tags.START:
-            # ****************************************************
-            # On start signal, this is where you actually do something
-            # ****************************************************
+            # TODO this is where you actually do something
             result = S3search.SmotifSearch(task)
-            # ****************************************************
-            # send result back to the main process, send Done signal
-            # ****************************************************
+
             comm.send(result, dest=0, tag=tags.DONE)
 
         elif tag == tags.EXIT:
-            # On exit signal from the master process, break the infinite loop
+            # break the infinite loop because there is no more work that can be assigned
             break
 
-    # Confirm exit signal from the master process
+    # Tell the master respectfully that you are exiting
     comm.send(None, dest=0, tag=tags.EXIT)
