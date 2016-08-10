@@ -165,7 +165,7 @@ def SmotifSearch(index_array):
             # scoring based on normalised chisqr
             # ************************************************
 
-            if 'pcs_data' in exp_data_types and seq_identity >= 0.0:
+            if 'pcs_data' in exp_data_types:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage = 3)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 

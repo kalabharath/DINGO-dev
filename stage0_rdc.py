@@ -8,6 +8,7 @@ Date: 08/08/2016
 prepare data to run with BOSS-R
 """
 import multiprocessing
+
 import utility.RDCUtil    as ru
 import utility.io_util    as io
 import utility.ss_util    as ss
@@ -41,6 +42,15 @@ chisqr_cutoff = data['rdc_chisqr_cutoff']
 chisqr_cutoff = chisqr_cutoff.split()
 chisqr_cutoff = [float(i) for i in chisqr_cutoff]
 
+pred_axial = data['predicted_axial']
+pred_axial = pred_axial.split()
+pred_axial = [float(i) for i in pred_axial]
+
+exp_error = data['exp_error']
+exp_error = exp_error.split()
+exp_error = [float(i) for i in exp_error]
+
+
 rmsd_cutoff = data['rmsd_cutoff']
 rmsd_cutoff = rmsd_cutoff.split()
 rmsd_cutoff = [float(i) for i in rmsd_cutoff]
@@ -52,7 +62,6 @@ if (len(chisqr_cutoff) != 4) or (len(axrh_cutoff) != 4):
 clash_distance = float(data['clash_distance'])
 print 'clash_distance: ', clash_distance
 
-
 rdcdata = ru.getRdcData(data['rdc_input_files'], ss_seq)
 map_route = [[9, 10, 'start'], [8, 9, 'left'], [7, 8, 'left'], [6, 7, 'left'], [5, 6, 'left'], [4, 5, 'left'],
              [3, 4, 'left'], [2, 3, 'left'], [1, 2, 'left'], [0, 1, 'left']]
@@ -62,10 +71,10 @@ database_cutoff = data['database_cutoff']
 
 data_dict = {'ss_seq': ss_seq, 'rdc_data': rdcdata, 'aa_seq': aa_seq, 'natives': native_pdbs, \
              'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \
-             'rdc_axrh_cutoff': axrh_cutoff, 'rdc_chisqr_cutoff': chisqr_cutoff, 'rmsd_cutoff': rmsd_cutoff}
+             'rdc_axrh_cutoff': axrh_cutoff, 'rdc_chisqr_cutoff': chisqr_cutoff, 'rmsd_cutoff': rmsd_cutoff,
+             'pred_axial': pred_axial, 'exp_error': exp_error}
 
 io.dumpPickle("exp_data.pickle", data_dict)
-
 
 fout = open("run.sh", 'w')
 fout.write("#!/bin/bash\n")

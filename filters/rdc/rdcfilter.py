@@ -178,24 +178,35 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     :return:
     """
     rdc_vectors = getVectorData(s1_def, s2_def, smotif, exp_data)
-
+    pred_axial = exp_data['pred_axial']
+    exp_error  = exp_data['exp_error']
     total_chisqr = 0
     all_tensors = []
-    for vector_data in rdc_vectors:
+    temp_tensor = []
+
+    for i in range(0, len(rdc_vectors)):
         B0 = 18.8
         TinK = 298.0
         Sorder = 1.0
         scal = rdcScal(Sorder, B0, TinK)
-
-        p0 = [40, 4, 10, 20, 30]
+        p0 = [pred_axial[i], pred_axial[i]*(0.33), 10, 20, 30]
         maxcs = 10000  # maximum number of optimization calls
         try:
-            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, vector_data), full_output=1, maxfev=maxcs)
-            chisq = sum(info["fvec"] * info["fvec"]) / len(vector_data)
+            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output=1, maxfev=maxcs)
+            chisq = sum(info["fvec"] * info["fvec"]) / len(rdc_vectors[i])
             tensor = ConvertUTR.AnglesUTR(soln)
-            all_tensors = all_tensors+tensor
+            if abs(tensor[0]) > pred_axial[i]:
+                chisq = 999.999
+            elif chisq > exp_error[i]:
+                chisq = 999.999
+            else:
+                all_tensors = all_tensors+tensor
         except:
             chisq = 999.999
-        total_chisqr = total_chisqr + chisq
 
-    return total_chisqr, all_tensors
+        if chisq < 999.999:
+            temp_tensor.append([chisq, tensor])
+    if len(temp_tensor) == len(rdc_vectors):
+        return temp_tensor
+    else:
+        return []
