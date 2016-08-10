@@ -50,14 +50,12 @@ def SmotifSearch(index_array):
         return True
 
     dump_log = []
-    contact_fmeasure = []
-
     # ************************************************************************************************
     # Main
     # The 'for' loop below iterates over all of the Smotifs and applies various filters
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
-
+    contol_chisqr = 999.999
     for i in range(0, len(smotif_data)):
         # loop over for all of the entries in the smotif_db file
 
@@ -70,6 +68,7 @@ def SmotifSearch(index_array):
             tpdbid = smotif_data[i][0][0]
             pdbid = tpdbid[0:4]
             if pdbid in natives:
+                #if pdbid not in ['2z2i']:
                 # Stop further execution, but, iterate.
                 continue
 
@@ -78,8 +77,7 @@ def SmotifSearch(index_array):
         # Prepare temp log array to save data at the end
         # ************************************************
 
-        tlog = []
-        pcs_tensor_fits = []
+        tlog, contact_fmeasure, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
         tlog.append(['cathcodes', [smotif_data[i][0]]])
@@ -125,7 +123,8 @@ def SmotifSearch(index_array):
 
         if 'pcs_data' in exp_data_types:
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
-            tlog.append(['PCS_filter', pcs_tensor_fits])
+            if len(pcs_tensor_fits) > 0:
+                tlog.append(['PCS_filter', pcs_tensor_fits])
 
         # ************************************************
         # Residual dipolar coupling filter
@@ -134,11 +133,18 @@ def SmotifSearch(index_array):
         # ************************************************
 
         if 'rdc_data' in exp_data_types:
-            rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
-            tlog.append(['RDC_filter', rdc_tensor_fits])
+            rdc_tensor_fits, tensor = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+
+            if rdc_tensor_fits:
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+                if rdc_tensor_fits < contol_chisqr:
+                    contol_chisqr = rdc_tensor_fits
+                    print rdc_tensor_fits, tpdbid, tensor
+                if tpdbid == '2z2i':
+                    print rdc_tensor_fits, tpdbid, tensor
 
         # Dump the data to the disk
-        if pcs_tensor_fits or contact_fmeasure:
+        if pcs_tensor_fits or contact_fmeasure or rdc_tensor_fits:
             # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             dump_log.append(tlog)
 

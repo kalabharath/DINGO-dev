@@ -1,5 +1,6 @@
-import math
+import math, ConvertUTR
 import numpy as np
+from scipy.optimize import leastsq
 
 """
 Module to provide subroutines to parse and fit RDC data
@@ -78,9 +79,7 @@ def getVector(c1, c2):
     """
     return the vector for given two coordinates
     """
-
-    vector = [c1[0][0] - c2[0][0], c1[0][1] - c2[0][1], c1[0][2] - c2[0][2]]
-    return vector
+    return [c1[0] - c2[0], c1[1] - c2[1], c1[2] - c2[2]]
 
 
 def RDC_ZYZ(p0, scal, vec_data):
@@ -115,6 +114,59 @@ def RDC_ZYZ(p0, scal, vec_data):
         err[i] = rdc_measured - rdc
     return err
 
+def getVectorData(s1_def, s2_def, smotif, exp_data):
+    """
+
+    :param s1_def:
+    :param s2_def:
+    :param smotif:
+    :param exp_data:
+    :return:
+    """
+
+    rdc_vector = []
+    ss1_list = range(s1_def[4], s1_def[5] + 1)
+    ss2_list = range(s2_def[4], s2_def[5] + 1)
+    sse_list = ss1_list + ss2_list
+
+    smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
+    smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
+    smotif_list = smotif_ss1+smotif_ss2
+    smotif_coors = smotif[1]+smotif[2]
+
+    rdc_data = exp_data['rdc_data']
+
+
+    for data in rdc_data:
+        t_rdc_vector=[]
+        for res in sse_list:
+            res_no = smotif_list[sse_list.index(res)]
+            try:
+                for entry in data[res_no]:
+                    #[58, 'H', 58, 'N', 0.725]
+                    for coor in smotif_coors:
+                        # [31, 'PHE', 'H', 9.467, -2.327, 10.206]
+                        if coor[0] == res_no and coor[2] == 'N':
+                            atco1 = coor[3:]
+                        if coor[0] == res_no and coor[2] == 'H':
+                            atco2 = coor[3:]
+                    #print res_no, atco1, atco2
+                    t_rdc_vector.append([getVector(atco2, atco1), getGMR('H', 'N'), entry[4]])
+            except:
+                pass
+                """
+                res1 = sse_list[smotif_list.index(entry[0])]
+                res2 = sse_list[smotif_list.index(entry[2])]
+                for coor in smotif_coors:
+                    #[31, 'PHE', 'H', 9.467, -2.327, 10.206]
+                    if coor[0] == res1 and coor[2] == entry[1]:
+                        atco1 = coor[3:]
+                    if coor[0] == res2 and coor[2] == entry[1]:
+                        atco2 = coor[3:]
+                print res1, res2, atco1, atco2
+                """
+        rdc_vector.append(t_rdc_vector)
+    return rdc_vector
 
 def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     """
@@ -125,11 +177,25 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     :param threshold:
     :return:
     """
+    rdc_vectors = getVectorData(s1_def, s2_def, smotif, exp_data)
 
-    ss1_list = range(s1_def[4], s1_def[5] + 1)
-    ss2_list = range(s2_def[4], s2_def[5] + 1)
+    total_chisqr = 0
+    all_tensors = []
+    for vector_data in rdc_vectors:
+        B0 = 18.8
+        TinK = 298.0
+        Sorder = 1.0
+        scal = rdcScal(Sorder, B0, TinK)
 
+        p0 = [40, 4, 10, 20, 30]
+        maxcs = 10000  # maximum number of optimization calls
+        try:
+            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, vector_data), full_output=1, maxfev=maxcs)
+            chisq = sum(info["fvec"] * info["fvec"]) / len(vector_data)
+            tensor = ConvertUTR.AnglesUTR(soln)
+            all_tensors = all_tensors+tensor
+        except:
+            chisq = 999.999
+        total_chisqr = total_chisqr + chisq
 
-
-
-    return True
+    return total_chisqr, all_tensors

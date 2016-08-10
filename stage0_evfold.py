@@ -8,9 +8,10 @@ Date: 14/06/2016
 prepare data to run with BOSS-Evo
 
 """
+
+
 import multiprocessing
 import sys
-
 sys.path.append('/home/kalabharath/projects/boss-evo/zinr/')
 import utility.evfold as evfold
 import utility.io_util    as io
