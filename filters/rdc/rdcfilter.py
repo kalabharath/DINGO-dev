@@ -197,10 +197,8 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
             tensor = ConvertUTR.AnglesUTR(soln)
             if abs(tensor[0]) > pred_axial[i]:
                 chisq = 999.999
-            elif chisq > exp_error[i]:
+            if chisq > exp_error[i]:
                 chisq = 999.999
-            else:
-                all_tensors = all_tensors+tensor
         except:
             chisq = 999.999
 
@@ -210,3 +208,26 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
         return temp_tensor
     else:
         return []
+
+def getVectorData2(transformed_coos, sse_ordered, rdc_data):
+    rdc_vector = []
+    for data in rdc_data:
+        for i in range(0, len(sse_ordered)):
+            #print i, sse_ordered[i], transformed_coos[i]
+            for j in range(sse_ordered[i][4], sse_ordered[i][5]+1):
+                try:
+                    print j, data[j]
+                except:
+                    pass
+
+
+
+    return True
+def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
+    import filters.pcs.pcsfilter as pcs
+    #print transformed_coos
+    #nh_dict = pcs.coorNHdict(transformed_coos, sse_ordered)
+    vec_data = getVectorData2(transformed_coos, sse_ordered, exp_data['rdc_data'])
+    die
+
+    return False

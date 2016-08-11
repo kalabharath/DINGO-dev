@@ -11,6 +11,7 @@ Perform stage 2 in parallel
 import filters.constraints.looplengthConstraint as llc
 import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
+import filters.rdc.rdcfilter as Rfilter
 import filters.rmsd.qcp as qcp
 import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
@@ -77,8 +78,8 @@ def SmotifSearch(index_array):
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
-    psmotif = uts2.getPreviousSmotif(index_array[0])  # TODO refactor these to be more general in reading the route
-    current_ss, direction = uts2.getSS2(index_array[1])  # TODO refactor these to be more general in reading the route
+    psmotif = uts2.getPreviousSmotif(index_array[0])
+    current_ss, direction = uts2.getSS2(index_array[1])
 
     csmotif_data = getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'])
 
@@ -135,9 +136,7 @@ def SmotifSearch(index_array):
 
         if rmsd <= exp_data['rmsd_cutoff'][1] and no_clashes:
             # Prepare temp log array to save data at the end
-            tlog = []
-            pcs_tensor_fits = []
-            contact_fmeasure = []
+            tlog, contact_fmeasure, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
 
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
@@ -169,6 +168,18 @@ def SmotifSearch(index_array):
             if 'pcs_data' in exp_data_types:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
+
+
+            # ************************************************
+            # Residual dipolar coupling filter
+            # uses experimental RDC data to filter Smotifs
+            # scoring based on normalised chisqr
+            # ************************************************
+
+            if 'rdc_data' in exp_data_types:
+                rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
+                tlog.append(['PCS_filter', pcs_tensor_fits])
+
 
             # ************************************************
             # Contacts filter

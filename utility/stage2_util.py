@@ -124,7 +124,24 @@ def getNchiSum(pcs_filter, stage):
     """
     return snchi
 
+def rdcSumChi(rdc_data, stage):
+    snchi = 999.999
+    tensors = rdc_data[1]
+    if len(tensors) == 1 and stage == 2:
+        return tensors[0]
 
+    if len(tensors) == 2 and stage == 2:
+        snchi = 0
+        for tensor in tensors:
+            nchi = tensor[0]
+            snchi += nchi
+    if len(tensors) == 2:
+        snchi = 0
+        for tensor in tensors:
+            nchi = tensor[0]
+            snchi += nchi
+
+    return snchi
 def makeTopPickle(previous_smotif_index, num_hits, stage):
     """
     Concatenate data from all of the threads, organize, remove redundancies, rank
@@ -148,6 +165,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     new_dict = collections.defaultdict(list)
     pcs_filter = False
     contact_filter = False
+    rdc_filter = False
 
     for hit in hits:
         # thread_data contains data from each search and filter thread.
@@ -158,10 +176,16 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 Nchi = getNchiSum(pcs_data, stage)
                 # new_dict.setdefault(Nchi, []).append(entry)
                 new_dict[Nchi].append(hit)
+
             if data_filter[0] == 'Evofilter':
                 contact_filter = True
                 new_dict[data_filter[1]].append(hit)
 
+            if data_filter[0] == 'RDC_filter':
+                rdc_filter = True
+                rdc_data = data_filter
+                Nchi = rdcSumChi(rdc_data, stage)
+                new_dict[Nchi].append(hit)
     # ************************************************
     # Exclude the redundant entries and rank top hits
     # ************************************************
@@ -193,6 +217,9 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                     Nchi = getNchiSum(pcs_data, stage)
                 if ent[0] == 'Evofilter':
                     Nchi = ent[1]
+                if ent[0] == 'RDC_filter':
+                    rdc_data = ent
+                    Nchi = rdcSumChi(rdc_data, stage)
             if smotif_seq not in seqs:
                 seqs.append(smotif_seq)
                 # non_redundant.setdefault(Nchi, []).append(entry)
@@ -235,11 +262,16 @@ def getRunSeq(num_hits, stage):
     """
 
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    map_route = io.readPickle("pcs_route.pickle")
-    #map_route = io.readPickle("contacts_route.pickle")
+    if os.path.isfile("contacts_route.pickle"):
+        map_route = io.readPickle("contacts_route.pickle")
+    elif os.path.isfile("pcs_route.pickle"):
+        map_route = io.readPickle("pcs_route.pickle")
+    elif os.path.isfile("rdc_route.pickle"):
+        map_route = io.readPickle("rdc_route.pickle")
 
     try:
         next_index, next_smotif = getNextSmotif(map_route)
+        print next_index, next_smotif
     except TypeError:
         return [999], 999
 
@@ -268,8 +300,14 @@ def getRunSeq(num_hits, stage):
 
 
 def getPreviousSmotif(index):
-    map_route = io.readPickle("pcs_route.pickle")
-    #map_route = io.readPickle("contacts_route.pickle")
+
+    if os.path.isfile("contacts_route.pickle"):
+        map_route = io.readPickle("contacts_route.pickle")
+    elif os.path.isfile("pcs_route.pickle"):
+        map_route = io.readPickle("pcs_route.pickle")
+    elif os.path.isfile("rdc_route.pickle"):
+        map_route = io.readPickle("rdc_route.pickle")
+
     next_index, next_smotif = getNextSmotif(map_route)
     top_hits = io.readPickle(str(next_index - 1) + "_tophits.pickle")  # Read in previous index hits
     # print len(top_hits)
@@ -277,10 +315,17 @@ def getPreviousSmotif(index):
 
 
 def getSS2(index):
+
+
+    if os.path.isfile("contacts_route.pickle"):
+        map_route = io.readPickle("contacts_route.pickle")
+    elif os.path.isfile("pcs_route.pickle"):
+        map_route = io.readPickle("pcs_route.pickle")
+    elif os.path.isfile("rdc_route.pickle"):
+        map_route = io.readPickle("rdc_route.pickle")
+
     ss_profiles = io.readPickle("ss_profiles.pickle")
-    # map_route = io.readPickle("contact_route.pickle")
-    map_route = io.readPickle("pcs_route.pickle")
-    #map_route = io.readPickle("contacts_route.pickle")
+    
     next_index, next_smotif = getNextSmotif(map_route)
     direction = next_smotif[-1]
 
