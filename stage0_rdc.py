@@ -26,7 +26,7 @@ print ss_seq
 # Generate fuzzy +/-2 SSE combinations
 ss_def, ss_combi = ss.genSSCombinations(ss_seq)
 io.dumpPickle("ss_profiles.pickle", ss_combi)
-
+print ss_def
 # Read the native pdbs that you can exclude from the smotif search
 native_pdbs = data['native_pdbs']
 native_pdbs = native_pdbs.lower()
@@ -84,15 +84,15 @@ for i in range(0, len(map_route)):
     smotif = map_route[i]
     print smotif
     if i == 0:
-        run_line = "mpirun -np " + str(ncpus) + " python stage1_mpi_run.py\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage1_mpi_run.py\n"
         print run_line
         fout.write(run_line)
     elif i == 1:
-        run_line = "mpirun -np " + str(ncpus) + " python stage2_mpi_run.py\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage2_mpi_run.py 10\n"
         print run_line
         fout.write(run_line)
     else:
-        run_line = "mpirun -np " + str(ncpus) + " python stage3x_mpi_run.py\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage3x_mpi_run.py 10\n"
         print run_line
         fout.write(run_line)
 

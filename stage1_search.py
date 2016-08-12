@@ -68,7 +68,7 @@ def SmotifSearch(index_array):
             tpdbid = smotif_data[i][0][0]
             pdbid = tpdbid[0:4]
             if pdbid in natives:
-                #if pdbid not in ['2z2i']:
+            #if pdbid not in ['2z2i']:
                 # Stop further execution, but, iterate.
                 continue
 
@@ -133,10 +133,8 @@ def SmotifSearch(index_array):
 
         if 'rdc_data' in exp_data_types:
             rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['RDC_filter', rdc_tensor_fits])
 
-            if rdc_tensor_fits:
-                tlog.append(['RDC_filter', rdc_tensor_fits])
-                print rdc_tensor_fits, tpdbid
 
 
         # Dump the data to the disk

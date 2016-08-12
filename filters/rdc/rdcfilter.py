@@ -1,4 +1,5 @@
-import math, ConvertUTR
+import ConvertUTR
+import math
 import numpy as np
 from scipy.optimize import leastsq
 
@@ -114,6 +115,7 @@ def RDC_ZYZ(p0, scal, vec_data):
         err[i] = rdc_measured - rdc
     return err
 
+
 def getVectorData(s1_def, s2_def, smotif, exp_data):
     """
 
@@ -131,26 +133,25 @@ def getVectorData(s1_def, s2_def, smotif, exp_data):
 
     smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
     smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
-    smotif_list = smotif_ss1+smotif_ss2
-    smotif_coors = smotif[1]+smotif[2]
+    smotif_list = smotif_ss1 + smotif_ss2
+    smotif_coors = smotif[1] + smotif[2]
 
     rdc_data = exp_data['rdc_data']
 
-
     for data in rdc_data:
-        t_rdc_vector=[]
+        t_rdc_vector = []
         for res in sse_list:
             res_no = smotif_list[sse_list.index(res)]
             try:
                 for entry in data[res_no]:
-                    #[58, 'H', 58, 'N', 0.725]
+                    # [58, 'H', 58, 'N', 0.725]
                     for coor in smotif_coors:
                         # [31, 'PHE', 'H', 9.467, -2.327, 10.206]
                         if coor[0] == res_no and coor[2] == 'N':
                             atco1 = coor[3:]
                         if coor[0] == res_no and coor[2] == 'H':
                             atco2 = coor[3:]
-                    #print res_no, atco1, atco2
+                    # print res_no, atco1, atco2
                     t_rdc_vector.append([getVector(atco2, atco1), getGMR('H', 'N'), entry[4]])
             except:
                 pass
@@ -168,6 +169,7 @@ def getVectorData(s1_def, s2_def, smotif, exp_data):
         rdc_vector.append(t_rdc_vector)
     return rdc_vector
 
+
 def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     """
 
@@ -179,7 +181,7 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     """
     rdc_vectors = getVectorData(s1_def, s2_def, smotif, exp_data)
     pred_axial = exp_data['pred_axial']
-    exp_error  = exp_data['exp_error']
+    exp_error = exp_data['exp_error']
     total_chisqr = 0
     all_tensors = []
     temp_tensor = []
@@ -189,10 +191,11 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
         TinK = 298.0
         Sorder = 1.0
         scal = rdcScal(Sorder, B0, TinK)
-        p0 = [pred_axial[i], pred_axial[i]*(0.33), 10, 20, 30]
+        p0 = [pred_axial[i], pred_axial[i] * (0.33), 10, 20, 30]
         maxcs = 10000  # maximum number of optimization calls
         try:
-            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output=1, maxfev=maxcs)
+            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output=1,
+                                                     maxfev=maxcs)
             chisq = sum(info["fvec"] * info["fvec"]) / len(rdc_vectors[i])
             tensor = ConvertUTR.AnglesUTR(soln)
             if abs(tensor[0]) > pred_axial[i]:
@@ -209,25 +212,79 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     else:
         return []
 
+
+def getNHvectors(coo_arrays, sse_list):
+    """
+    link to contacts_filter.py
+
+    :param coo_arrays:
+    :param sse_list:
+    :return:
+    """
+    import filters.pcs.pcsfilter as pcs
+    nh_dict = {}
+    for i in range(0, len(sse_list)):
+        sse_def = sse_list[i]
+        h_array = pcs.getAtomCoo(coo_arrays[i], atom_type='H')
+        n_array = pcs.getAtomCoo(coo_arrays[i], atom_type='N')
+
+        sse_range = range(sse_def[4], sse_def[5] + 1)
+
+        for j in range(0, len(sse_range)):
+            try:
+                nh_dict[sse_range[j]] = [getVector([h_array[0][j], h_array[1][j], h_array[2][j]],
+                                                   [n_array[0][j], n_array[1][j], n_array[2][j]])]
+            except:
+                pass
+    return nh_dict
+
+
 def getVectorData2(transformed_coos, sse_ordered, rdc_data):
     rdc_vector = []
+    nh_vectors = getNHvectors(transformed_coos, sse_ordered)
+    nh_residues = nh_vectors.keys()
     for data in rdc_data:
-        for i in range(0, len(sse_ordered)):
-            #print i, sse_ordered[i], transformed_coos[i]
-            for j in range(sse_ordered[i][4], sse_ordered[i][5]+1):
-                try:
-                    print j, data[j]
-                except:
-                    pass
+        t_rdc_vector = []
+        residues = data.keys()
+        for res in residues:
+            if res in nh_residues:
+                t_rdc_vector.append([nh_vectors[res][0], getGMR('H', 'N'), data[res][0][-1]])
+        rdc_vector.append(t_rdc_vector)
+
+    return rdc_vector
 
 
-
-    return True
 def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
-    import filters.pcs.pcsfilter as pcs
-    #print transformed_coos
-    #nh_dict = pcs.coorNHdict(transformed_coos, sse_ordered)
-    vec_data = getVectorData2(transformed_coos, sse_ordered, exp_data['rdc_data'])
-    die
+    # print transformed_coos
+    # nh_dict = pcs.coorNHdict(transformed_coos, sse_ordered)
+    rdc_vectors = getVectorData2(transformed_coos, sse_ordered, exp_data['rdc_data'])
+    pred_axial = exp_data['pred_axial']
+    exp_error = exp_data['exp_error']
+    temp_tensor = []
+    for i in range(0, len(rdc_vectors)):
+        B0 = 18.8
+        TinK = 298.0
+        Sorder = 1.0
+        scal = rdcScal(Sorder, B0, TinK)
+        p0 = [pred_axial[i], pred_axial[i] * (0.33), 10, 20, 30]
+        maxcs = 10000  # maximum number of optimization calls
+        try:
+            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output=1,
+                                                     maxfev=maxcs)
+            chisq = sum(info["fvec"] * info["fvec"]) / len(rdc_vectors[i])
+            tensor = ConvertUTR.AnglesUTR(soln)
+            if abs(tensor[0]) > pred_axial[i]:
+                chisq = 999.999
+            if chisq > exp_error[i]:
+                chisq = 999.999
+        except:
+            chisq = 999.999
 
-    return False
+        if chisq < 999.999:
+            temp_tensor.append([chisq, tensor])
+    if len(temp_tensor) == len(rdc_vectors):
+        return temp_tensor
+    else:
+        return []
+
+

@@ -12,6 +12,7 @@ import time
 import filters.constraints.looplengthConstraint as llc
 import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
+import filters.rdc.rdcfilter as Rfilter
 import filters.rmsd.qcp as qcp
 import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
@@ -109,6 +110,7 @@ def SmotifSearch(index_array):
             natives = exp_data['natives']
             tpdbid = csmotif_data[i][0][0]
             pdbid = tpdbid[0:4]
+            #if pdbid not in ['2z2i']:
             if pdbid in natives:
                 # Stop further execution, but resume iteration
                 continue
@@ -168,6 +170,16 @@ def SmotifSearch(index_array):
             if 'pcs_data' in exp_data_types:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage = 3)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
+            # ************************************************
+            # Residual dipolar coupling filter
+            # uses experimental RDC data to filter Smotifs
+            # scoring based on normalised chisqr
+            # ************************************************
+
+            if 'rdc_data' in exp_data_types:
+                rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+
 
             # ************************************************
             # Contacts filter
@@ -197,7 +209,7 @@ def SmotifSearch(index_array):
                         # continue
                     tlog.append(['Evofilter', contact_score])
 
-            if pcs_tensor_fits or contact_fmeasure:
+            if pcs_tensor_fits or contact_fmeasure or rdc_tensor_fits:
                 #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 

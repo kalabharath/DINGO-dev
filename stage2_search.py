@@ -114,6 +114,7 @@ def SmotifSearch(index_array):
             tpdbid = csmotif_data[i][0][0]
             pdbid = tpdbid[0:4]
             if pdbid in natives:
+            #if pdbid not in ['2z2i']:
                 # Stop further execution and
                 continue
 
@@ -178,8 +179,7 @@ def SmotifSearch(index_array):
 
             if 'rdc_data' in exp_data_types:
                 rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
-                tlog.append(['PCS_filter', pcs_tensor_fits])
-
+                tlog.append(['RDC_filter', rdc_tensor_fits])
 
             # ************************************************
             # Contacts filter
@@ -206,7 +206,7 @@ def SmotifSearch(index_array):
                         # continue
                     tlog.append(['Evofilter', contact_score])
 
-            if pcs_tensor_fits or contact_fmeasure:
+            if pcs_tensor_fits or contact_fmeasure or rdc_tensor_fits:
                 #dump data to the disk
                 # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
