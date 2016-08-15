@@ -43,7 +43,7 @@ if rank == 0:
             tag = status.Get_tag()
             if tag == tags.READY:
                 comm.send(None, dest=source, tag=tags.EXIT)
-    exit()
+        exit()
 
 
     if sse_index == 999 :
