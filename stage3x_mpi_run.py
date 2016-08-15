@@ -41,6 +41,7 @@ if rank == 0:
             tag = status.Get_tag()
             if tag == tags.READY:
                 comm.send(None, dest=source, tag=tags.EXIT)
+        exit()
 
     if sse_index == 999:
         # kill all slaves if there is there is EOL
