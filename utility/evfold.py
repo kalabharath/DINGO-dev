@@ -171,7 +171,7 @@ def getRoute(ss_def, contact_matrix):
         else:
             if i == 0:
                 ti = j
-                j = j + 1
+                j += 1
                 control += 1
                 direction = 'right'
                 map_route.append([ti, j, direction])
@@ -184,13 +184,13 @@ def getRoute(ss_def, contact_matrix):
             else:
                 if contacts_perss[i - 1] >= contacts_perss[j + 1]:
                     tj = i
-                    i = i - 1
+                    i -= 1
                     direction = 'left'
                     control += 1
                     map_route.append([i, tj, direction])
                 else:
                     ti = j
-                    j = j + 1
+                    j += 1
                     control += 1
                     direction = 'right'
     return map_route

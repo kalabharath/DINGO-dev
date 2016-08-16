@@ -12,6 +12,7 @@ import filters.constraints.looplengthConstraint as llc
 import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
+import filters.noe.noefilter as Nfilter
 import filters.rmsd.qcp as qcp
 import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
@@ -21,6 +22,7 @@ import utility.stage2_util as uts2
 
 def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
     """
+    :param database_cutoff:
     :param previous_smotif:
     :param current_ss:
     :param direction:
@@ -170,6 +172,16 @@ def SmotifSearch(index_array):
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
+            # ************************************************
+            # Ambiguous NOE score filter
+            # uses experimental ambiguous noe data to filter Smotifs
+            # scoring based on f-measure?
+            # ************************************************
+
+            if 'noe_data' in exp_data_types:
+                noe_fmeasure = Nfilter.s2NOEfit(transformed_coos, sse_ordered, exp_data)
+                tlog.append(['noe_filter', noe_fmeasure])
+
 
             # ************************************************
             # Residual dipolar coupling filter
@@ -178,8 +190,9 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
-                tlog.append(['RDC_filter', rdc_tensor_fits])
+                if noe_fmeasure and noe_fmeasure > 0.4:
+                    rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
+                    tlog.append(['RDC_filter', rdc_tensor_fits])
 
             # ************************************************
             # Contacts filter
@@ -208,6 +221,7 @@ def SmotifSearch(index_array):
 
             if pcs_tensor_fits or contact_fmeasure or rdc_tensor_fits:
                 #dump data to the disk
+                print tpdbid, noe_fmeasure, rdc_tensor_fits
                 # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 

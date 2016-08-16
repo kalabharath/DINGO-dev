@@ -155,13 +155,13 @@ def getContactRoute(ss_def, contacts_def):
         else:
             if i == 0:
                 ti = j
-                j = j + 1
+                j += 1
                 control += 1
                 direction = 'right'
                 map_route.append([ti, j, direction])
             elif j == len(ss_def) - 1:  # -1 to deal with array index
                 tj = i
-                i = i - 1
+                i -= 1
                 control += 1
                 direction = 'left'
                 map_route.append([i, tj, direction])

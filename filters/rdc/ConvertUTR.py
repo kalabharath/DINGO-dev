@@ -93,7 +93,7 @@ def correctAngle(cosv, sinv):
 
     if (cosv <= pi/2.0):
         if (sinv < 0.0):
-            sinv = sinv + 2*pi
+            sinv += 2 * pi
             return sinv
         else:
             return sinv
@@ -221,12 +221,12 @@ def AnglesUTR(p0, ref=0, verbose=False):
 
     # Determine the UTR case
     if (aDz >= aDy) and (aDy >= aDx):
-        if verbose == True:
+        if verbose:
             print "UTR Case1"
     if (aDz >= aDx)and (aDx >= aDy):
-        g = g + 90.0
+        g += 90.0
         Dy, Dx = Dx, Dy
-        if verbose == True:
+        if verbose:
             print "UTR Case2"
     if (aDy >= aDz) and (aDz >= aDx):
         Dy, Dz = Dz, Dy
@@ -235,10 +235,10 @@ def AnglesUTR(p0, ref=0, verbose=False):
         nR = mat(rX90) * mat(rZYZ)
         a, b, g = ABGFromRotMatrixZYZ(nR)
         a, b, g = degrees(a), degrees(b), degrees(g)
-        if verbose == True:
+        if verbose:
             print "UTR Case3"
     if (aDy >= aDx) and (aDx >= aDz):
-        g = g + 90.0
+        g += 90.0
         Dy, Dx = Dx, Dy
         Dz, Dx = Dx, Dz
         rY90 = RotY90()
@@ -246,10 +246,10 @@ def AnglesUTR(p0, ref=0, verbose=False):
         nR = mat(rY90) * mat(rZYZ)
         a, b, g = ABGFromRotMatrixZYZ(nR)
         a, b, g = degrees(a), degrees(b), degrees(g)
-        if verbose == True:
+        if verbose:
             print "UTR Case4"
     if(aDx >= aDz) and (aDz >= aDy):
-        g = g + 90.0
+        g += 90.0
         Dy, Dx = Dx, Dy
         Dy, Dz = Dz, Dy
         rX90 = RotX90()
@@ -257,7 +257,7 @@ def AnglesUTR(p0, ref=0, verbose=False):
         nR = mat(rX90) * mat(rZYZ)
         a, b, g = ABGFromRotMatrixZYZ(nR)
         a, b, g = degrees(a), degrees(b), degrees(g)
-        if verbose == True:
+        if verbose:
             print "UTR Case5"
     if(aDx >= aDy) and (aDy >= aDz):
         Dz, Dx = Dx, Dz
@@ -266,7 +266,7 @@ def AnglesUTR(p0, ref=0, verbose=False):
         nR =  mat(rY90)* mat(rZYZ)
         a, b, g = ABGFromRotMatrixZYZ(nR)
         a, b, g = degrees(a), degrees(b), degrees(g)
-        if verbose == True:
+        if verbose:
             print "UTR Case6"
 
     #Axial and Rhombic are now in UTR
@@ -285,33 +285,33 @@ def AnglesUTR(p0, ref=0, verbose=False):
             if g >= 0.0  and  g < 180.0:
                 pass
             else:
-                g = g + 180.0
+                g += 180.0
         else:
             if g >= 0.0 and g < 180.0:
-                b =  b + 180.0
+                b += 180.0
                 g = -g +180
             else:
-                b = b + 180.0
+                b += 180.0
                 g = -g
     else:
         if b >= 0 and  b < 180.0:
             if g >= 0  and  g < 180.0:
-                a =  a + 180.0
+                a += 180.0
                 b = -b + 180.0
                 g = -g + 180.0
             else:
-                a =  a + 180.0
+                a += 180.0
                 b = -b + 180.0
                 g = -g
         else:
             if g >= 0 and  g < 180.0:
-                a =  a + 180.0
+                a += 180.0
                 b = -b
                 g =  g
             else:
-                a = a + 180.0
+                a += 180.0
                 b = -b
-                g = g + 180.0
+                g += 180.0
 
     # Important. Fix to 0-360 to get in UTR (really 0-180).
     a = FixAngle(a)

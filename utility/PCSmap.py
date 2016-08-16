@@ -83,26 +83,26 @@ def getRoute(ss_seq, pcsdata):
         else:
             if i == 0:
                 ti = j
-                j = j + 1
+                j += 1
                 control += 1
                 direction = 'right'
                 map_route.append([ti, j, direction])
             elif j == len(pcs_array) - 1:
                 tj = i
-                i = i - 1
+                i -= 1
                 control += 1
                 direction = 'left'
                 map_route.append([i, tj, direction])
             else:
                 if pcs_array[i - 1] >= pcs_array[j + 1]:
                     tj = i
-                    i = i - 1
+                    i -= 1
                     direction = 'left'
                     control += 1
                     map_route.append([i, tj, direction])
                 else:
                     ti = j
-                    j = j + 1
+                    j += 1
                     control += 1
                     direction = 'right'
                     map_route.append([ti, j, direction])

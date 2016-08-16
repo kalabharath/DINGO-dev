@@ -177,7 +177,7 @@ for i in range(0, len(map_route)):
                 fout.write(outline)
                 continue
 
-            if percent > 25.0 and percent < 50.0:
+            if 25.0 < percent < 50.0:
                 if i >= 2:
                     num_of_models = (len(map_route) - i) * 125
                     print "num_of_models", num_of_models
@@ -192,7 +192,7 @@ for i in range(0, len(map_route)):
                         num_of_models) + '"\nrun="$Executable"\necho $run\n$run\n'
                     print outline
                     fout.write(outline)
-            if percent > 50.0 and percent < 75.0:
+            if 50.0 < percent < 75.0:
                 num_of_models = (len(map_route) - i) * 125
                 print "num_of_models", num_of_models
                 outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py ' + str(
@@ -219,7 +219,7 @@ for i in range(0, len(map_route)):
                 print outline
                 fout.write(outline)
                 continue
-            if percent > 25.0 and percent <= 50.0:
+            if 25.0 < percent <= 50.0:
                 if i >= 2:
                     num_of_models = (len(map_route) - i) * 125
                     print "num_of_models", num_of_models
@@ -234,7 +234,7 @@ for i in range(0, len(map_route)):
                         num_of_models) + '"\nrun="$Executable"\necho $run\n$run\n'
                     print outline
                     fout.write(outline)
-            if percent > 50.0 and percent <= 75.0:
+            if 50.0 < percent <= 75.0:
                 num_of_models = (len(map_route) - i) * 125
                 print "num_of_models", num_of_models
                 outline = 'Executable="mpirun -np 128 python stage3x_mpi_run.py ' + str(

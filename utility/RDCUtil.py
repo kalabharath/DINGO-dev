@@ -63,8 +63,9 @@ def FormatRdc(seqlen, rdcfile):
     should be in the format #['179', 'H', '179', 'N', '16.042', '0.0']
     the rdcs are returned as a dict with res_no as key and rdc def as value.
     """
-    with open(rdcfile) as f:
-        rdc_l = f.read().splitlines()
+
+    import io_util as io
+    rdc_l = io.readFile(rdcfile)
     rdcs = {}
     for l in rdc_l:
         r1, v1, r2, v2, rdc, tol = l.split()

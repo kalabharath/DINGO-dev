@@ -18,16 +18,17 @@ def calcFmeasure(gbar, ganoe):
         if entry in gbar:
             tp += 1
         else:
-            fn = fn + 1
+            fn += 1
     for entry in gbar:
         if entry in ganoe:
             pass
         else:
-            fp = fp + 1
+            fp += 1
     if tp:
         precision = tp / (tp + fp)
         recall = tp / (tp + fn)
-        return (2 * precision * recall) / (precision + recall)
+        return precision
+        #return (2 * precision * recall) / (precision + recall)
     else:
         return False
 

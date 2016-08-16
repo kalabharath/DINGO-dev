@@ -18,12 +18,12 @@ def genSSDef(ss_seq):
             if ss_seq[i] == ss_seq[i - 1]:
                 if ss_seq[i] == 'H':
                     seq.append(i)
-                    helix = helix + 1
+                    helix += 1
                 if ss_seq[i] == 'E':
                     seq.append(i)
-                    strand = strand + 1
+                    strand += 1
                 if (ss_seq[i] == 'C') or (ss_seq[i] == 'L'):
-                    loop = loop + 1
+                    loop += 1
             else:
                 if (helix > 4) and ( (strand == 1) ):
                     end = i
@@ -66,12 +66,12 @@ def genSSDef_BACK(ss_seq):
             if ss_seq[i] == ss_seq[i - 1]:
                 if ss_seq[i] == 'H':
                     seq.append(i)
-                    helix = helix + 1
+                    helix += 1
                 if ss_seq[i] == 'E':
                     seq.append(i)
-                    strand = strand + 1
+                    strand += 1
                 if (ss_seq[i] == 'C') or (ss_seq[i] == 'L'):
-                    loop = loop + 1
+                    loop += 1
             else:
                 if (helix > 3) and ( (strand == 1) ):
                     end = i
@@ -100,11 +100,11 @@ def check_profile(ss_type, tlen_ss, tl_loop, tr_loop, tstart, tend, X, Y):
 	"""
     if X:
         if Y == 0:
-            tlen_ss = tlen_ss - 2
-            tstart = tstart + 1
+            tlen_ss -= 2
+            tstart += 1
             tend = tend - 1
-            tr_loop = tr_loop + 1
-            tl_loop = tl_loop + 1
+            tr_loop += 1
+            tl_loop += 1
             if (tlen_ss > 4) and (tl_loop >= 0 and tr_loop >= 0 ):
                 if (tend - tstart + 1) == tlen_ss:
                     return [ss_type, tlen_ss, tl_loop, tr_loop, tstart, tend]
@@ -122,11 +122,11 @@ def check_profile(ss_type, tlen_ss, tl_loop, tr_loop, tstart, tend, X, Y):
                 return False
     else:
         if Y == 0:
-            tlen_ss = tlen_ss + 2
-            tstart = tstart - 1
+            tlen_ss += 2
+            tstart -= 1
             tend = tend + 1
-            tr_loop = tr_loop - 1
-            tl_loop = tl_loop - 1
+            tr_loop -= 1
+            tl_loop -= 1
             if (tlen_ss > 4) and (tl_loop >= 0 and tr_loop >= 0 ):
                 if (tend - tstart + 1) == tlen_ss:
                     return [ss_type, tlen_ss, tl_loop, tr_loop, tstart, tend]

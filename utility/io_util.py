@@ -93,7 +93,7 @@ def readFasta(filename):
     header = lines[0].rstrip()
     seq = ''
     for i in range(1, len(lines)):
-        seq = seq + lines[i].rstrip()
+        seq += lines[i].rstrip()
     return header, seq
 
 
@@ -196,7 +196,7 @@ def getPcsTagInfo(ss_seq, brokerfile):
     npc_files = {}
     for line in brokerlines:
         if line[0:7] == 'CLAIMER':
-            ntags = ntags + 1
+            ntags += 1
     for i in range(ntags):
         temp = 0
         for l in brokerlines:

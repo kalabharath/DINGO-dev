@@ -14,8 +14,6 @@ def get_seqs(filename):
     with open(filename) as fin:
         lines = fin.readlines()
 
-    seqs = []
-
     for line in lines:
         if line[2:12] == 'seq_filter':
             #print line

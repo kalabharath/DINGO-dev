@@ -81,7 +81,7 @@ def getNchiSum(pcs_filter, stage):
     """
     snchi = 999.999
     tensors = pcs_filter[1]
-    # print len(tensors)
+    print len(tensors)
 
     if len(tensors) == 1:
         # Discourage single tag scoring by returning high score
@@ -107,7 +107,7 @@ def getNchiSum(pcs_filter, stage):
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination4t(score_list)
-        snchi = snchi / 100.0  # artificially increase the priority
+        snchi /= 100.0  # artificially increase the priority
 
     if len(tensors) >= 4 and stage == 4:  # stage 4
         # For 4 tags, get lowest Nchi for 3
@@ -127,8 +127,9 @@ def getNchiSum(pcs_filter, stage):
 def rdcSumChi(rdc_data, stage):
     snchi = 999.999
     tensors = rdc_data[1]
-    if len(tensors) == 1 and stage == 2:
-        return tensors[0]
+    if len(tensors) == 1:
+        for tensor in tensors:
+            return tensor[0]
 
     if len(tensors) == 2 and stage == 2:
         snchi = 0

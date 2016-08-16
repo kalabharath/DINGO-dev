@@ -170,6 +170,17 @@ def SmotifSearch(index_array):
             if 'pcs_data' in exp_data_types:
                 pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage = 3)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
+
+            # ************************************************
+            # Ambiguous NOE score filter
+            # uses experimental ambiguous noe data to filter Smotifs
+            # scoring based on f-measure?
+            # ************************************************
+
+            if 'noe_data' in exp_data_types:
+                noe_fmeasure = Nfilter.s2NOEfit(transformed_coos, sse_ordered, exp_data)
+                tlog.append(['noe_filter', noe_fmeasure])
+
             # ************************************************
             # Residual dipolar coupling filter
             # uses experimental RDC data to filter Smotifs
@@ -177,8 +188,9 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
-                tlog.append(['RDC_filter', rdc_tensor_fits])
+                if noe_fmeasure and noe_fmeasure > 0.6:
+                    rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
+                    tlog.append(['RDC_filter', rdc_tensor_fits])
 
 
             # ************************************************
