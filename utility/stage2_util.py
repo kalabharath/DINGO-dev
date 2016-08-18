@@ -1,7 +1,5 @@
-import collections
-import glob
+import collections, glob, os, math
 import io_util as io
-import os
 
 def enum(*sequential, **named):
     """
@@ -160,14 +158,15 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
         for t_hit in t_hits:
             hits.append(t_hit)
     """
-    identifiers: smotif, smotif_def, seq_filter, contacts_filter, PCS_filter, qcp_rmsd, Evofilter.
+    identifiers: smotif, smotif_def, seq_filter, contacts_filter, PCS_filter, qcp_rmsd, Evofilter
+                 RDC_filter, NOE_filter
     """
 
     new_dict = collections.defaultdict(list)
     pcs_filter = False
     contact_filter = False
     rdc_filter = False
-
+    noe_filter = False
     for hit in hits:
         # thread_data contains data from each search and filter thread.
         for data_filter in hit:
@@ -186,7 +185,15 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 rdc_filter = True
                 rdc_data = data_filter
                 Nchi = rdcSumChi(rdc_data, stage)
-                new_dict[Nchi].append(hit)
+                for filter in hit:
+                    if filter[0] == 'NOE_filter':
+                        noe_filter = True
+                        noe_fmeasure = filter[1]
+                        Nchi = Nchi / math.pow(10, noe_fmeasure * 10)
+                        new_dict[Nchi].append(hit)
+                if not noe_filter:
+                    new_dict[Nchi].append(hit)
+
     # ************************************************
     # Exclude the redundant entries and rank top hits
     # ************************************************
@@ -221,6 +228,14 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 if ent[0] == 'RDC_filter':
                     rdc_data = ent
                     Nchi = rdcSumChi(rdc_data, stage)
+                    if noe_filter:
+                        for ent in entry:
+                            if ent[0] == 'NOE_filter':
+                                noe_fmeasure = ent[1]
+                                Nchi = Nchi /math.pow(10, noe_fmeasure * 10)
+                    else:
+                        Nchi = rdcSumChi(rdc_data, stage)
+
             if smotif_seq not in seqs:
                 seqs.append(smotif_seq)
                 # non_redundant.setdefault(Nchi, []).append(entry)

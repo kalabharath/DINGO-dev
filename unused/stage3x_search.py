@@ -10,6 +10,7 @@ Perform stage 3x in parallel
 import time
 
 import filters.constraints.looplengthConstraint as llc
+import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.noe.noefilter as Nfilter
@@ -92,6 +93,7 @@ def SmotifSearch(index_array):
     #print sse_ordered
     dump_log = []
     no_clashes = False
+    stime = time.time()
 
     # ************************************************************************************************
     # Main
@@ -135,7 +137,11 @@ def SmotifSearch(index_array):
 
         if rmsd <= exp_data['rmsd_cutoff'][2] and no_clashes:
             # Prepare temp log array to save data at the end
-            tlog, noe_fmeasure, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
+            tlog = []
+            pcs_tensor_fits = []
+            rdc_tensor_fits = []
+            contact_fmeasure = []
+
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
@@ -175,7 +181,7 @@ def SmotifSearch(index_array):
 
             if 'noe_data' in exp_data_types:
                 noe_fmeasure = Nfilter.s2NOEfit(transformed_coos, sse_ordered, exp_data)
-                tlog.append(['NOE_filter', noe_fmeasure])
+                tlog.append(['noe_filter', noe_fmeasure])
 
             # ************************************************
             # Residual dipolar coupling filter
@@ -184,12 +190,40 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                if noe_fmeasure and noe_fmeasure > 0.5:
+                if noe_fmeasure and noe_fmeasure > 0.6:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
 
 
-            if pcs_tensor_fits or rdc_tensor_fits:
+            # ************************************************
+            # Contacts filter
+            # uses the contact data obtained from EVfold server
+            # tp score a given smotif
+            # ************************************************
+            if 'contact_matrix' in exp_data_types:
+
+                contact_fmeasure, plm_score = Evofilter.s2EVcouplings(transformed_coos, sse_ordered,
+                                                                      exp_data['contact_matrix'],
+                                                                      exp_data['plm_scores'],
+                                                                      contacts_cutoff=9.0)
+                if contact_fmeasure and plm_score:
+
+                    if contact_fmeasure >= 0.6:
+
+                        contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                        # print csmotif_data[i][
+                        #    0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+
+                    elif contact_fmeasure > 0.5 and contact_fmeasure < 0.6:
+
+                        # continue
+                        contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                    else:
+                        contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                        # continue
+                    tlog.append(['Evofilter', contact_score])
+
+            if pcs_tensor_fits or contact_fmeasure or rdc_tensor_fits:
                 #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 

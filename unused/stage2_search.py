@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 """
-Project_Name: main, File_name: stage3x_search.py
+Project_Name: main, File_name: stage2_search.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 7/05/15 , Time:10:05 PM
 
-Perform stage 3x in parallel
+Perform stage 2 in parallel
 """
-import time
 
 import filters.constraints.looplengthConstraint as llc
+import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.noe.noefilter as Nfilter
@@ -21,25 +21,25 @@ import utility.stage2_util as uts2
 
 
 def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
-    # print "previous_smotif: ", previous_smotif
+    """
+    :param database_cutoff:
+    :param previous_smotif:
+    :param current_ss:
+    :param direction:
+    :return:
+    """
 
-    searched_smotifs = []
     for entry in previous_smotif:
         if 'smotif_def' == entry[0]:
-            searched_smotifs = entry[-1]
-
-    # ['smotif_def', [['helix', 6, 7, 5, 145, 150], ['helix', 23, 5, 1, 156, 178], ['strand', 5, 7, 8, 133, 137]]]
+            psmotif = entry[-1]
 
     if direction == 'left':
-        previous_ss = searched_smotifs[0]
+        previous_ss = psmotif[0]
     else:
-        previous_ss = searched_smotifs[-1]
+        previous_ss = psmotif[1]
 
-    # print "previous_ss: ", previous_ss
-    # print "current_ss : ", current_ss
-
+    # current_ss, previous_ss
     if direction == 'left':  # double check this implementation
-
         smotif_def = sm.getSmotif(current_ss, previous_ss)
     else:
         smotif_def = sm.getSmotif(previous_ss, current_ss)
@@ -49,23 +49,26 @@ def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
 
 def orderSSE(previous_smotif, current_sse, direction):
     """
-
     :param previous_smotif:
     :param current_sse:
+    :param direction:
     :return:
     """
 
+    previous_seq = []
     for entry in previous_smotif:
-        # ['qcp_rmsd', transformed_coos, sse_ordered, rmsd]
-        if 'qcp_rmsd' == entry[0]:
-            previous_sse = entry[2]
+        if 'smotif_def' == entry[0]:
+            previous_seq = entry
 
-            if direction == 'left':
-                previous_sse.insert(0,current_sse)
-            else:
-                previous_sse.append(current_sse)
-            return previous_sse
+    ordered_SSE = []
+    for sse_array in previous_seq[1]:
+        ordered_SSE.append(sse_array)
 
+    if direction == 'left':
+        ordered_SSE.insert(0, current_sse)
+    else:
+        ordered_SSE.append(current_sse)
+    return ordered_SSE
 
 def SmotifSearch(index_array):
     """
@@ -74,22 +77,23 @@ def SmotifSearch(index_array):
     :return:
     """
 
-
-    preSSE = uts2.getPreviousSmotif(index_array[0])
-    current_ss, direction = uts2.getSS2(index_array[1])
-    print current_ss, direction
-
     exp_data = io.readPickle("exp_data.pickle")
-    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts', 'natives']
-    csmotif_data = getfromDB(preSSE, current_ss, direction, exp_data['database_cutoff'])
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+
+    psmotif = uts2.getPreviousSmotif(index_array[0])
+    current_ss, direction = uts2.getSS2(index_array[1])
+
+    csmotif_data = getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'])
 
     if not csmotif_data:
-        # If the smotif library doesn't exist.
-        # Terminate further execution by return value.
+        # If the smotif library doesn't exist
+        # Terminate further execution
         return True
 
-    sse_ordered = orderSSE(preSSE, current_ss, direction)
-    #print sse_ordered
+    """
+    always narrow down to previous sse and current sse and operate on them individually
+    """
+    sse_ordered = orderSSE(psmotif, current_ss, direction)
     dump_log = []
     no_clashes = False
 
@@ -99,31 +103,31 @@ def SmotifSearch(index_array):
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
 
+
     for i in range(0, len(csmotif_data)):
+
         # ************************************************
         # Applying different filters for the Smotif assembly
         # ************************************************
 
-        # Exclude the natives, if present.
+        # Exclude natives if needed
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
             tpdbid = csmotif_data[i][0][0]
             pdbid = tpdbid[0:4]
-            #if pdbid not in ['2z2i']:
             if pdbid in natives:
-                # Stop further execution, but resume iteration
+            #if pdbid not in ['2z2i']:
+                # Stop further execution and
                 continue
 
         # ************************************************
         # RMSD filter using QCP method
-        # quickly filters non-overlapping Smotifs
+        # quickly filters non-overlapping smotifs
         # ************************************************
 
-        rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
+        rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
 
-
-        if rmsd <= exp_data['rmsd_cutoff'][2]:
-
+        if rmsd <= exp_data['rmsd_cutoff'][1]:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
             if loop_constraint:
@@ -133,15 +137,15 @@ def SmotifSearch(index_array):
                 no_clashes = False
 
 
-        if rmsd <= exp_data['rmsd_cutoff'][2] and no_clashes:
+        if rmsd <= exp_data['rmsd_cutoff'][1] and no_clashes:
             # Prepare temp log array to save data at the end
-            tlog, noe_fmeasure, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
+            tlog, contact_fmeasure, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
+
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
-            tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
-            cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
-            #print cathcodes
+            tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
+            cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
             tlog.append(['cathcodes', cathcodes])
 
             # ************************************************
@@ -153,7 +157,8 @@ def SmotifSearch(index_array):
             csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],
                                                                                   direction, exp_data)
 
-            concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
+            # concat current to previous seq
+            concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
 
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
@@ -164,7 +169,7 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'pcs_data' in exp_data_types:
-                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage = 3)
+                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
             # ************************************************
@@ -177,6 +182,7 @@ def SmotifSearch(index_array):
                 noe_fmeasure = Nfilter.s2NOEfit(transformed_coos, sse_ordered, exp_data)
                 tlog.append(['NOE_filter', noe_fmeasure])
 
+
             # ************************************************
             # Residual dipolar coupling filter
             # uses experimental RDC data to filter Smotifs
@@ -184,16 +190,44 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                if noe_fmeasure and noe_fmeasure > 0.5:
+                if noe_fmeasure and noe_fmeasure > 0.4:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
 
+            # ************************************************
+            # Contacts filter
+            # uses the contact data obtained from EVfold server
+            # tp score a given smotif
+            # ************************************************
+            if 'contact_matrix' in exp_data_types:
 
-            if pcs_tensor_fits or rdc_tensor_fits:
-                #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                contact_fmeasure, plm_score = Evofilter.s2EVcouplings(transformed_coos, sse_ordered,
+                                                                      exp_data['contact_matrix'],
+                                                                      exp_data['plm_scores'],
+                                                                      contacts_cutoff=9.0)
+                if contact_fmeasure and plm_score:
+
+                    if contact_fmeasure >= 0.6:
+                        contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                        # print csmotif_data[i][
+                        #    0], 'fmeasure', contact_fmeasure, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
+                    elif contact_fmeasure > 0.5 and contact_fmeasure < 0.6:
+                        contact_score = (contact_fmeasure) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                        # continue
+                    else:
+                        contact_score = (contact_fmeasure) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
+                        # continue
+                    tlog.append(['Evofilter', contact_score])
+
+            if pcs_tensor_fits or contact_fmeasure or rdc_tensor_fits:
+                #dump data to the disk
+                print tpdbid, noe_fmeasure, rdc_tensor_fits
+                # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
+    # prevent dumping empty arrays with no data
     if len(dump_log) > 0:
-        print "num of hits", len(dump_log)
+        print "num of hits", len(dump_log),
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
+
     return True

@@ -294,5 +294,3 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
         return temp_tensor
     else:
         return []
-
-

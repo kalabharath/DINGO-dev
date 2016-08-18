@@ -8,8 +8,9 @@ Date: 7/05/15 , Time:10:05 PM
 Perform stage 3x in parallel
 """
 import filters.constraints.looplengthConstraint as llc
-import filters.contacts.evfoldContacts as Evofilter
 import filters.pcs.pcsfilter as Pfilter
+import filters.rdc.rdcfilter as Rfilter
+import filters.noe.noefilter as Nfilter
 import filters.rmsd.qcp as qcp
 import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
@@ -121,10 +122,7 @@ def SmotifSearch(index_array):
 
         if rmsd <= exp_data['rmsd_cutoff'][3] and no_clashes:
             # Prepare temp log array to save data at the end
-            tlog = []
-            pcs_tensor_fits = []
-            contact_fmeasure = []
-
+            tlog, noe_fmeasure, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
@@ -161,7 +159,7 @@ def SmotifSearch(index_array):
 
             if 'noe_data' in exp_data_types:
                 noe_fmeasure = Nfilter.s2NOEfit(transformed_coos, sse_ordered, exp_data)
-                tlog.append(['noe_filter', noe_fmeasure])
+                tlog.append(['NOE_filter', noe_fmeasure])
 
             # ************************************************
             # Residual dipolar coupling filter
@@ -174,27 +172,7 @@ def SmotifSearch(index_array):
                 tlog.append(['RDC_filter', rdc_tensor_fits])
 
 
-            # ************************************************
-            # Contacts filter
-            # uses the contact data obtained from EVfold server
-            # tp score a given smotif
-            # ************************************************
-            if 'contact_matrix' in exp_data_types:
-
-                contact_fmeasure, plm_score = Evofilter.s2EVcouplings(transformed_coos, sse_ordered,
-                                                                      exp_data['contact_matrix'],
-                                                                      exp_data['plm_scores'],
-                                                                      contacts_cutoff=9.0)
-                if contact_fmeasure and plm_score:
-                    if contact_fmeasure >= 0.6:
-                        contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
-                    elif contact_fmeasure > 0.5 and contact_fmeasure < 0.6:
-                        contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
-                    else:
-                        contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
-                    tlog.append(['Evofilter', contact_score])
-
-            if pcs_tensor_fits or contact_fmeasure:
+            if pcs_tensor_fits or rdc_tensor_fits:
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:
