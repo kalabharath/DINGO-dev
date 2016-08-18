@@ -43,7 +43,7 @@ def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
     else:
         smotif_def = sm.getSmotif(previous_ss, current_ss)
 
-    return sm.readSmotifDatabase(smotif_def, database_cutoff)
+    return sm.readSmotifDatabase(smotif_def, database_cutoff), smotif_def
 
 
 def orderSSE(previous_smotif, current_sse, direction):
@@ -80,9 +80,9 @@ def SmotifSearch(index_array):
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
     psmotif = uts2.getPreviousSmotif(index_array[0])
-    current_ss, direction = uts2.getSS2(index_array[1])
 
-    csmotif_data = getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'])
+    current_ss, direction = uts2.getSS2(index_array[1])
+    csmotif_data, smotif_def = getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'])
 
     if not csmotif_data:
         # If the smotif library doesn't exist
@@ -128,7 +128,7 @@ def SmotifSearch(index_array):
 
         if rmsd <= exp_data['rmsd_cutoff'][1]:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
-            loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction)
+            loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
             if loop_constraint:
                 # Check whether the SSEs with in the assembled smotifs are clashing to one another
                 no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
