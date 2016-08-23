@@ -127,6 +127,9 @@ def loopConstraint(coo_arrays, sseorder, direction, smotif_def):
 
     dist = get_dist(c_CA, p_CA)
     loop_length = float(loop_length)
+    if loop_length > 30:
+        return False
+
     try:
         Ndist = round(dist / loop_length, 2)
     except:
@@ -134,7 +137,6 @@ def loopConstraint(coo_arrays, sseorder, direction, smotif_def):
         print dist, loop_length
         print csse, psse
         return False
-
 
     stat_dist = 0
     stat_std = 0

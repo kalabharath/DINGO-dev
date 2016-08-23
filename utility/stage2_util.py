@@ -79,7 +79,6 @@ def getNchiSum(pcs_filter, stage):
     """
     snchi = 999.999
     tensors = pcs_filter[1]
-    print len(tensors)
 
     if len(tensors) == 1:
         # Discourage single tag scoring by returning high score
