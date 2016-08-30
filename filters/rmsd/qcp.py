@@ -275,18 +275,22 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
             presse = temp_holder[:]
 
     #print csmotif
-    if direction == 'left':
-        frag_b = getcoo(csmotif[2])
-        native_fragb_2ndsse = copy.copy(csmotif[1])
-        frag_a = copy.deepcopy(presse[0])
+    try:
+        if direction == 'left':
+            frag_b = getcoo(csmotif[2])
+            native_fragb_2ndsse = copy.copy(csmotif[1])
+            frag_a = copy.deepcopy(presse[0])
 
-    else:
-        try:
+        else:
+
             frag_a = copy.deepcopy(presse[-1])
             frag_b = getcoo(csmotif[1])
             native_fragb_2ndsse = copy.copy(csmotif[2])
-        except:
-            print previous_smotif
+    except:
+        print "Error in format of data"
+        print "Wrong stage for the data format"
+        return 999.999, []
+
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)
