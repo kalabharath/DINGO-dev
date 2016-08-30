@@ -234,10 +234,10 @@ def checkAxRhCutoffs(axrh, chisqr, total_pcs, exp_data, stage):
         if (chisqr / total_pcs) > chisqr_cutoffs[1]:  # no error limit
             return 1.0e+30
     elif stage == 3:
-        if (chisqr / total_pcs) > chisqr_cutoffs[2]:  # no error limit
+        if (chisqr / total_pcs) > chisqr_cutoffs[2]:
             return 1.0e+30
     else:
-        if (chisqr / total_pcs) > chisqr_cutoffs[3]:  # no error limit
+        if (chisqr / total_pcs) > chisqr_cutoffs[3]:
             return 1.0e+30
 
     # Apply Axial and Rhombic cutoffs

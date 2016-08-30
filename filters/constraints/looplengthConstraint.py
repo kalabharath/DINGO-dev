@@ -127,7 +127,7 @@ def loopConstraint(coo_arrays, sseorder, direction, smotif_def):
 
     dist = get_dist(c_CA, p_CA)
     loop_length = float(loop_length)
-    if loop_length > 30:
+    if loop_length > 30 or loop_length <= 0:
         return False
 
     try:
@@ -142,16 +142,16 @@ def loopConstraint(coo_arrays, sseorder, direction, smotif_def):
     stat_std = 0
     if smotif_def[0] == 'hh':
         stat_dist = nhh_dict[loop_length]
-        stat_std = hh_std[loop_length] * 2
+        stat_std = hh_std[loop_length]
     if smotif_def[0] == 'hs':
         stat_dist = nhs_dict[loop_length]
-        stat_std = hs_std[loop_length] * 2
+        stat_std = hs_std[loop_length]
     if smotif_def[0] == 'sh':
         stat_dist = nsh_dict[loop_length]
-        stat_std = sh_std[loop_length] * 2
+        stat_std = sh_std[loop_length]
     if smotif_def[0] == 'ss':
         stat_dist = nss_dict[loop_length]
-        stat_std = ss_std[loop_length] * 2
+        stat_std = ss_std[loop_length]
 
     if stat_dist - stat_std <= Ndist <= stat_dist + stat_std:
         #print "stat_dist", "Ndist"

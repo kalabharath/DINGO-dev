@@ -112,13 +112,22 @@ def getNchiSum(pcs_filter, stage):
         for tensor in tensors:
             score_list.append(tensor[1])
         snchi = scoreCombination4t(score_list)
-    """
-    if len(tensors) ==3 and stage == 4:
+
+    if len(tensors) ==3 and  stage == 99:
         score_list = []
         for tensor in tensors:
             score_list.append(tensor[1])
-        snchi = score_list[0]+score_list[1]+score_list[2]
-    """
+        snchi = score_list[0] + score_list[1] + score_list[2]
+
+    if stage == 999:
+        if len(tensors) < 4:
+            snchi = 999.999
+        else:
+            score_list = []
+            for tensor in tensors:
+                score_list.append(tensor[1])
+            snchi = score_list[0] + score_list[1] + score_list[2]+ score_list[3]
+
     return snchi
 
 def rdcSumChi(rdc_data, stage):

@@ -187,21 +187,22 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     temp_tensor = []
 
     for i in range(0, len(rdc_vectors)):
-        B0 = 18.8
-        TinK = 298.0
+        B0 = 21.1
+        TinK = 313.0
         Sorder = 1.0
         scal = rdcScal(Sorder, B0, TinK)
         p0 = [pred_axial[i], pred_axial[i] * (0.33), 10, 20, 30]
         maxcs = 10000  # maximum number of optimization calls
         try:
-            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output=1,
+            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output=True,
                                                      maxfev=maxcs)
             chisq = sum(info["fvec"] * info["fvec"]) / len(rdc_vectors[i])
             tensor = ConvertUTR.AnglesUTR(soln)
 
-            if abs(tensor[0]) > pred_axial[i]:
+            if abs(tensor[0]) > pred_axial[0]:
+
                 chisq = 999.999
-            if chisq > exp_error[i]:
+            if chisq > exp_error[0]:
                 chisq = 999.999
         except:
             chisq = 999.999
@@ -263,28 +264,33 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     exp_error = exp_data['exp_error']
     temp_tensor = []
     for i in range(0, len(rdc_vectors)):
-        B0 = 18.8
-        TinK = 298.0
+        B0 = 21.1
+        TinK = 313
         Sorder = 1.0
         scal = rdcScal(Sorder, B0, TinK)
         p0 = [pred_axial[i], pred_axial[i] * (0.33), 10, 20, 30]
         maxcs = 10000  # maximum number of optimization calls
         try:
-            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output=1,
+            soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output = True,
                                                      maxfev=maxcs)
             chisq = sum(info["fvec"] * info["fvec"]) / len(rdc_vectors[i])
             tensor = ConvertUTR.AnglesUTR(soln)
-            if abs(tensor[0]) > pred_axial[i]:
-                chisq = 999.999
-
-            if chisq > exp_error[i]:
-                chisq = 999.999
-            """
-            if exp_error[i] - 2 <= chisq <= exp_error[i] + 2:
-                pass
+            if stage == 3:
+                if pred_axial[stage-1] -2 <= abs(tensor[0]) <= pred_axial[stage -1]+2:
+                    if chisq <= exp_error[stage - 1]:
+                        pass
+                    else:
+                        chisq = 999.999
+                else:
+                    chisq = 999.999
             else:
-                chisq = 999.999
-            """
+
+                if abs(tensor[0]) > pred_axial[stage-1]:
+                    chisq = 999.999
+
+                if chisq > exp_error[stage-1]:
+                    chisq = 999.999
+
         except:
             chisq = 999.999
 

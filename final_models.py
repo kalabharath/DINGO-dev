@@ -1,5 +1,6 @@
 import sys, os
-sys.path.append('/short/xc4/kbp502/BOSS/zinr')
+#sys.path.append('/short/xc4/kbp502/BOSS/zinr')
+sys.path.append('../../main/')
 __author__ = 'kalabharath'
 
 
@@ -61,7 +62,7 @@ import utility.stage2_util as util
 
 seq = int(sys.argv[1])
 num_hits = 50
-stage = 4
+stage = 999
 util.makeTopPickle(seq, num_hits, stage)
 
 
@@ -69,8 +70,8 @@ top_result = io.readPickle(str(seq)+"_tophits.pickle")
 
 
 
-#for p in range(0, len(top_result)):
-for p in range(0,5):
+for p in range(0, len(top_result)):
+#for p in range(0,5):
 
     top_struct = top_result[p]
 
@@ -110,8 +111,8 @@ for p in range(0,5):
         dumpPDBCoo2(coor_arrays[i], i, sse_sequence[i],aa_seq,p)
 
 
-#for q in range(0, len(top_result)):
-for q in range(0,5):
+for q in range(0, len(top_result)):
+#for q in range(0,5):
     cat = "cat "+str(q)+"_*_.pdb >model_"+str(q)+".pdb"
     #print cat
     os.system(cat)
