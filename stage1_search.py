@@ -122,7 +122,7 @@ def SmotifSearch(index_array):
 
         if 'rdc_data' in exp_data_types:
 
-            if noe_fmeasure and noe_fmeasure > 0.5:
+            if noe_fmeasure and noe_fmeasure > 0.7:
                 rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
                 tlog.append(['RDC_filter', rdc_tensor_fits])
 
@@ -130,7 +130,7 @@ def SmotifSearch(index_array):
         # Dump the data to the disk
         if pcs_tensor_fits or rdc_tensor_fits:
             # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
-            print tpdbid, noe_fmeasure, rdc_tensor_fits
+            #print tpdbid, noe_fmeasure, rdc_tensor_fits
             dump_log.append(tlog)
 
     # Save all of the hits in pickled arrays

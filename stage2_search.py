@@ -178,7 +178,7 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'noe_data' in exp_data_types:
-                noe_fmeasure = Nfilter.s2NOEfit(transformed_coos, sse_ordered, exp_data)
+                noe_fmeasure = Nfilter.s3NOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
                 tlog.append(['NOE_filter', noe_fmeasure])
 
             # ************************************************
@@ -188,13 +188,13 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                if noe_fmeasure and noe_fmeasure > 0.6:
+                if noe_fmeasure and noe_fmeasure > 0.8:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
 
             if pcs_tensor_fits or rdc_tensor_fits:
                 #dump data to the disk
-                print tpdbid, noe_fmeasure, rdc_tensor_fits
+                #print tpdbid, noe_fmeasure, rdc_tensor_fits
                 # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 

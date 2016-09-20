@@ -7,6 +7,11 @@ Date: 08/08/2016
 
 prepare data to run with BOSS-R
 """
+
+import os
+import sys
+
+sys.path.append("../../main")
 import multiprocessing
 
 import utility.RDCUtil    as ru
@@ -67,8 +72,8 @@ rdc_data = ru.getRdcData(data['rdc_input_files'], ss_seq)
 
 noe_data =nu.getNOEData(data['noe_input_files'], ss_seq)
 
-map_route = [[10, 11, 'start'], [9, 10, 'left'], [8, 9, 'left'], [7, 8, 'left'], [6, 7, 'left'], [5, 6, 'left'],
-             [4, 5, 'left'], [3, 4, 'left'], [2, 3, 'left'], [1, 2, 'left'], [0, 1, 'left']]
+map_route= [[3, 4, 'start'], [2, 3, 'left'], [4, 5, 'right'], [5, 6, 'right'], [6, 7, 'right'], [1, 2, 'left'], [0, 1, 'left']]
+
 
 io.dumpPickle("rdc_route.pickle", map_route)
 database_cutoff = data['database_cutoff']

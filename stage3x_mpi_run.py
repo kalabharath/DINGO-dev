@@ -31,6 +31,7 @@ status = MPI.Status()
 if rank == 0:
     num_hits = int(sys.argv[1])
     print num_hits
+    sse_index = 999
     try:
         tasks, sse_index = util.getRunSeq(num_hits, stage=3)
     except:
