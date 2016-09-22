@@ -152,7 +152,7 @@ def SmotifSearch(index_array):
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
             # ************************************************
-            # Ambiguous NOE score filter
+            # NOE score filter
             # uses experimental ambiguous noe data to filter Smotifs
             # scoring based on f-measure?
             # ************************************************

@@ -159,7 +159,7 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
                         except:
                             continue
                         dist = get_dist(ca_res1, ca_res2)
-                        if dist < noe_cutoff:
+                        if dist <= noe_cutoff:
                             noes_found.append((res1, res2))
                             noes_total.append((res1, res2))
                         else:
@@ -168,6 +168,8 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
     if len(noes_found) == 0:
         return []
 
-    fmeasure = calcFmeasure(noes_found, noes_total)
+    #fmeasure = calcFmeasure(noes_found, noes_total)
+
+    fmeasure = (len(noes_found) / len(noes_total))
 
     return fmeasure
