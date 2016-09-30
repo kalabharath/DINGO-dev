@@ -122,10 +122,11 @@ def SmotifSearch(index_array):
 
         if 'rdc_data' in exp_data_types:
 
-            if noe_fmeasure and noe_fmeasure > 0.6:
+            if noe_fmeasure and noe_fmeasure > 0.8:
                 rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
                 tlog.append(['RDC_filter', rdc_tensor_fits])
-
+                if seq_identity == 100.0:
+                    print rdc_tensor_fits
 
         # Dump the data to the disk
         if pcs_tensor_fits or rdc_tensor_fits:

@@ -203,7 +203,7 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisq = nchisq / float(math.pow(len(rdc_vectors[i]), 1 / 3.0))
 
             tensor = ConvertUTR.AnglesUTR(soln)
-            print chisq, tensor[0]
+
             if abs(tensor[0]) > pred_axial[0]:
 
                 chisq = 999.999
@@ -283,6 +283,16 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
 
             tensor = ConvertUTR.AnglesUTR(soln)
             #print abs(tensor[0]), pred_axial[0], chisq
+
+            if abs(tensor[0]) > pred_axial[stage - 1]:
+                chisq = 999.999
+
+            if chisq > exp_error[stage - 1]:
+                chisq = 999.999
+
+
+
+            """
             if stage == 2:
                 if pred_axial[stage - 1] - 10 <= abs(tensor[0]) <= pred_axial[stage - 1] + 2.5:
                     if chisq <= exp_error[stage - 1]:
@@ -315,7 +325,7 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
 
                 if chisq > exp_error[stage - 1]:
                     chisq = 999.999
-
+            """
 
         except:
             chisq = 999.999

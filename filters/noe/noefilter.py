@@ -77,6 +77,7 @@ def s1NOEfit(s1_def, s2_def, smotif, exp_data):
     # print len(total_noes), total_noes
     # print len(noes_found), noes_found
     """
+    #fmeasure = calcFmeasure(noes_found, noes_total)
     fmeasure = (float(len(noes_found)) / float(len(noes_total)))
     return fmeasure
 
@@ -144,6 +145,7 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
     noes_found = []
     noes_total = []
 
+
     # current_ss ['strand', 13, 4, 10, 36, 48]
 
     cresi = range(current_ss[4], current_ss[5] + 1)
@@ -162,6 +164,7 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
         ss1_list = range(native_sse_order[i][4], native_sse_order[i][5] + 1)
         ss2_list = range(native_sse_order[j][4], native_sse_order[j][5] + 1)
         if ss1_list == cresi or ss2_list == cresi:
+            sse_satisfied = False
             for res1 in ss1_list:
                 try:
                     ca_res1 = [ca1[0][ss1_list.index(res1)], ca1[1][ss1_list.index(res1)], ca1[2][ss1_list.index(res1)]]
@@ -183,14 +186,16 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
                             continue
                         dist = get_dist(ca_res1, ca_res2)
                         if dist <= noe_cutoff:
+                            sse_satisfied = True
                             noes_found.append((res1, res2))
                             noes_total.append((res1, res2))
                         else:
                             noes_total.append((res1, res2))
 
+    #if len(noes_found) == 0 or not sse_satisfied:
     if len(noes_found) == 0:
         return []
-    # fmeasure = calcFmeasure(noes_found, noes_total)
+    #fmeasure = calcFmeasure(noes_found, noes_total)
     fmeasure = (float(len(noes_found)) / float(len(noes_total)))
 
     return fmeasure
