@@ -194,10 +194,10 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 rdc_data = data_filter
                 Nchi = rdcSumChi(rdc_data, stage)
                 for filter in hit:
-                    if filter[0] == 'NOE_filter':
+                    if filter[0] == 'NOE2_filter':
                         noe_filter = True
                         noe_fmeasure = filter[1]
-                        Nchi = Nchi / math.pow(10, noe_fmeasure)
+                        Nchi = Nchi / math.pow(5, noe_fmeasure)
                         new_dict[Nchi].append(hit)
                 if not noe_filter:
                     new_dict[Nchi].append(hit)
@@ -219,6 +219,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     seqs = []
     smotif_seq = ''
     Nchi = 0.0
+    count_hits = 0
     for i in range(0, len(keys)):
         entries = new_dict[keys[i]]
         for entry in entries:
@@ -238,9 +239,9 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                     Nchi = rdcSumChi(rdc_data, stage)
                     if noe_filter:
                         for ent in entry:
-                            if ent[0] == 'NOE_filter':
+                            if ent[0] == 'NOE2_filter':
                                 noe_fmeasure = ent[1]
-                                Nchi = Nchi /math.pow(10, noe_fmeasure)
+                                Nchi = Nchi /math.pow(5, noe_fmeasure)
                     else:
                         Nchi = rdcSumChi(rdc_data, stage)
 
@@ -248,6 +249,10 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 seqs.append(smotif_seq)
                 # non_redundant.setdefault(Nchi, []).append(entry)
                 non_redundant[Nchi].append(entry)
+                count_hits += 1
+        if count_hits >= num_hits:
+            break
+
 
     # Rank top hits and dump the data
     keys = non_redundant.keys()
@@ -322,7 +327,54 @@ def getRunSeq(num_hits, stage):
                 run_seq.append([i, j])
         return run_seq, next_index
 
+def start_top_hits(num_hits, stage):
+    """
+    generate run seq, a seq list of pairs of
+    indexes of profiles for job scheduling
+    """
 
+    ss_profiles = io.readPickle("ss_profiles.pickle")
+    if os.path.isfile("contacts_route.pickle"):
+        map_route = io.readPickle("contacts_route.pickle")
+    elif os.path.isfile("pcs_route.pickle"):
+        map_route = io.readPickle("pcs_route.pickle")
+    elif os.path.isfile("rdc_route.pickle"):
+        map_route = io.readPickle("rdc_route.pickle")
+
+    try:
+        next_index, next_smotif = getNextSmotif(map_route)
+        print next_index, next_smotif
+    except TypeError:
+        return [999], 999
+
+    direction = next_smotif[-1]
+    if direction == 'left':
+        next_ss_list = ss_profiles[next_smotif[0]]
+    else:
+        next_ss_list = ss_profiles[next_smotif[1]]
+    # get and make a list of top 10(n) of the previous run
+
+    top_hit_file = str((next_index)-1)+"_tophits.pickle"
+
+    if os.path.isfile(top_hit_file):
+        top_hits = io.readPickle(top_hit_file)
+        print len(top_hits)
+    else:
+        print "WTF: Somethis is wrong somewhere"
+    # delete two stages down pickled files
+    check_pickle = str(next_index - 2) + str("_*_*.pickle")
+    file_list = glob.glob(check_pickle)
+
+    if len(file_list) > 10:
+        remove = "rm "+check_pickle
+        os.system(remove)
+
+    if top_hits:
+        run_seq = []
+        for i in range(len(top_hits)):
+            for j in range(len(next_ss_list)):
+                run_seq.append([i, j])
+        return run_seq, next_index
 def getPreviousSmotif(index):
 
     if os.path.isfile("contacts_route.pickle"):

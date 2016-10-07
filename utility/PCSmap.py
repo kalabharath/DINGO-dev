@@ -8,6 +8,13 @@ Date: 1/04/15 , Time:10:53 AM
 # TODO write comments for each def
 
 def getNspcs(sstart, send, pcs_data):
+    """
+
+    :param sstart:
+    :param send:
+    :param pcs_data:
+    :return:
+    """
     nspcs = []
 
     for dataset in pcs_data:
@@ -26,6 +33,12 @@ def getNspcs(sstart, send, pcs_data):
 
 
 def SearchPcs(ss_array, pcs_data):
+    """
+
+    :param ss_array:
+    :param pcs_data:
+    :return:
+    """
     pcs_array = []
     for i in xrange(0, len(ss_array)):
         nspcs = getNspcs(ss_array[i][3], ss_array[i][4], pcs_data)

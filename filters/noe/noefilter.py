@@ -62,7 +62,7 @@ def s1NOEfit(s1_def, s2_def, smotif, exp_data):
                             else:
                                 noes_total.append((res1, res2))
     if len(noes_found) == 0:
-            return []
+            return 0.00
 
 
     """
@@ -194,7 +194,7 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
 
     #if len(noes_found) == 0 or not sse_satisfied:
     if len(noes_found) == 0:
-        return []
+        return 0.00
     #fmeasure = calcFmeasure(noes_found, noes_total)
     fmeasure = (float(len(noes_found)) / float(len(noes_total)))
 

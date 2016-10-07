@@ -287,12 +287,21 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
             if abs(tensor[0]) > pred_axial[stage - 1]:
                 chisq = 999.999
 
-            if chisq > exp_error[stage - 1]:
-                chisq = 999.999
+            if stage == 2:
+                pass
+
+            if stage > 2:
+                if chisq > exp_error[stage - 1]:
+                    chisq = 999.999
 
 
 
             """
+            if exp_error[stage-1] -50 <= chisq <= exp_error[stage - 1]:
+            pass
+            else:
+                    chisq = 999.999
+
             if stage == 2:
                 if pred_axial[stage - 1] - 10 <= abs(tensor[0]) <= pred_axial[stage - 1] + 2.5:
                     if chisq <= exp_error[stage - 1]:

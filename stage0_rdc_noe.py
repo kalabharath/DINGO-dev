@@ -56,6 +56,9 @@ exp_error = data['exp_error']
 exp_error = exp_error.split()
 exp_error = [float(i) for i in exp_error]
 
+noe_fmeasure = data['noe_fmeasure']
+noe_fmeasure = noe_fmeasure.split()
+noe_fmeasure = [float(i) for i in noe_fmeasure]
 
 rmsd_cutoff = data['rmsd_cutoff']
 rmsd_cutoff = rmsd_cutoff.split()
@@ -81,7 +84,7 @@ database_cutoff = data['database_cutoff']
 data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives': native_pdbs, \
              'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \
              'rdc_axrh_cutoff': axrh_cutoff, 'rdc_chisqr_cutoff': chisqr_cutoff, 'rmsd_cutoff': rmsd_cutoff,
-             'pred_axial': pred_axial, 'exp_error': exp_error, 'noe_data': noe_data }
+             'pred_axial': pred_axial, 'exp_error': exp_error, 'noe_data': noe_data, 'noe_fmeasure': noe_fmeasure }
 
 io.dumpPickle("exp_data.pickle", data_dict)
 
@@ -97,11 +100,15 @@ for i in range(0, len(map_route)):
         print run_line
         fout.write(run_line)
     elif i == 1:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage2_mpi_run.py 100\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage2_mpi_run.py 1000\n"
+        print run_line
+        fout.write(run_line)
+    elif i != 1 and i <= len(map_route)-3:
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage3x_mpi_run.py 1000\n"
         print run_line
         fout.write(run_line)
     else:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage3x_mpi_run.py 100\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage4x_mpi_run.py 1000\n"
         print run_line
         fout.write(run_line)
 
