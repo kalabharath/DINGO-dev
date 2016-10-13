@@ -291,7 +291,9 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
                 pass
 
             if stage > 2:
-                if chisq > exp_error[stage - 1]:
+                if 7.0 <= chisq <= 14.0 :
+                    pass
+                else:
                     chisq = 999.999
 
 

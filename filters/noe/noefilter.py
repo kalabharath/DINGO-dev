@@ -56,7 +56,14 @@ def s1NOEfit(s1_def, s2_def, smotif, exp_data):
 
                         if noe_cutoff:
                             dist = get_distance(coo1, coo2)
-                            if dist <= noe_cutoff:
+                            if noe_cutoff > 10000:
+                                real_noe = noe_cutoff - 10000
+                                # backmapping side chain noes to amides
+                                if (real_noe - 4.0 <= dist <= real_noe + 4.0):
+
+                                    noes_found.append((res1, res2))
+                                    noes_total.append((res1, res2))
+                            elif dist <= noe_cutoff:
                                 noes_found.append((res1, res2))
                                 noes_total.append((res1, res2))
                             else:
@@ -185,7 +192,17 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
                         except:
                             continue
                         dist = get_dist(ca_res1, ca_res2)
-                        if dist <= noe_cutoff:
+
+                        if noe_cutoff >10000:
+                            real_noe = noe_cutoff-10000
+                            #backmapping side chain noes to amides
+
+                            if (real_noe - 4.0 <= dist <= real_noe + 4.0):
+
+                                noes_found.append((res1, res2))
+                                noes_total.append((res1, res2))
+
+                        elif dist <= noe_cutoff:
                             sse_satisfied = True
                             noes_found.append((res1, res2))
                             noes_total.append((res1, res2))

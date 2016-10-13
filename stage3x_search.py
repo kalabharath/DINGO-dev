@@ -185,7 +185,7 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][2] and seq_identity > 10.0 :
+                if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][2]:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
 
