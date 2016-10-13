@@ -8,7 +8,6 @@ Date: 08/08/2016
 prepare data to run with BOSS-R
 """
 
-import os
 import sys
 
 sys.path.append("../../main")
@@ -56,6 +55,10 @@ exp_error = data['exp_error']
 exp_error = exp_error.split()
 exp_error = [float(i) for i in exp_error]
 
+abs_exp_error = data['abs_exp_error']
+abs_exp_error = abs_exp_error.split()
+abs_exp_error = [float(i) for i in abs_exp_error]
+
 noe_fmeasure = data['noe_fmeasure']
 noe_fmeasure = noe_fmeasure.split()
 noe_fmeasure = [float(i) for i in noe_fmeasure]
@@ -73,10 +76,10 @@ print 'clash_distance: ', clash_distance
 
 rdc_data = ru.getRdcData(data['rdc_input_files'], ss_seq)
 
-noe_data =nu.getNOEData(data['noe_input_files'], ss_seq)
+noe_data = nu.getNOEData(data['noe_input_files'], ss_seq)
 
-map_route= [[3, 4, 'start'], [2, 3, 'left'], [4, 5, 'right'], [5, 6, 'right'], [6, 7, 'right'], [1, 2, 'left'], [0, 1, 'left']]
-
+map_route = [[3, 4, 'start'], [2, 3, 'left'], [4, 5, 'right'], [5, 6, 'right'], [6, 7, 'right'], [1, 2, 'left'],
+             [0, 1, 'left']]
 
 io.dumpPickle("rdc_route.pickle", map_route)
 database_cutoff = data['database_cutoff']
@@ -84,7 +87,8 @@ database_cutoff = data['database_cutoff']
 data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives': native_pdbs, \
              'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \
              'rdc_axrh_cutoff': axrh_cutoff, 'rdc_chisqr_cutoff': chisqr_cutoff, 'rmsd_cutoff': rmsd_cutoff,
-             'pred_axial': pred_axial, 'exp_error': exp_error, 'noe_data': noe_data, 'noe_fmeasure': noe_fmeasure }
+             'pred_axial': pred_axial, 'exp_error': exp_error, 'abs_exp_error': abs_exp_error, 'noe_data': noe_data,
+             'noe_fmeasure': noe_fmeasure}
 
 io.dumpPickle("exp_data.pickle", data_dict)
 
@@ -103,7 +107,7 @@ for i in range(0, len(map_route)):
         run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage2_mpi_run.py 1000\n"
         print run_line
         fout.write(run_line)
-    elif i != 1 and i <= len(map_route)-3:
+    elif i != 1 and i <= len(map_route) - 3:
         run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage3x_mpi_run.py 1000\n"
         print run_line
         fout.write(run_line)
