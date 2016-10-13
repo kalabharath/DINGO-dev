@@ -247,6 +247,13 @@ def getNHvectors(coo_arrays, sse_list):
 
 
 def getVectorData2(transformed_coos, sse_ordered, rdc_data):
+    """
+
+    :param transformed_coos:
+    :param sse_ordered:
+    :param rdc_data:
+    :return:
+    """
     rdc_vector = []
     nh_vectors = getNHvectors(transformed_coos, sse_ordered)
     nh_residues = nh_vectors.keys()
@@ -262,12 +269,21 @@ def getVectorData2(transformed_coos, sse_ordered, rdc_data):
 
 
 def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
-    # print transformed_coos
-    # nh_dict = pcs.coorNHdict(transformed_coos, sse_ordered)
+    """
+
+    :param transformed_coos:
+    :param sse_ordered:
+    :param exp_data:
+    :param stage:
+    :return:
+    """
+
     rdc_vectors = getVectorData2(transformed_coos, sse_ordered, exp_data['rdc_data'])
     pred_axial = exp_data['pred_axial']
     exp_error = exp_data['exp_error']
+    abs_exp_error = exp_data['abs_exp_error']
     temp_tensor = []
+
     for i in range(0, len(rdc_vectors)):
         B0 = 21.1
         TinK = 313
@@ -282,65 +298,22 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
             chisq = nchisq / float(math.pow(len(rdc_vectors[i]), 1 / 3.0))
 
             tensor = ConvertUTR.AnglesUTR(soln)
-            #print abs(tensor[0]), pred_axial[0], chisq
 
             if abs(tensor[0]) > pred_axial[stage - 1]:
                 chisq = 999.999
-
-            if stage == 2:
+            else:
                 pass
 
-            if stage > 2:
-                if chisq > exp_error[stage - 1]:
-                    chisq = 999.999
-
-
-
-            """
-            if exp_error[stage-1] -50 <= chisq <= exp_error[stage - 1]:
-            pass
+            if abs_exp_error[stage -1] <= chisq <= exp_error[stage - 1]:
+                pass
             else:
-                    chisq = 999.999
-
-            if stage == 2:
-                if pred_axial[stage - 1] - 10 <= abs(tensor[0]) <= pred_axial[stage - 1] + 2.5:
-                    if chisq <= exp_error[stage - 1]:
-                        pass
-                    else:
-                        chisq = 999.999
-                else:
-                    chisq = 999.999
-
-            elif stage == 3:
-                if pred_axial[stage - 1] - 10 <= abs(tensor[0]) <= pred_axial[stage - 1] + 2:
-                    if chisq <= exp_error[stage - 1]:
-                        pass
-                    else:
-                        chisq = 999.999
-                else:
-                    chisq = 999.999
-
-            elif stage == 4:
-                if (pred_axial[stage - 1] - 0.5 )<= abs(tensor[0]) <= (pred_axial[stage - 1] + 0.5):
-                    if chisq <= exp_error[stage - 1]:
-                        pass
-                    else:
-                        chisq = 999.999
-                else:
-                    chisq = 999.99
-            else:
-                if abs(tensor[0]) > pred_axial[stage - 1]:
-                    chisq = 999.999
-
-                if chisq > exp_error[stage - 1]:
-                    chisq = 999.999
-            """
-
+                chisq = 999.999
         except:
             chisq = 999.999
 
         if chisq < 999.999:
             temp_tensor.append([chisq, tensor])
+
     if len(temp_tensor) == len(rdc_vectors):
         return temp_tensor
     else:
