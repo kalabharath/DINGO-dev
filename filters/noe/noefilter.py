@@ -185,7 +185,7 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
                     else:
                         noe_cutoff = False
                     if noe_cutoff:
-                        # print res1, res2, noe_matrix[res1, res2], noe_matrix[res2, res1], noe_cutoff
+                        # mo res1, res2, noe_matrix[res1, res2], noe_matrix[res2, res1], noe_cutoff
                         try:
                             ca_res2 = [ca2[0][ss2_list.index(res2)], ca2[1][ss2_list.index(res2)],
                                        ca2[2][ss2_list.index(res2)]]
