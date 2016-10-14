@@ -197,12 +197,12 @@ def s3NOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
                             real_noe = noe_cutoff-10000
                             #backmapping side chain noes to amides
 
-                            if (real_noe - 4.0 <= dist <= real_noe + 4.0):
+                            if (real_noe - 5.0 <= dist <= real_noe + 5.0):
 
                                 noes_found.append((res1, res2))
                                 noes_total.append((res1, res2))
 
-                        elif dist <= noe_cutoff:
+                        elif dist <= noe_cutoff :
                             sse_satisfied = True
                             noes_found.append((res1, res2))
                             noes_total.append((res1, res2))
