@@ -421,3 +421,10 @@ def rename_pickle(index):
         mv_cmd = "mv " + file + " " + str(index) + file[2:]
         os.system(mv_cmd)
     return True
+
+
+def rename_pickle2(index):
+    import glob, os
+    rename_cmd = "rename 's/tx_/"+str(index)+"_/' tx_*.pickle"
+    os.system(rename_cmd)
+    return True
