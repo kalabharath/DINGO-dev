@@ -95,7 +95,7 @@ if rank == 0:
             closed_workers += 1
 
     print "All Done, Master exiting"
-    util.rename_pickle2(sse_index)
+    util.rename_pickle(sse_index)
     exit()
 
 # On the worker processes
