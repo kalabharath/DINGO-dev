@@ -59,6 +59,11 @@ abs_exp_error = data['abs_exp_error']
 abs_exp_error = abs_exp_error.split()
 abs_exp_error = [float(i) for i in abs_exp_error]
 
+prob_top_hits = data['prob_top_hits']
+prob_top_hits = prob_top_hits.split()
+prob_top_hits = [float(i) for i in prob_top_hits]
+
+
 noe_fmeasure = data['noe_fmeasure']
 noe_fmeasure = noe_fmeasure.split()
 noe_fmeasure = [float(i) for i in noe_fmeasure]
@@ -88,7 +93,7 @@ data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives'
              'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \
              'rdc_axrh_cutoff': axrh_cutoff, 'rdc_chisqr_cutoff': chisqr_cutoff, 'rmsd_cutoff': rmsd_cutoff,
              'pred_axial': pred_axial, 'exp_error': exp_error, 'abs_exp_error': abs_exp_error, 'noe_data': noe_data,
-             'noe_fmeasure': noe_fmeasure}
+             'noe_fmeasure': noe_fmeasure, 'prob_top_hits': prob_top_hits}
 
 io.dumpPickle("exp_data.pickle", data_dict)
 

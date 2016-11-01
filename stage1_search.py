@@ -15,6 +15,7 @@ import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
 import utility.smotif_util as sm
 import utility.stage1_util as uts1
+import ranking.RDCStageRank as rank
 
 
 def getSSdef(index_array):
@@ -55,7 +56,10 @@ def SmotifSearch(index_array):
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
 
+    print "no of entries: ", len(smotif_data)
+
     for i in range(0, len(smotif_data)):
+
         # loop over for all of the entries in the smotif_db file
 
         # ************************************************
@@ -136,6 +140,9 @@ def SmotifSearch(index_array):
 
     # Save all of the hits in pickled arrays
     if dump_log:
+
+        if len(dump_log) > 100:
+            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
         print "num of hits", len(dump_log)
         io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
 

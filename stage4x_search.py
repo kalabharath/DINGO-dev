@@ -16,6 +16,7 @@ import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
 import utility.smotif_util as sm
 import utility.stage2_util as uts2
+import ranking.RDCStageRank as rank
 
 # Stage3 and stage4 should be merged, there is no difference except for one of the args in pcsfilter is stage4
 
@@ -178,6 +179,8 @@ def SmotifSearch(index_array):
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:
+        if len(dump_log) > 50:
+            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=4)
         print "num of hits", len(dump_log),
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
     return True

@@ -18,7 +18,7 @@ import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
 import utility.smotif_util as sm
 import utility.stage2_util as uts2
-
+import ranking.RDCStageRank as rank
 
 def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
     # print "previous_smotif: ", previous_smotif
@@ -189,18 +189,13 @@ def SmotifSearch(index_array):
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
 
-                elif noe_fmeasure == 0.00:
-                    rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
-                    tlog.append(['RDC_filter', rdc_tensor_fits])
-
-                else:
-                    pass
-
             if pcs_tensor_fits or rdc_tensor_fits:
                 #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:
+        if len(dump_log) > 50:
+            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=3)
         print "num of hits", len(dump_log)
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
     return True

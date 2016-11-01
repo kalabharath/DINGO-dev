@@ -10,6 +10,7 @@ Perform stage 3 in parallel
 import sys
 sys.path.append('../../main/')
 import time
+import traceback
 from   mpi4py import MPI
 
 import stage3x_search as S3search
@@ -37,6 +38,7 @@ if rank == 0:
         tasks, sse_index = util.getRunSeq(num_hits, stage=3)
         #tasks, sse_index = util.start_top_hits(num_hits, stage=3)
     except:
+        traceback.print_exc()
         print "Couldn't extract top hits within the specified cutoffs: Exiting..."
         for i in range(0, size - 1):
             data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
