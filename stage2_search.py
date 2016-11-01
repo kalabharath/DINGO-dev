@@ -200,8 +200,7 @@ def SmotifSearch(index_array):
 
     # prevent dumping empty arrays with no data
     if len(dump_log) > 0:
-        if len(dump_log) > 50:
-            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=2)
+        dump_log = rank.rank_dump_log(dump_log, exp_data, stage=2)
         print "num of hits", len(dump_log),
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
 

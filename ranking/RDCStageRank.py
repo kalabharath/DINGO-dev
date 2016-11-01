@@ -1,11 +1,22 @@
 import utility.stage2_util as s2util
 import collections
 import math
-
+import os
 def rank_dump_log(dump_log, exp_data, stage):
 
+    current_min = 999.999
     prob_top_hits=exp_data['prob_top_hits']
-    num_hits = round(len(dump_log) * prob_top_hits[stage-1], 1)
+    if prob_top_hits[stage-1] == 1.0:
+        return dump_log
+
+    if os.path.isfile("temp_min.dat"):
+        with open('temp_min.dat') as fin:
+            line = fin.readline()
+        current_min = float(line)
+
+
+    #num_hits = round(len(dump_log) * prob_top_hits[stage-1], 1)
+    num_hits = 10
     new_dict = collections.defaultdict(list)
 
     rdc_filter = False

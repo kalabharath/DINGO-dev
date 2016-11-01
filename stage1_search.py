@@ -140,9 +140,7 @@ def SmotifSearch(index_array):
 
     # Save all of the hits in pickled arrays
     if dump_log:
-
-        if len(dump_log) > 100:
-            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
+        dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
         print "num of hits", len(dump_log)
         io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
 
