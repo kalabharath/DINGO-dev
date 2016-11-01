@@ -17,7 +17,7 @@ import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
 import utility.smotif_util as sm
 import utility.stage2_util as uts2
-
+import ranking.RDCStageRank as rank
 
 def getfromDB(previous_smotif, current_ss, direction, database_cutoff):
     """
