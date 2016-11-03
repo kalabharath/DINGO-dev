@@ -197,7 +197,10 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                     if filter[0] == 'NOE_filter':
                         noe_filter = True
                         noe_fmeasure = filter[1]
-                        Nchi = Nchi / math.pow(10, noe_fmeasure)
+                        if stage == 99:
+                            Nchi = Nchi / math.pow(100, noe_fmeasure)
+                        else:
+                            Nchi = Nchi / math.pow(10, noe_fmeasure)
                         new_dict[Nchi].append(hit)
                 if not noe_filter:
                     new_dict[Nchi].append(hit)

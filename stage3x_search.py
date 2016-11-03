@@ -194,8 +194,9 @@ def SmotifSearch(index_array):
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:
+        if 'rank_top_hits' in exp_data_types:
+            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=3)
 
-        dump_log = rank.rank_dump_log(dump_log, exp_data, stage=3)
         print "num of hits", len(dump_log)
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
     return True

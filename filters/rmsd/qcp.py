@@ -7,7 +7,6 @@ Date: 8/05/15 , Time:4:27 AM
 """
 
 import copy
-
 import qcprot
 
 

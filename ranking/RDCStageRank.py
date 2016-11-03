@@ -1,22 +1,12 @@
 import utility.stage2_util as s2util
 import collections
 import math
-import os
+
 def rank_dump_log(dump_log, exp_data, stage):
 
-    current_min = 999.999
-    prob_top_hits=exp_data['prob_top_hits']
-    if prob_top_hits[stage-1] == 1.0:
-        return dump_log
 
-    if os.path.isfile("temp_min.dat"):
-        with open('temp_min.dat') as fin:
-            line = fin.readline()
-        current_min = float(line)
-
-
-    #num_hits = round(len(dump_log) * prob_top_hits[stage-1], 1)
-    num_hits = 10
+    rank_top_hits=exp_data['rank_top_hits']
+    num_hits = rank_top_hits[stage-1]
     new_dict = collections.defaultdict(list)
 
     rdc_filter = False
@@ -59,24 +49,11 @@ def rank_dump_log(dump_log, exp_data, stage):
                 if ent[0] == 'seq_filter':
                     seq_filter = ent
                     smotif_seq = seq_filter[1]
-                if ent[0] == 'RDC_filter':
-                    rdc_data = ent
-                    Nchi = s2util.rdcSumChi(rdc_data, stage)
-                    if noe_filter:
-                        for ent in entry:
-                            if ent[0] == 'NOE_filter':
-                                noe_fmeasure = ent[1]
-                                Nchi = Nchi / math.pow(10, noe_fmeasure)
-                    else:
-                        Nchi = s2util.rdcSumChi(rdc_data, stage)
-
             if smotif_seq not in seqs:
                 seqs.append(smotif_seq)
-                # non_redundant.setdefault(Nchi, []).append(entry)
-                #non_redundant[Nchi].append(entry)
                 reduced_dump_log.append(entry)
                 count_hits += 1
         if count_hits >= num_hits:
             break
-    print "Reducing the amount of data to:",prob_top_hits[stage-1], len(reduced_dump_log), len(dump_log)
+    print "Reducing the amount of data to:",rank_top_hits[stage-1], len(reduced_dump_log), len(dump_log)
     return reduced_dump_log

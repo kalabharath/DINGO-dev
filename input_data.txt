@@ -1,41 +1,64 @@
 #list all the relavant input data files in the appropriate types
 # notice the appropriate spaces
 
+fasta_file = ./setup/seq.fasta
+# sequence information in the appropriate fasta file
+
+ss_file = ./talosN/predSS.tab
+
+# Secondary structure predicition as predicted by psipred
+
+#contacts_file = './2m47_metapsicov_contacts.txt'
+# contacts as predicted by metapsicov
+
+
+rdc_input_files = ./setup/rdc_out.npc ./setup/phages.npc
+
+noe_input_files = ./setup/bb_all.dat
+
+#predicted/estimation of axial magnitude for different RDC  sets
+predicted_axial = 1000 600 20 6
+# predicted/observed Error in measurement for different RDC sets
+exp_error = 4000 4000 20 22
+# abs error in measurement, the error model
+abs_exp_error = 0 0 4 4
+
+# noe probability for different stages
+noe_fmeasure = 0.8 0.8 0.8 0.8
+
+#Keep this probability of tophits in every thread
+
+prob_top_hits = 1.0 0.75 0.50 0.25
+
+#Calc native rmsds all the time
+
+native_pdb = idealized_2kpp.pdb
+
+
+pcs_broker = ./setup/broker-ts4.txt
+
 #broker file format as used as input for GPS-Rosetta
 native_pdbs = 1ORM 1Q9F 1Q9G 1QJ8 1QJ9 2M06 2M07
-
-
 #RMSD cutoff for smotif SSE superposition
-#specify abs(cutoff) for each of the four stages
-# four differnt stages are stage1 (First smotif), stage2(second smotif), stage3(<75% of the data), stage4(>75% data)
+
 rmsd = 3.0
-rmsd_cutoff = 3.0 3.0 3.0 3.0
+#clash cutoff dist
+rmsd_cutoff = 2.0 2.0 2.0 2.0
 
 #clash cutoff dist
-# Least distance between neighbouring SSEs
-
-clash_distance = 3.0
-
-#Specific to readin data generated from EVFold server
-
-evfold_ss = /home/kalabharath/projects/boss-evo/tm_targets/1SOR_A/EVFold/residue_numbering/1SOR_A_1SOR_A.indextable
-evfold_plm = /home/kalabharath/projects/boss-evo/tm_targets/1SOR_A/EVFold/ev_couplings/1SOR_A_PLM.txt
-
-#contacts cutoff, std is 8A
-
+clash_distance = 2.8
 
 #database cutoff to use
-# Available options are 0.5, 1.0, 1.5, 9999 (uses redundant database)
-database_cutoff = 0.25
+# Available options are 0.05, 0.07, 0.1, 0.25,  9999 (uses redundant database)
+database_cutoff = 0.07
 
 #Axial and rhombic cutoffs for different stages
 #specify abs(cutoff) for each of the four stages
 # four differnt stages are stage1 (First smotif), stage2(second smotif), stage3(<75% of the data), stage4(>75% data)
-axrh_cutoff =  100 100 60 40
+rdc_axrh_cutoff =  150 150 80 60
 
-
- #chisqr cutoff for different stages
- #PCS error threshold for the 4 different stages
+#chisqr cutoff for different stages
+#PCS error threshold for the 4 different stages
 # four differnt stages are stage1 (First smotif), stage2(second smotif), stage3(<75% of the data), stage4(>75% data)
 # 0.0025 (0.05 * 0.05) std error, 0.0025 *2 = 0.005, 0.0025 * 4 = 0.01
-chisqr_cutoff = 0.0025 0.0025 0.005 0.01
+rdc_chisqr_cutoff = 0.0025 0.0025 0.01 0.02

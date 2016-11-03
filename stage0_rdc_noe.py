@@ -17,6 +17,7 @@ import utility.RDCUtil    as ru
 import utility.io_util    as io
 import utility.ss_util    as ss
 import utility.NOEUtil    as nu
+import utility.referenceUtil as ref
 
 # Parse the input data text file
 data = io.readInputDataFiles('input_data.txt')
@@ -38,15 +39,6 @@ native_pdbs = native_pdbs.lower()
 native_pdbs = native_pdbs.split()
 print native_pdbs
 
-# Read in the axial, Rhombic and chisqr cutoffs for all of the datasets
-axrh_cutoff = data['rdc_axrh_cutoff']
-axrh_cutoff = axrh_cutoff.split()
-axrh_cutoff = [float(i) for i in axrh_cutoff]
-
-chisqr_cutoff = data['rdc_chisqr_cutoff']
-chisqr_cutoff = chisqr_cutoff.split()
-chisqr_cutoff = [float(i) for i in chisqr_cutoff]
-
 pred_axial = data['predicted_axial']
 pred_axial = pred_axial.split()
 pred_axial = [float(i) for i in pred_axial]
@@ -59,10 +51,9 @@ abs_exp_error = data['abs_exp_error']
 abs_exp_error = abs_exp_error.split()
 abs_exp_error = [float(i) for i in abs_exp_error]
 
-prob_top_hits = data['prob_top_hits']
-prob_top_hits = prob_top_hits.split()
-prob_top_hits = [float(i) for i in prob_top_hits]
-
+rank_top_hits = data['rank_top_hits']
+rank_top_hits = rank_top_hits.split()
+rank_top_hits = [float(i) for i in rank_top_hits]
 
 noe_fmeasure = data['noe_fmeasure']
 noe_fmeasure = noe_fmeasure.split()
@@ -72,28 +63,26 @@ rmsd_cutoff = data['rmsd_cutoff']
 rmsd_cutoff = rmsd_cutoff.split()
 rmsd_cutoff = [float(i) for i in rmsd_cutoff]
 
+reference_ca = ref.getRefCoors(data['reference_pdb'])
 print rmsd_cutoff
 
-if (len(chisqr_cutoff) != 4) or (len(axrh_cutoff) != 4):
-    print "The number of specified cutoffs should be exactly 4"
 clash_distance = float(data['clash_distance'])
 print 'clash_distance: ', clash_distance
 
 rdc_data = ru.getRdcData(data['rdc_input_files'], ss_seq)
-
 noe_data = nu.getNOEData(data['noe_input_files'], ss_seq)
 
-map_route = [[3, 4, 'start'], [2, 3, 'left'], [4, 5, 'right'], [5, 6, 'right'], [6, 7, 'right'], [1, 2, 'left'],
-             [0, 1, 'left']]
+map_route = [[0, 1, 'start'], [1, 2, 'right'], [2, 3, 'right'], [3, 4, 'right'], [4, 5, 'right'], [5, 6, 'right'],
+             [6, 7, 'right']]
 
 io.dumpPickle("rdc_route.pickle", map_route)
 database_cutoff = data['database_cutoff']
 
 data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives': native_pdbs, \
              'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \
-             'rdc_axrh_cutoff': axrh_cutoff, 'rdc_chisqr_cutoff': chisqr_cutoff, 'rmsd_cutoff': rmsd_cutoff,
+             'rmsd_cutoff': rmsd_cutoff, 'reference_ca': reference_ca, \
              'pred_axial': pred_axial, 'exp_error': exp_error, 'abs_exp_error': abs_exp_error, 'noe_data': noe_data,
-             'noe_fmeasure': noe_fmeasure, 'prob_top_hits': prob_top_hits}
+             'noe_fmeasure': noe_fmeasure, 'prob_top_hits': rank_top_hits}
 
 io.dumpPickle("exp_data.pickle", data_dict)
 
