@@ -11,6 +11,7 @@ stage 1 in parallel
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.noe.noefilter as Nfilter
+import filters.rmsd.RefRmsd as ref
 import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
 import utility.smotif_util as sm
@@ -80,7 +81,8 @@ def SmotifSearch(index_array):
         # Prepare temp log array to save data at the end
         # ************************************************
 
-        tlog, pcs_tensor_fits, rdc_tensor_fits, noe_fmeasure = [], [], [], []
+        tlog, pcs_tensor_fits, rdc_tensor_fits, noe_fmeasure, = [], [], [], []
+        ref_rmsd = 0.0
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
         tlog.append(['cathcodes', [smotif_data[i][0]]])
@@ -121,7 +123,7 @@ def SmotifSearch(index_array):
         # ************************************************
         # Residual dipolar coupling filter
         # uses experimental RDC data to filter Smotifs
-        # scoring based on normalised chisqr
+        # scoring based on normalised chisqr.
         # ************************************************
 
         if 'rdc_data' in exp_data_types:
@@ -134,17 +136,18 @@ def SmotifSearch(index_array):
                     continue
 
         # ************************************************
-        # Residual dipolar coupling filter
-        # uses experimental RDC data to filter Smotifs
-        # scoring based on normalised chisqr
+        # Calc RMSD of the reference structure.
+        # Used to identify the lowest possible RMSD
+        # structure for the target, from the Smotif library.
         # ************************************************
 
         if 'reference_ca' in exp_data_types:
-
-            
+            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'],s1_def, s2_def, smotif_data[i], rmsd_cutoff= 2.0 )
+            if ref_rmsd:
+                tlog.append(['Ref_RMSD', ref_rmsd])
 
         # Dump the data to the disk
-        if pcs_tensor_fits or rdc_tensor_fits:
+        if pcs_tensor_fits or rdc_tensor_fits or ref_rmsd:
             # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             #print tpdbid, noe_fmeasure, rdc_tensor_fits
             dump_log.append(tlog)

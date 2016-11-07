@@ -13,6 +13,7 @@ import filters.constraints.looplengthConstraint as llc
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.noe.noefilter as Nfilter
+import filters.rmsd.RefRmsd as ref
 import filters.rmsd.qcp as qcp
 import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
@@ -91,6 +92,7 @@ def SmotifSearch(index_array):
     sse_ordered = orderSSE(preSSE, current_ss, direction)
     #print sse_ordered
     dump_log = []
+    ref_rmsd = 0
     no_clashes = False
 
 
@@ -189,7 +191,20 @@ def SmotifSearch(index_array):
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
 
-            if pcs_tensor_fits or rdc_tensor_fits:
+
+            # ************************************************
+            # Calc RMSD of the reference structure.
+            # Used to identify the lowest possible RMSD
+            # structure for the target, from the Smotif library.
+            # ************************************************
+
+            if 'reference_ca' in exp_data_types:
+
+                ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=3.0)
+                if ref_rmsd:
+                    tlog.append(['Ref_RMSD', ref_rmsd])
+
+            if pcs_tensor_fits or rdc_tensor_fits or ref_rmsd:
                 #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
