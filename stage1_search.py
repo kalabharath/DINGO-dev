@@ -142,9 +142,9 @@ def SmotifSearch(index_array):
         # ************************************************
 
         if 'reference_ca' in exp_data_types:
-            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'],s1_def, s2_def, smotif_data[i], rmsd_cutoff= 2.0 )
+            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'],s1_def, s2_def, smotif_data[i], rmsd_cutoff= 20.0 )
             if ref_rmsd:
-                tlog.append(['Ref_RMSD', ref_rmsd])
+                tlog.append(['Ref2_RMSD', ref_rmsd])
 
         # Dump the data to the disk
         if pcs_tensor_fits or rdc_tensor_fits or ref_rmsd:
