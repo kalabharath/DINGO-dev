@@ -147,7 +147,7 @@ def SmotifSearch(index_array):
                 tlog.append(['Ref2_RMSD', ref_rmsd])
 
         # Dump the data to the disk
-        if pcs_tensor_fits or rdc_tensor_fits or ref_rmsd:
+        if pcs_tensor_fits or rdc_tensor_fits:
             # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
             #print tpdbid, noe_fmeasure, rdc_tensor_fits
             dump_log.append(tlog)

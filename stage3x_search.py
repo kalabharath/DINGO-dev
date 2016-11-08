@@ -204,7 +204,7 @@ def SmotifSearch(index_array):
                 if ref_rmsd:
                     tlog.append(['Ref2_RMSD', ref_rmsd])
 
-            if pcs_tensor_fits or rdc_tensor_fits or ref_rmsd:
+            if pcs_tensor_fits or rdc_tensor_fits:
                 #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
