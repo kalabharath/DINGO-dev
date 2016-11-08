@@ -81,3 +81,46 @@ def getRdcData(rdc_files, ss_seq):
         for j in range(0, len(rdc_files)):
             rdc_data.append(FormatRdc(len(ss_seq), rdc_files[j]))
         return rdc_data
+
+def getRDCMapRoute(ss_combi, rdc_data):
+    """
+    #map_route = [[0, 1, 'start'], [1, 2, 'right'], [2, 3, 'right'], [3, 4, 'right'], [4, 5, 'right'], [5, 6, 'right']
+    :param ss_combi:
+    :param rdc_data:
+    :return:
+    """
+    map_route=[]
+    found_pairs=[]
+    sse_index = ss_combi.keys()
+    data_dict = {}
+    rdc_data = rdc_data[0]
+    rdc_resi = rdc_data.keys()
+    for i in range(0, len(sse_index)-1):
+        print sse_index[i], sse_index[i+1]
+        found_pairs.append([sse_index[i], sse_index[i+1]])
+        ss1 = ss_combi[sse_index[i]][0]
+        ss2 = ss_combi[sse_index[i+1]][0]
+        data_count = 0
+        for j in range(ss1[4], ss1[5] + 1):
+            if j in rdc_resi:
+                data_count += 1
+
+        for j in range(ss2[4], ss2[5] + 1):
+            if j in rdc_resi:
+                data_count += 1
+
+        data_dict[data_count] = (sse_index[i], sse_index[i+1])
+    sse_data = data_dict.keys()
+    sse_data.sort()
+    sse_data.reverse()
+    start_pair = data_dict[sse_data[0]]
+    map_route.append([start_pair[0], start_pair[1], 'start'])
+    print map_route
+
+    while len(map_route) == len(found_pairs):
+        
+
+
+
+
+    return map_route
