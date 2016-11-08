@@ -82,7 +82,7 @@ data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives'
              'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \
              'rmsd_cutoff': rmsd_cutoff, 'reference_ca': reference_ca, \
              'pred_axial': pred_axial, 'exp_error': exp_error, 'abs_exp_error': abs_exp_error, 'noe_data': noe_data,
-             'noe_fmeasure': noe_fmeasure, 'prob_top_hits': rank_top_hits}
+             'noe_fmeasure': noe_fmeasure, 'rank_top_hits': rank_top_hits}
 
 io.dumpPickle("exp_data.pickle", data_dict)
 
@@ -106,7 +106,7 @@ for i in range(0, len(map_route)):
         print run_line
         fout.write(run_line)
     else:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage4x_mpi_run.py 1000\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage4x_mpi_run.py 5000\n"
         print run_line
         fout.write(run_line)
 
