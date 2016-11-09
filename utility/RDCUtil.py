@@ -95,32 +95,69 @@ def getRDCMapRoute(ss_combi, rdc_data):
     data_dict = {}
     rdc_data = rdc_data[0]
     rdc_resi = rdc_data.keys()
+
     for i in range(0, len(sse_index)-1):
-        print sse_index[i], sse_index[i+1]
         found_pairs.append([sse_index[i], sse_index[i+1]])
         ss1 = ss_combi[sse_index[i]][0]
         ss2 = ss_combi[sse_index[i+1]][0]
         data_count = 0
         for j in range(ss1[4], ss1[5] + 1):
             if j in rdc_resi:
-                data_count += 1
-
+                data_count = data_count + len(rdc_data[j])
         for j in range(ss2[4], ss2[5] + 1):
             if j in rdc_resi:
-                data_count += 1
-
+                data_count = data_count + len(rdc_data[j])
         data_dict[data_count] = (sse_index[i], sse_index[i+1])
+
+
+    sse_rdc_data = []
+    for i in range(0, len(sse_index)):
+        ss1 = ss_combi[sse_index[i]][0]
+        data_count = 0
+        for j in range(ss1[4], ss1[5] + 1):
+            if j in rdc_resi:
+                data_count = data_count + len(rdc_data[j])
+        sse_rdc_data.append(data_count)
+
+
     sse_data = data_dict.keys()
     sse_data.sort()
     sse_data.reverse()
-    start_pair = data_dict[sse_data[0]]
-    map_route.append([start_pair[0], start_pair[1], 'start'])
-    print map_route
-
-    while len(map_route) == len(found_pairs):
-
-        pass
 
 
+    control, i , j = 0, 0, 0
 
+    while len(map_route) != len(found_pairs):
+
+        if control == 0:
+            start_pair = data_dict[sse_data[control]]
+            i, j = start_pair[0], start_pair[1]
+            map_route.append([i, j, 'start'])
+            control += 1
+        else:
+            if i == 0:
+                ti = j
+                j +=1
+                control += 1
+                direction = 'right'
+                map_route.append([ti, j, direction])
+            elif j == len(sse_index)-1:
+                tj = i
+                i -= 1
+                control += 1
+                direction = 'left'
+                map_route.append([i, tj, direction])
+            else:
+                if sse_rdc_data[i-1] >= sse_rdc_data[j+1]:
+                    tj = i
+                    i -= 1
+                    direction = 'left'
+                    control += 1
+                    map_route.append([i, tj, direction])
+                else:
+                    ti = j
+                    j += 1
+                    control += 1
+                    direction = 'right'
+                    map_route.append([ti, j, direction])
     return map_route

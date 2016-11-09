@@ -72,14 +72,9 @@ print 'clash_distance: ', clash_distance
 rdc_data = ru.getRdcData(data['rdc_input_files'], ss_seq)
 noe_data = nu.getNOEData(data['noe_input_files'], ss_seq)
 
-map_route = [[0, 1, 'start'], [1, 2, 'right'], [2, 3, 'right'], [3, 4, 'right'], [4, 5, 'right'], [5, 6, 'right'],
-             [6, 7, 'right']]
-
 map_route =  ru.getRDCMapRoute(ss_combi, rdc_data)
-
-
-
 io.dumpPickle("rdc_route.pickle", map_route)
+
 database_cutoff = data['database_cutoff']
 
 data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives': native_pdbs, \
