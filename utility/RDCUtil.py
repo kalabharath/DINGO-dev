@@ -118,8 +118,8 @@ def getRDCMapRoute(ss_combi, rdc_data):
     print map_route
 
     while len(map_route) == len(found_pairs):
-        
 
+        pass
 
 
 
