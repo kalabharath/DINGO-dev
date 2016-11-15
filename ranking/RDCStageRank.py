@@ -8,12 +8,18 @@ def rank_dump_log(dump_log, exp_data, stage):
     rank_top_hits=exp_data['rank_top_hits']
     num_hits = rank_top_hits[stage-1]
     new_dict = collections.defaultdict(list)
-
+    pcs_filter = False
     rdc_filter = False
     noe_filter = False
     for hit in dump_log:
         # thread_data contains data from each search and filter thread.
         for data_filter in hit:
+            if data_filter[0] == 'PCS_filter':
+                pcs_filter = True
+                pcs_data = data_filter
+                Nchi = s2util.getNchiSum(pcs_data, stage)
+                # new_dict.setdefault(Nchi, []).append(entry)
+                new_dict[Nchi].append(hit)
             if data_filter[0] == 'RDC_filter':
                 rdc_filter = True
                 rdc_data = data_filter
