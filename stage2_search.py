@@ -203,12 +203,12 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'reference_ca' in exp_data_types:
-                ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=20.0)
+                ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=4.0)
                 if ref_rmsd:
                     tlog.append(['Ref2_RMSD', ref_rmsd])
                     if count_ten < 10:
                         count_ten += 1
-                        print "count_ten:", tpdbid
+                        print "count_ten:", tpdbid, csmotif_data[i][0]
 
 
             if pcs_tensor_fits or rdc_tensor_fits:
