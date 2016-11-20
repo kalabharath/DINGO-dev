@@ -101,7 +101,7 @@ def SmotifSearch(index_array):
     # The 'for' loop below iterates over all of the Smotifs and applies various filters
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
-
+    count_ten = 0
     for i in range(0, len(csmotif_data)):
         # ************************************************
         # Applying different filters for the Smotif assembly
@@ -203,6 +203,9 @@ def SmotifSearch(index_array):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=20.0)
                 if ref_rmsd:
                     tlog.append(['Ref2_RMSD', ref_rmsd])
+                    if count_ten < 10:
+                        count_ten += 1
+                        print "count_ten:", tpdbid
 
             if pcs_tensor_fits or rdc_tensor_fits:
                 #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes

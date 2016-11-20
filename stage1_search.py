@@ -58,7 +58,7 @@ def SmotifSearch(index_array):
     # ************************************************************************************************
 
     print "no of entries: ", len(smotif_data)
-
+    count_ten = 0
     for i in range(0, len(smotif_data)):
 
         # loop over for all of the entries in the smotif_db file
@@ -142,9 +142,13 @@ def SmotifSearch(index_array):
         # ************************************************
 
         if 'reference_ca' in exp_data_types:
-            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'],s1_def, s2_def, smotif_data[i], rmsd_cutoff= 20.0 )
+            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'],s1_def, s2_def, smotif_data[i], rmsd_cutoff= 3.0 )
+
             if ref_rmsd:
                 tlog.append(['Ref2_RMSD', ref_rmsd])
+                if count_ten < 10:
+                    count_ten += 1
+                    print "count_ten:", tpdbid
 
         # Dump the data to the disk
         if pcs_tensor_fits or rdc_tensor_fits:
