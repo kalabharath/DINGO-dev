@@ -104,8 +104,8 @@ def SmotifSearch(index_array):
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
 
-    print "no of entries: ", len(csmotif_data)
-    count_ten = 0
+    #print "no of entries: ", len(csmotif_data)
+
     for i in range(0, len(csmotif_data)):
 
         # ************************************************
@@ -162,6 +162,8 @@ def SmotifSearch(index_array):
             # concat current to previous seq
             concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
 
+            g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
+
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
             # ************************************************
@@ -183,6 +185,8 @@ def SmotifSearch(index_array):
             if 'noe_data' in exp_data_types:
                 noe_fmeasure = Nfilter.s3NOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
                 tlog.append(['NOE_filter', noe_fmeasure])
+            else:
+                noe_fmeasure = False
 
             # ************************************************
             # Residual dipolar coupling filter
@@ -194,6 +198,11 @@ def SmotifSearch(index_array):
                 if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][1]:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
+                elif g_seq_identity >= 30:
+                    rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
+                    tlog.append(['RDC_filter', rdc_tensor_fits])
+                else:
+                    continue
 
 
             # ************************************************
@@ -204,16 +213,14 @@ def SmotifSearch(index_array):
 
             if 'reference_ca' in exp_data_types:
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=5.0)
-                if ref_rmsd:
-                    tlog.append(['Ref2_RMSD', ref_rmsd])
-                    if count_ten < 10 and ref_rmsd > 1.0:
-                        count_ten += 1
-                        print "count_ten:", tpdbid, csmotif_data[i][0]
+
+
 
 
             if pcs_tensor_fits or rdc_tensor_fits:
                 #dump data to the disk
-                #print tpdbid, noe_fmeasure, rdc_tensor_fits
+                print tpdbid, rdc_tensor_fits, g_seq_identity
+                # print tpdbid, noe_fmeasure, rdc_tensor_fits
                 # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 

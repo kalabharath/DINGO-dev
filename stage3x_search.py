@@ -158,6 +158,8 @@ def SmotifSearch(index_array):
 
             concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
 
+            g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
+
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
             # ************************************************
@@ -179,6 +181,8 @@ def SmotifSearch(index_array):
             if 'noe_data' in exp_data_types:
                 noe_fmeasure = Nfilter.s3NOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
                 tlog.append(['NOE_filter', noe_fmeasure])
+            else:
+                noe_fmeasure = False
 
             # ************************************************
             # Residual dipolar coupling filter
@@ -190,6 +194,11 @@ def SmotifSearch(index_array):
                 if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][2]:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
+                elif g_seq_identity >=30:
+                    rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
+                    tlog.append(['RDC_filter', rdc_tensor_fits])
+                else:
+                    continue
 
 
             # ************************************************

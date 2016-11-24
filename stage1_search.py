@@ -57,8 +57,7 @@ def SmotifSearch(index_array):
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
 
-    print "no of entries: ", len(smotif_data)
-    count_ten = 0
+
     for i in range(0, len(smotif_data)):
 
         # loop over for all of the entries in the smotif_db file
@@ -118,6 +117,9 @@ def SmotifSearch(index_array):
             noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['NOE_filter', noe_fmeasure ])
 
+        else:
+            noe_fmeasure = False
+
 
 
         # ************************************************
@@ -131,9 +133,13 @@ def SmotifSearch(index_array):
             if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][0]:
                 rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
                 tlog.append(['RDC_filter', rdc_tensor_fits])
-                if seq_identity == 100.0:
-                    print rdc_tensor_fits
-                    continue
+            elif seq_identity >=20:
+                rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+            else:
+                continue
+
 
         # ************************************************
         # Calc RMSD of the reference structure.
@@ -144,16 +150,11 @@ def SmotifSearch(index_array):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'],s1_def, s2_def, smotif_data[i], rmsd_cutoff= 4.0 )
 
-            if ref_rmsd:
-                tlog.append(['Ref2_RMSD', ref_rmsd])
-                if count_ten < 10 and ref_rmsd > 1.0:
-                    count_ten += 1
-                    print "count_ten:", tpdbid, smotif_data[i][0]
 
         # Dump the data to the disk
         if pcs_tensor_fits or rdc_tensor_fits:
             # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
-            #print tpdbid, noe_fmeasure, rdc_tensor_fits
+            print tpdbid, rdc_tensor_fits, seq_identity
             dump_log.append(tlog)
 
     # Save all of the hits in pickled arrays
