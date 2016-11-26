@@ -180,7 +180,7 @@ def SmotifSearch(index_array):
                 if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][3]:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=4)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
-                elif g_seq_identity >=30:
+                elif g_seq_identity >=20:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=4)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
                 else:
@@ -197,9 +197,6 @@ def SmotifSearch(index_array):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=5.0)
                 if ref_rmsd:
                     tlog.append(['Ref2_RMSD', ref_rmsd])
-                    if count_ten < 10 and ref_rmsd > 1.0:
-                        count_ten += 1
-                        print "count_ten:", tpdbid, csmotif_data[i][0]
 
             if pcs_tensor_fits or rdc_tensor_fits:
                 dump_log.append(tlog)

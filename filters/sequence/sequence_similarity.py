@@ -126,7 +126,7 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data):
 
     return smotif_seq, seq_id, score
 
-def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
+def getGlobalSequenceIdentityBACK(concat_seq, exp_data, sse_ordered):
 
 
     aa_seq = exp_data['aa_seq']
@@ -159,6 +159,30 @@ def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
                 k += 1
     # seq_id = (k/j)*100
     seq_id = (k / len(concat_seq)) * 100
+
+    return seq_id
+
+
+def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
+
+
+    aa_seq = exp_data['aa_seq']
+    # [['helix', 12, 3, 6, 4, 15], ['helix', 11, 4, 10, 24, 34], ['helix', 7, 10, 8, 45, 51]]
+    native_sse_seq = ''
+    for sse in sse_ordered:
+        sse_seq = aa_seq[sse[4]-1 : sse[5]]
+        native_sse_seq = native_sse_seq + sse_seq
+
+    k=0.0
+
+    for i in range(0, len(concat_seq)):
+        #print native_sse_seq[i], concat_seq[i]
+
+        if native_sse_seq[i] == concat_seq[i]:
+
+            k += 1
+
+    seq_id = (k / float(len(concat_seq))) * 100
 
     return seq_id
 
