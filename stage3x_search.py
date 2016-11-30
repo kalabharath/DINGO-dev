@@ -112,10 +112,15 @@ def SmotifSearch(index_array):
             natives = exp_data['natives']
             tpdbid = csmotif_data[i][0][0]
             pdbid = tpdbid[0:4]
-            #if pdbid not in ['2z2i']:
+
             if pdbid in natives:
-                # Stop further execution, but resume iteration
+                # print pdbid, natives
+                pass
+                # Stop further execution, but, iterate.
+            else:
                 continue
+
+
 
         # ************************************************
         # RMSD filter using QCP method
@@ -159,7 +164,7 @@ def SmotifSearch(index_array):
             concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
 
             g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
-
+            #print g_seq_identity
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
             # ************************************************
@@ -194,7 +199,7 @@ def SmotifSearch(index_array):
                 if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][2]:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
-                elif g_seq_identity >=20:
+                elif g_seq_identity >=0:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
                 else:

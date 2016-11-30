@@ -70,9 +70,12 @@ def SmotifSearch(index_array):
             natives = exp_data['natives']
             tpdbid = smotif_data[i][0][0]
             pdbid = tpdbid[0:4]
+            #if pdbid in natives:
             if pdbid in natives:
-            #if pdbid not in ['2z2i']:
+                # print pdbid, natives
+                pass
                 # Stop further execution, but, iterate.
+            else:
                 continue
 
         # ************************************************
@@ -133,7 +136,7 @@ def SmotifSearch(index_array):
             if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][0]:
                 rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
                 tlog.append(['RDC_filter', rdc_tensor_fits])
-            elif seq_identity >=20:
+            elif seq_identity >=0:
                 rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
 
                 tlog.append(['RDC_filter', rdc_tensor_fits])
