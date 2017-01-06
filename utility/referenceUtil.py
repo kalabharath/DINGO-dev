@@ -7,6 +7,7 @@ def getRefCoors(pdb_file):
     :param pdb_file:
     :return:
     """
+
     ca_coors = []
     data = io.readFile(pdb_file)
     for line in data:
