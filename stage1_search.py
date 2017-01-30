@@ -11,6 +11,7 @@ stage 1 in parallel
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.noe.noefilter as Nfilter
+import filters.noe.allNoes   as Noe
 import filters.rmsd.RefRmsd as ref
 import filters.sequence.sequence_similarity as Sfilter
 import utility.io_util as io
@@ -117,8 +118,8 @@ def SmotifSearch(index_array):
         # ************************************************
 
         if 'noe_data' in exp_data_types:
-
-            noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            # noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            noe_fmeasure = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['NOE_filter', noe_fmeasure ])
 
 
@@ -152,13 +153,14 @@ def SmotifSearch(index_array):
         # ************************************************
 
         if 'reference_ca' in exp_data_types:
-            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'],s1_def, s2_def, smotif_data[i], rmsd_cutoff= 10.0 )
+            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
 
 
         # Dump the data to the disk
         if pcs_tensor_fits or rdc_tensor_fits:
             # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
-            print tpdbid, rdc_tensor_fits, ref_rmsd
+            if ref_rmsd < 5.0:
+                print tpdbid, rdc_tensor_fits, ref_rmsd
             dump_log.append(tlog)
 
     # Save all of the hits in pickled arrays

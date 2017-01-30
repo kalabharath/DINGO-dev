@@ -220,7 +220,6 @@ def SmotifSearch(index_array):
                 tlog.append(['Ref2_RMSD', ref_rmsd, g_seq_identity])
 
 
-
             if pcs_tensor_fits or rdc_tensor_fits:
                 #dump data to the disk
                 print tpdbid, rdc_tensor_fits, ref_rmsd
