@@ -1,8 +1,7 @@
-from filters.contacts.contacts_filter import get_distance
+from filters.constraints.looplengthConstraint import get_dist
 
 
 def s1NOEfit(s1_def, s2_def, smotif, exp_data):
-    noe_cutoff = False
     noe_matrix = exp_data['noe_data']
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)
@@ -31,12 +30,12 @@ def s1NOEfit(s1_def, s2_def, smotif, exp_data):
                     if entry1[2] == 'H' and entry1[0] == sres2:
                         coo2 = [entry1[3], entry1[4], entry1[5]]
 
-                dist = get_distance(coo1, coo2)
+                dist = get_dist(coo1, coo2)
                 # print sres1, sres2, noe_cutoff, coo1, coo2, dist
                 if noe_cutoff > 10000:
                     real_noe = noe_cutoff - 10000
                     # backmapping side chain noes to amides
-                    if (real_noe - 4.0 <= dist <= real_noe + 4.0):
+                    if real_noe - 4.0 <= dist <= real_noe + 4.0:
                         noes_found.append((sres1, sres2))
                         noes_total.append((sres1, sres2))
                     else:
@@ -63,12 +62,12 @@ def s1NOEfit(s1_def, s2_def, smotif, exp_data):
                     if entry1[2] == 'H' and entry1[0] == sres2:
                         coo2 = [entry1[3], entry1[4], entry1[5]]
 
-                dist = get_distance(coo1, coo2)
+                dist = get_dist(coo1, coo2)
                 # print sres1, sres2, noe_cutoff, coo1, coo2, dist
                 if noe_cutoff > 10000:
                     real_noe = noe_cutoff - 10000
                     # backmapping side chain noes to amides
-                    if (real_noe - 4.0 <= dist <= real_noe + 4.0):
+                    if real_noe - 4.0 <= dist <= real_noe + 4.0:
                         noes_found.append((sres1, sres2))
                         noes_total.append((sres1, sres2))
                     else:
@@ -95,11 +94,11 @@ def s1NOEfit(s1_def, s2_def, smotif, exp_data):
                         else:
                             noe_cutoff = False
                         if noe_cutoff:
-                            dist = get_distance(coo1, coo2)
+                            dist = get_dist(coo1, coo2)
                             if noe_cutoff > 10000:
                                 real_noe = noe_cutoff - 10000
                                 # backmapping side chain noes to amides
-                                if (real_noe - 4.0 <= dist <= real_noe + 4.0):
+                                if real_noe - 4.0 <= dist <= real_noe + 4.0:
                                     noes_found.append((res1, res2))
                                     noes_total.append((res1, res2))
                                 else:
@@ -130,19 +129,53 @@ def getNHandresi(frag):
 
 
 def sXNOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
-    noe_cutoff = False
-
+    import copy
     sse_coors = copy.deepcopy(transformed_coors)
     noe_matrix = exp_data['noe_data']
     noes_found = []
     noes_total = []
 
     # current_ss ['strand', 13, 4, 10, 36, 48]
-
     cresi = range(current_ss[4], current_ss[5] + 1)
 
-    import itertools
+    # Score Intra SSE NOEs first
+    score_intra_sse = False
+    for i in range(0, len(sse_coors)):
+        ss1_list = range(native_sse_order[i][4], native_sse_order[i][5] + 1)
+        if ss1_list == cresi:
+            score_intra_sse = True
+            res_c, ca1 = getNHandresi(sse_coors[i])
 
+            try:
+                for j in range(0, len(cresi) - 1):
+                    res1 = cresi[j]
+                    coo1 = [ca1[0][ss1_list.index(res1)], ca1[1][ss1_list.index(res1)], ca1[2][ss1_list.index(res1)]]
+                    for k in range(j + 1, len(cresi)):
+                        res2 = cresi[k]
+                        coo2 = [ca1[0][ss1_list.index(res2)], ca1[1][ss1_list.index(res2)],
+                                ca1[2][ss1_list.index(res2)]]
+                        noe_cutoff = noe_matrix[res1, res2]
+                        if noe_cutoff:
+                            dist = get_dist(coo1, coo2)
+                            if noe_cutoff > 10000:
+                                real_noe = noe_cutoff - 10000
+                                # backmapping side chain noes to amides
+                                if real_noe - 4.0 <= dist <= real_noe + 4.0:
+                                    noes_found.append((res1, res2))
+                                    noes_total.append((res1, res2))
+                                else:
+                                    noes_total.append((res1, res2))
+                            elif dist <= noe_cutoff:
+                                noes_found.append((res1, res2))
+                                noes_total.append((res1, res2))
+                            else:
+                                noes_total.append((res1, res2))
+            except:
+                continue
+        if score_intra_sse:
+            break
+
+    import itertools
     sse_pairs = list(itertools.combinations(range(len(sse_coors)), 2))
     # [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (2, 3),\
     # (2, 4), (2, 5), (2, 6), (2, 7), (3, 4), (3, 5), (3, 6), (3, 7), (4, 5), (4, 6), (4, 7), (5, 6), (5, 7), (6, 7)]
@@ -155,7 +188,6 @@ def sXNOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
         ss1_list = range(native_sse_order[i][4], native_sse_order[i][5] + 1)
         ss2_list = range(native_sse_order[j][4], native_sse_order[j][5] + 1)
         if ss1_list == cresi or ss2_list == cresi:
-            sse_satisfied = False
             for res1 in ss1_list:
                 try:
                     ca_res1 = [ca1[0][ss1_list.index(res1)], ca1[1][ss1_list.index(res1)], ca1[2][ss1_list.index(res1)]]
@@ -178,15 +210,15 @@ def sXNOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
                         dist = get_dist(ca_res1, ca_res2)
 
                         if noe_cutoff > 10000:
-                            real_noe = noe_cutoff - 10000
-                            # backmapping side chain noes to amides
+                            real_noe = noe_cutoff - 10000  # back mapping side chain noes to amides
 
-                            if (real_noe - 5.0 <= dist <= real_noe + 5.0):
+                            if real_noe - 4.0 <= dist <= real_noe + 4.0:
                                 noes_found.append((res1, res2))
+                                noes_total.append((res1, res2))
+                            else:
                                 noes_total.append((res1, res2))
 
                         elif dist <= noe_cutoff:
-                            sse_satisfied = True
                             noes_found.append((res1, res2))
                             noes_total.append((res1, res2))
                         else:
@@ -197,5 +229,4 @@ def sXNOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
         return 0.00
     # fmeasure = calcFmeasure(noes_found, noes_total)
     fmeasure = (float(len(noes_found)) / float(len(noes_total)))
-
     return fmeasure

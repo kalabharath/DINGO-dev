@@ -102,6 +102,16 @@ def getNHandresi(frag):
 
 
 def s2NOEfit(transformed_coors, native_sse_order, exp_data):
+    import warnings
+    """
+    Depr
+    :param transformed_coors:
+    :param native_sse_order:
+    :param exp_data:
+    :return:
+    """
+    warnings.warn("deprecated", DeprecationWarning)
+
     noe_cutoff = False
 
     sse_coors = copy.deepcopy(transformed_coors)

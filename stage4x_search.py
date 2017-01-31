@@ -11,6 +11,7 @@ import filters.constraints.looplengthConstraint as llc
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.noe.noefilter as Nfilter
+import filters.noe.allNoes   as Noe
 import filters.rmsd.qcp as qcp
 import filters.rmsd.RefRmsd as ref
 import filters.sequence.sequence_similarity as Sfilter
@@ -168,7 +169,8 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'noe_data' in exp_data_types:
-                noe_fmeasure = Nfilter.s3NOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
+                # noe_fmeasure = Nfilter.s3NOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
+                noe_fmeasure = Noe.sXNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
                 tlog.append(['NOE_filter', noe_fmeasure])
             else:
                 noe_fmeasure = False
