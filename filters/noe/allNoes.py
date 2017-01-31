@@ -129,43 +129,60 @@ def getNHandresi(frag):
     return resi, [x, y, z]
 
 
-def s2NOEfit(transformed_coors, native_sse_order, exp_data):
+def sXNOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
     noe_cutoff = False
-    sse_satisfied = False
+
     sse_coors = copy.deepcopy(transformed_coors)
     noe_matrix = exp_data['noe_data']
     noes_found = []
     noes_total = []
-    for i in range(0, len(sse_coors) - 1):
-        # wtf am i doing here !
+
+    # current_ss ['strand', 13, 4, 10, 36, 48]
+
+    cresi = range(current_ss[4], current_ss[5] + 1)
+
+    import itertools
+
+    sse_pairs = list(itertools.combinations(range(len(sse_coors)), 2))
+    # [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (2, 3),\
+    # (2, 4), (2, 5), (2, 6), (2, 7), (3, 4), (3, 5), (3, 6), (3, 7), (4, 5), (4, 6), (4, 7), (5, 6), (5, 7), (6, 7)]
+
+    for ij in sse_pairs:
+        i = ij[0]
+        j = ij[1]
         res_c, ca1 = getNHandresi(sse_coors[i])
-        res_n, ca2 = getNHandresi(sse_coors[i + 1])
+        res_n, ca2 = getNHandresi(sse_coors[j])
         ss1_list = range(native_sse_order[i][4], native_sse_order[i][5] + 1)
-        ss2_list = range(native_sse_order[i + 1][4], native_sse_order[i + 1][5] + 1)
-        try:
+        ss2_list = range(native_sse_order[j][4], native_sse_order[j][5] + 1)
+        if ss1_list == cresi or ss2_list == cresi:
+            sse_satisfied = False
             for res1 in ss1_list:
-                # print ss1_list, res1, res_c, res_c[ss1_list.index(res1)]
-                # print ss1_list.index(res1)
-                ca_res1 = [ca1[0][ss1_list.index(res1)], ca1[1][ss1_list.index(res1)], ca1[2][ss1_list.index(res1)]]
+                try:
+                    ca_res1 = [ca1[0][ss1_list.index(res1)], ca1[1][ss1_list.index(res1)], ca1[2][ss1_list.index(res1)]]
+                except:
+                    continue
                 for res2 in ss2_list:
                     if noe_matrix[res1, res2]:
                         noe_cutoff = noe_matrix[res1, res2]
+                    elif noe_matrix[res2, res1]:
+                        noe_cutoff = noe_matrix[res2, res1]
                     else:
                         noe_cutoff = False
-
                     if noe_cutoff:
-                        ca_res2 = [ca2[0][ss2_list.index(res2)], ca2[1][ss2_list.index(res2)],
-                                   ca2[2][ss2_list.index(res2)]]
+                        # mo res1, res2, noe_matrix[res1, res2], noe_matrix[res2, res1], noe_cutoff
+                        try:
+                            ca_res2 = [ca2[0][ss2_list.index(res2)], ca2[1][ss2_list.index(res2)],
+                                       ca2[2][ss2_list.index(res2)]]
+                        except:
+                            continue
                         dist = get_dist(ca_res1, ca_res2)
 
                         if noe_cutoff > 10000:
                             real_noe = noe_cutoff - 10000
                             # backmapping side chain noes to amides
 
-                            if (real_noe - 4.0 <= dist <= real_noe + 4.0):
+                            if (real_noe - 5.0 <= dist <= real_noe + 5.0):
                                 noes_found.append((res1, res2))
-                                noes_total.append((res1, res2))
-                            else:
                                 noes_total.append((res1, res2))
 
                         elif dist <= noe_cutoff:
@@ -174,11 +191,11 @@ def s2NOEfit(transformed_coors, native_sse_order, exp_data):
                             noes_total.append((res1, res2))
                         else:
                             noes_total.append((res1, res2))
-        except:
-            return []
-    if len(noes_found) == 0:
-        return []
 
-    fmeasure = calcFmeasure(noes_found, noes_total)
+    # if len(noes_found) == 0 or not sse_satisfied:
+    if len(noes_found) == 0:
+        return 0.00
+    # fmeasure = calcFmeasure(noes_found, noes_total)
+    fmeasure = (float(len(noes_found)) / float(len(noes_total)))
 
     return fmeasure
