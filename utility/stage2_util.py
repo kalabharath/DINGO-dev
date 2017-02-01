@@ -202,10 +202,11 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                     if filter[0] == 'NOE_filter':
                         noe_filter = True
                         noe_fmeasure = filter[1]
+                        no_of_noes = filter[2]
                         if stage == 99:
-                            Nchi = Nchi / math.pow(100, noe_fmeasure)
+                            Nchi = Nchi / math.pow(100, noe_fmeasure * no_of_noes)
                         else:
-                            Nchi = Nchi / math.pow(10, noe_fmeasure)
+                            Nchi = Nchi / math.pow(10, noe_fmeasure * no_of_noes)
                         new_dict[Nchi].append(hit)
                 if not noe_filter:
                     new_dict[Nchi].append(hit)
@@ -251,7 +252,8 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                         for ent in entry:
                             if ent[0] == 'NOE_filter':
                                 noe_fmeasure = ent[1]
-                                Nchi = Nchi /math.pow(10, noe_fmeasure)
+                                no_of_noes = ent[2]
+                                Nchi = Nchi / math.pow(10, noe_fmeasure * no_of_noes)
                     else:
                         Nchi = rdcSumChi(rdc_data, stage)
 
