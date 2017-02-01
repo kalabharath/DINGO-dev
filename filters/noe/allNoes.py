@@ -113,7 +113,7 @@ def s1NOEfit(s1_def, s2_def, smotif, exp_data):
 
     # fmeasure = calcFmeasure(noes_found, noes_total)
     fmeasure = (float(len(noes_found)) / float(len(noes_total)))
-    return fmeasure
+    return fmeasure * len(noes_found)
 
 
 def getNHandresi(frag):
@@ -229,4 +229,4 @@ def sXNOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
         return 0.00
     # fmeasure = calcFmeasure(noes_found, noes_total)
     fmeasure = (float(len(noes_found)) / float(len(noes_total)))
-    return fmeasure
+    return fmeasure * len(noes_found)
