@@ -182,13 +182,17 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     rdc_vectors = getVectorData(s1_def, s2_def, smotif, exp_data)
     pred_axial = exp_data['pred_axial']
     exp_error = exp_data['exp_error']
+    B0inTs = exp_data['B0inT']
+    TinKs = exp_data['TinK']
     total_chisqr = 0
     all_tensors = []
     temp_tensor = []
 
     for i in range(0, len(rdc_vectors)):
-        B0 = 21.1
-        TinK = 313.0
+        # B0 = 21.1
+        # TinK = 313.0
+        B0 = B0inTs[i]
+        TinK = TinKs[i]
         Sorder = 1.0
         scal = rdcScal(Sorder, B0, TinK)
         p0 = [pred_axial[i], pred_axial[i] * (0.33), 10, 20, 30]
@@ -282,11 +286,14 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     pred_axial = exp_data['pred_axial']
     exp_error = exp_data['exp_error']
     abs_exp_error = exp_data['abs_exp_error']
+    B0inTs = exp_data['B0inT']
+    TinKs = exp_data['TinK']
     temp_tensor = []
 
     for i in range(0, len(rdc_vectors)):
-        B0 = 21.1
-        TinK = 313
+        # B0 = 21.1
+        # TinK = 313
+        B0 = B0inTs[i]
         Sorder = 1.0
         scal = rdcScal(Sorder, B0, TinK)
         p0 = [pred_axial[i], pred_axial[i] * (0.33), 10, 20, 30]

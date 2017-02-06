@@ -43,6 +43,17 @@ pred_axial = data['predicted_axial']
 pred_axial = pred_axial.split()
 pred_axial = [float(i) for i in pred_axial]
 
+TinK = data['TinK']
+TinK = TinK.split()
+TinK = [float(i) for i in TinK]
+print TinK
+
+B0inT = data['B0inT']
+B0inT = B0inT.split()
+B0inT = [float(i) for i in B0inT]
+print B0inT
+
+
 exp_error = data['exp_error']
 exp_error = exp_error.split()
 exp_error = [float(i) for i in exp_error]
@@ -73,6 +84,9 @@ rdc_data = ru.getRdcData(data['rdc_input_files'], ss_seq)
 noe_data = nu.getNOEData(data['noe_input_files'], ss_seq)
 
 map_route =  ru.getRDCMapRoute(ss_combi, rdc_data)
+print map_route
+
+
 io.dumpPickle("rdc_route.pickle", map_route)
 
 database_cutoff = data['database_cutoff']
@@ -81,7 +95,7 @@ data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives'
              'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \
              'rmsd_cutoff': rmsd_cutoff, 'reference_ca': reference_ca, \
              'pred_axial': pred_axial, 'exp_error': exp_error, 'abs_exp_error': abs_exp_error, 'noe_data': noe_data,
-             'noe_fmeasure': noe_fmeasure, 'rank_top_hits': rank_top_hits}
+             'noe_fmeasure': noe_fmeasure, 'rank_top_hits': rank_top_hits, 'B0inT': B0inT, 'TinK': TinK}
 
 io.dumpPickle("exp_data.pickle", data_dict)
 

@@ -6,59 +6,43 @@ fasta_file = ./setup/seq.fasta
 
 ss_file = ./talosN/predSS.tab
 
-# Secondary structure predicition as predicted by psipred
+rdc_input_files = ./setup/rdc1.tab ./setup/rdc2.tab
 
-#contacts_file = './2m47_metapsicov_contacts.txt'
-# contacts as predicted by metapsicov
+BoinT = 11.746 14.0954
 
+TinK = 298.0 298.0
 
-rdc_input_files = ./setup/rdc_out.npc ./setup/phages.npc
-
-noe_input_files = ./setup/bb_all.dat
+noe_input_files = ./setup/all_noes.dat
 
 #predicted/estimation of axial magnitude for different RDC  sets
-predicted_axial = 1000 600 20 6
+predicted_axial = 2000 20 15 10
+
 # predicted/observed Error in measurement for different RDC sets
-exp_error = 4000 4000 20 22
+exp_error = 1000 20 20 20
+
 # abs error in measurement, the error model
-abs_exp_error = 0 0 4 4
+abs_exp_error = 0.0 0.0 0.1 0.1
 
-# noe probability for different stages
-noe_fmeasure = 0.8 0.8 0.8 0.8
+#Keep this number of tophits per theread in each stage
+rank_top_hits = 100 100 100 100
 
-#Keep this probability of tophits in every thread
+# noe fmeasures for different stages
+noe_fmeasure = 0.9 0.9 0.9 0.9
 
-prob_top_hits = 1.0 0.75 0.50 0.25
+# Exclude usage of Smotifs from these pdbs
+native_pdbs = 9999
 
-#Calc native rmsds all the time
+# The best possible assembly
+# Calculate the rmsd of the best possible Smotif assembly
+reference_pdb = setup/idealized_model.pdb
 
-native_pdb = idealized_2kpp.pdb
-
-
-pcs_broker = ./setup/broker-ts4.txt
-
-#broker file format as used as input for GPS-Rosetta
-native_pdbs = 1ORM 1Q9F 1Q9G 1QJ8 1QJ9 2M06 2M07
-#RMSD cutoff for smotif SSE superposition
-
-rmsd = 3.0
-#clash cutoff dist
-rmsd_cutoff = 2.0 2.0 2.0 2.0
 
 #clash cutoff dist
-clash_distance = 2.8
+rmsd_cutoff = 3.0 3.0 3.0 3.0
+
+#clash cutoff dist
+clash_distance = 3.0
 
 #database cutoff to use
 # Available options are 0.05, 0.07, 0.1, 0.25,  9999 (uses redundant database)
-database_cutoff = 0.07
-
-#Axial and rhombic cutoffs for different stages
-#specify abs(cutoff) for each of the four stages
-# four differnt stages are stage1 (First smotif), stage2(second smotif), stage3(<75% of the data), stage4(>75% data)
-rdc_axrh_cutoff =  150 150 80 60
-
-#chisqr cutoff for different stages
-#PCS error threshold for the 4 different stages
-# four differnt stages are stage1 (First smotif), stage2(second smotif), stage3(<75% of the data), stage4(>75% data)
-# 0.0025 (0.05 * 0.05) std error, 0.0025 *2 = 0.005, 0.0025 * 4 = 0.01
-rdc_chisqr_cutoff = 0.0025 0.0025 0.01 0.02
+database_cutoff = 0.25
