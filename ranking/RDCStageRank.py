@@ -29,7 +29,8 @@ def rank_dump_log(dump_log, exp_data, stage):
                         noe_filter = True
                         noe_fmeasure = filter[1]
                         no_of_noes = filter[2]
-                        Nchi = Nchi / math.pow(10, noe_fmeasure * no_of_noes)
+                        # Nchi = Nchi / math.pow(10, noe_fmeasure * no_of_noes)
+                        Nchi = Nchi / math.pow(10, noe_fmeasure)
                         new_dict[Nchi].append(hit)
                 if not noe_filter:
                     new_dict[Nchi].append(hit)
