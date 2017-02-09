@@ -118,14 +118,21 @@ def SmotifSearch(index_array):
             natives = exp_data['natives']
             tpdbid = csmotif_data[i][0][0]
             pdbid = tpdbid[0:4]
-
-        if pdbid in natives:
-            # print pdbid, natives
-            continue
+            if pdbid in natives:
+                continue
             # Stop further execution, but, iterate.
-        else:
-            pass
+            else:
+                pass
 
+        if 'homologs' in exp_data_types:
+            homologs = exp_data['homologs']
+            tpdbid = csmotif_data[i][0][0]
+            pdbid = tpdbid[0:4]
+            if pdbid not in homologs:
+                # Stop further execution, but, iterate.
+                continue
+            else:
+                pass
 
         # ************************************************
         # RMSD filter using QCP method
@@ -224,7 +231,7 @@ def SmotifSearch(index_array):
 
             if pcs_tensor_fits or rdc_tensor_fits:
                 #dump data to the disk
-                print tpdbid, rdc_tensor_fits, ref_rmsd
+                print "hit", tpdbid, rdc_tensor_fits, ref_rmsd
                 # print tpdbid, noe_fmeasure, rdc_tensor_fits
                 # print csmotif_data[i][0], 'blosum62 score', blosum62_score, "seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)

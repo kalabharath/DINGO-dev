@@ -71,11 +71,21 @@ def SmotifSearch(index_array):
             natives = exp_data['natives']
             tpdbid = smotif_data[i][0][0]
             pdbid = tpdbid[0:4]
-            #if pdbid in natives:
+            # if pdbid in natives:
             if pdbid in natives:
                 # print pdbid, natives
                 continue
                 # Stop further execution, but, iterate.
+            else:
+                pass
+
+        if 'homologs' in exp_data_types:
+            homologs = exp_data['homologs']
+            tpdbid = smotif_data[i][0][0]
+            pdbid = tpdbid[0:4]
+            if pdbid not in homologs:
+                # Stop further execution, but, iterate.
+                continue
             else:
                 pass
 

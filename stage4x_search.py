@@ -111,6 +111,15 @@ def SmotifSearch(index_array):
             else:
                 pass
 
+        if 'homologs' in exp_data_types:
+            homologs = exp_data['homologs']
+            tpdbid = csmotif_data[i][0][0]
+            pdbid = tpdbid[0:4]
+            if pdbid not in homologs:
+                # Stop further execution, but, iterate.
+                continue
+            else:
+                pass
 
         # ************************************************
         # RMSD filter using QCP method
@@ -172,6 +181,7 @@ def SmotifSearch(index_array):
                 # noe_fmeasure = Nfilter.s3NOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
                 noe_fmeasure, no_of_noes = Noe.sXNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
                 tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
+                print noe_fmeasure, no_of_noes
             else:
                 noe_fmeasure = False
 
@@ -205,6 +215,7 @@ def SmotifSearch(index_array):
 
 
             if pcs_tensor_fits or rdc_tensor_fits:
+                print "hit", tpdbid, rdc_tensor_fits, g_seq_identity, ref_rmsd
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:
