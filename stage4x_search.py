@@ -5,7 +5,7 @@ Project_Name: main, File_name: stage2_search.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 7/05/15 , Time:10:05 PM
 
-Perform stage 3x in parallel
+Perform stage 4x in parallel
 """
 import filters.constraints.looplengthConstraint as llc
 import filters.pcs.pcsfilter as Pfilter
@@ -100,12 +100,11 @@ def SmotifSearch(index_array):
         # ************************************************
 
         # Exclude the natives, if present.
+        tpdbid = csmotif_data[i][0][0]
+        pdbid = tpdbid[0:4]
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
-            tpdbid = csmotif_data[i][0][0]
-            pdbid = tpdbid[0:4]
             if pdbid in natives:
-                # print pdbid, natives
                 continue
                 # Stop further execution, but, iterate.
             else:
@@ -113,8 +112,6 @@ def SmotifSearch(index_array):
 
         if 'homologs' in exp_data_types:
             homologs = exp_data['homologs']
-            tpdbid = csmotif_data[i][0][0]
-            pdbid = tpdbid[0:4]
             if pdbid not in homologs:
                 # Stop further execution, but, iterate.
                 continue
@@ -156,9 +153,7 @@ def SmotifSearch(index_array):
             csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],
                                                                                   direction, exp_data)
             concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
-
             g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
-
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
             # ************************************************
@@ -191,7 +186,6 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-
                 if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][3]:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=4)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
@@ -200,7 +194,6 @@ def SmotifSearch(index_array):
                     tlog.append(['RDC_filter', rdc_tensor_fits])
                 else:
                     continue
-
 
             # ************************************************
             # Calc RMSD of the reference structure.
@@ -212,13 +205,11 @@ def SmotifSearch(index_array):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=50.0)
                 tlog.append(['Ref2_RMSD', ref_rmsd, g_seq_identity])
 
-
             if pcs_tensor_fits or rdc_tensor_fits:
                 print "hit", tpdbid, rdc_tensor_fits, g_seq_identity, ref_rmsd
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:
-
         if 'rank_top_hits' in exp_data_types:
             dump_log = rank.rank_dump_log(dump_log, exp_data, stage=4)
 

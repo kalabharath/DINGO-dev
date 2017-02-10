@@ -114,7 +114,6 @@ def SmotifSearch(index_array):
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
             if pdbid in natives:
-                # print pdbid, natives
                 continue
                 # Stop further execution, but, iterate.
             else:
@@ -168,9 +167,7 @@ def SmotifSearch(index_array):
                                                                                   direction, exp_data)
 
             concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
-
             g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
-            #print g_seq_identity
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
             # ************************************************
@@ -224,11 +221,8 @@ def SmotifSearch(index_array):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=50.0)
                 tlog.append(['Ref2_RMSD', ref_rmsd, g_seq_identity])
 
-
-
             if pcs_tensor_fits or rdc_tensor_fits:
                 print "hit", tpdbid, rdc_tensor_fits, g_seq_identity, ref_rmsd
-                #print csmotif_data[i][0],"seq_id", seq_identity, "rmsd=", rmsd, cathcodes
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:

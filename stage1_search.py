@@ -37,10 +37,9 @@ def SmotifSearch(index_array):
     :return:
     """
 
-    # print index_array
+
     s1_def, s2_def = getSSdef(index_array)
     smotif_def = sm.getSmotif(s1_def, s2_def)
-    # print s1_def, s2_def
 
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
@@ -66,14 +65,12 @@ def SmotifSearch(index_array):
         # ************************************************
         # Excluding the natives
         # ************************************************
+        natives = exp_data['natives']
+        tpdbid = smotif_data[i][0][0]
+        pdbid = tpdbid[0:4]
 
         if 'natives' in exp_data_types:
-            natives = exp_data['natives']
-            tpdbid = smotif_data[i][0][0]
-            pdbid = tpdbid[0:4]
-            # if pdbid in natives:
             if pdbid in natives:
-                # print pdbid, natives
                 continue
                 # Stop further execution, but, iterate.
             else:
@@ -81,8 +78,6 @@ def SmotifSearch(index_array):
 
         if 'homologs' in exp_data_types:
             homologs = exp_data['homologs']
-            tpdbid = smotif_data[i][0][0]
-            pdbid = tpdbid[0:4]
             if pdbid not in homologs:
                 # Stop further execution, but, iterate.
                 continue
@@ -132,10 +127,6 @@ def SmotifSearch(index_array):
             noe_fmeasure, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
 
-
-
-
-
         # ************************************************
         # Residual dipolar coupling filter
         # uses experimental RDC data to filter Smotifs
@@ -146,7 +137,6 @@ def SmotifSearch(index_array):
 
             if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][0]:
                 rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
-
                 tlog.append(['RDC_filter', rdc_tensor_fits])
 
             elif seq_identity >=100:
@@ -154,7 +144,6 @@ def SmotifSearch(index_array):
                 tlog.append(['RDC_filter', rdc_tensor_fits])
             else:
                 continue
-
 
         # ************************************************
         # Calc RMSD of the reference structure.
@@ -165,12 +154,8 @@ def SmotifSearch(index_array):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
 
-
         # Dump the data to the disk
         if pcs_tensor_fits or rdc_tensor_fits:
-            # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
-            if ref_rmsd < 5.0:
-                print tpdbid, rdc_tensor_fits, ref_rmsd
             dump_log.append(tlog)
 
     # Save all of the hits in pickled arrays
