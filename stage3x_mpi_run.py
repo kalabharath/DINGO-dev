@@ -28,15 +28,16 @@ name = MPI.Get_processor_name()
 status = MPI.Status()
 
 ##
-
 if rank == 0:
     num_hits = int(sys.argv[1])
     print num_hits
     sse_index = 999
     #tasks, sse_index = util.getRunSeq(num_hits, stage=3)
     try:
-        tasks, sse_index = util.getRunSeq(num_hits, stage=3)
-        #tasks, sse_index = util.start_top_hits(num_hits, stage=3)
+        try:
+            tasks, sse_index = util.start_top_hits(num_hits, stage=3)
+        except:
+            tasks, sse_index = util.getRunSeq(num_hits, stage=3)
     except:
         traceback.print_exc()
         print "Couldn't extract top hits within the specified cutoffs: Exiting..."

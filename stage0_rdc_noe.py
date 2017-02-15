@@ -39,16 +39,21 @@ native_pdbs = native_pdbs.lower()
 native_pdbs = native_pdbs.split()
 print native_pdbs
 
-homologs = data['homolog_pdbs']
-homologs = homologs.lower()
-homologs = homologs.split()
-thomologs = []
-for entry in homologs:
-    if len(entry) > 4:
-        thomologs.append(entry[0:4])
-    else:
-        thomologs.append(entry)
-print thomologs
+try:
+
+    homologs = data['homolog_pdbs']
+    homologs = homologs.lower()
+    homologs = homologs.split()
+    thomologs = []
+    for entry in homologs:
+        if len(entry) > 4:
+            thomologs.append(entry[0:4])
+        else:
+            thomologs.append(entry)
+    print thomologs
+except:
+    pass
+
 
 pred_axial = data['predicted_axial']
 pred_axial = pred_axial.split()
@@ -101,6 +106,12 @@ print map_route
 io.dumpPickle("rdc_route.pickle", map_route)
 
 database_cutoff = data['database_cutoff']
+
+data_keys = ['ss_seq', 'rdc_data', 'aa_seq', 'natives', 'clash_distance', 'database_cutoff', 'rmsd_cutoff', \
+             'reference_ca', 'pred_axial', 'exp_error', 'abs_exp_error', 'noe_data', 'noe_fmeasure', 'rank_top_hits' \
+                                                                                                     'B0inT', 'TinK',
+             'homologs']
+
 
 data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives': native_pdbs, \
              'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \

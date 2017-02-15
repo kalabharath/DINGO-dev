@@ -34,8 +34,10 @@ if rank == 0:
     num_hits = int(sys.argv[1])
     print num_hits
     try:
-        tasks, sse_index = util.getRunSeq(num_hits, stage = 4)
-        #tasks, sse_index = util.start_top_hits(num_hits, stage= 4)
+        try:
+            tasks, sse_index = util.start_top_hits(num_hits, stage=4)
+        except:
+            tasks, sse_index = util.getRunSeq(num_hits, stage=4)
     except:
         print "Couldn't extract top hits within the specified cutoffs: Exiting..."
         for i in range(0, size - 1):
