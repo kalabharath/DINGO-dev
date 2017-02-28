@@ -189,7 +189,9 @@ def SmotifSearch(index_array):
             if 'noe_data' in exp_data_types:
                 # noe_fmeasure = Nfilter.s3NOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
                 noe_fmeasure, no_of_noes = Noe.sXNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
+                total_percent, total_noes = Noe.sXGlobalNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
                 tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
+                tlog.append(['GlobalNoe_filter', total_percent, total_noes])
             else:
                 noe_fmeasure = False
 

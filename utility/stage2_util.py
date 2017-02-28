@@ -176,6 +176,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     rdc_filter = False
     noe_filter = False
     ref_rmsd_filter = False
+    global_noe_filter = False
     for hit in hits:
         # thread_data contains data from each search and filter thread.
         for data_filter in hit:
@@ -209,6 +210,12 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                             # Nchi = Nchi / math.pow(10, noe_fmeasure * no_of_noes)
                             Nchi = Nchi / math.pow(10, noe_fmeasure )
                         new_dict[Nchi].append(hit)
+                    if filter[0] == 'GlobalNoe_filter':
+                        global_noe_filter = True
+                        noe_percent = filter[1]
+                        total_no_of_noes = filter[2]
+                        Nchi = total_no_of_noes
+
                 if not noe_filter:
                     new_dict[Nchi].append(hit)
 
@@ -218,7 +225,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
 
     keys = new_dict.keys()
     keys.sort()
-    if contact_filter:
+    if contact_filter or global_noe_filter:
         # Contact filter data should be as high as possible
         keys.reverse()
 
@@ -249,6 +256,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 if ent[0] == 'RDC_filter':
                     rdc_data = ent
                     Nchi = rdcSumChi(rdc_data, stage)
+                    """
                     if noe_filter:
                         for ent in entry:
                             if ent[0] == 'NOE_filter':
@@ -262,7 +270,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                                     #Nchi = Nchi / math.pow(10, noe_fmeasure * 10)
                     else:
                         Nchi = rdcSumChi(rdc_data, stage)
-
+                    """
 
             if smotif_seq not in seqs:
                 seqs.append(smotif_seq)
