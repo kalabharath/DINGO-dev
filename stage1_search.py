@@ -126,7 +126,7 @@ def SmotifSearch(index_array):
             # noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
             noe_fmeasure, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
-
+            tlog.append(['GlobalNoe_filter', noe_fmeasure, no_of_noes])
         # ************************************************
         # Residual dipolar coupling filter
         # uses experimental RDC data to filter Smotifs
