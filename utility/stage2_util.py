@@ -227,6 +227,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     keys.sort()
     if contact_filter or global_noe_filter:
         # Contact filter data should be as high as possible
+        print "Global NOEs are used"
         keys.reverse()
 
     # Exclude the redundant data.

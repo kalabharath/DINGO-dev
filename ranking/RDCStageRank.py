@@ -11,6 +11,7 @@ def rank_dump_log(dump_log, exp_data, stage):
     pcs_filter = False
     rdc_filter = False
     noe_filter = False
+    global_noe_filter = False
     for hit in dump_log:
         # thread_data contains data from each search and filter thread.
         for data_filter in hit:
@@ -25,13 +26,21 @@ def rank_dump_log(dump_log, exp_data, stage):
                 rdc_data = data_filter
                 Nchi = s2util.rdcSumChi(rdc_data, stage)
                 for filter in hit:
-                    if filter[0] == 'NOE_filter':
+                    if filter[0] == 'GlobalNoe_filter':
+                        global_noe_filter = True
+                        total_no_of_noes = filter[2]
+                        Nchi = total_no_of_noes
+
+                    elif filter[0] == 'NOE_filter':
                         noe_filter = True
                         noe_fmeasure = filter[1]
                         no_of_noes = filter[2]
                         #Nchi = Nchi / math.pow(10, noe_fmeasure * no_of_noes)
                         Nchi = Nchi / math.pow(10, noe_fmeasure )
                         new_dict[Nchi].append(hit)
+                    else:
+                        new_dict[Nchi].append(hit)
+
                 if not noe_filter:
                     new_dict[Nchi].append(hit)
 
@@ -41,6 +50,9 @@ def rank_dump_log(dump_log, exp_data, stage):
 
     keys = new_dict.keys()
     keys.sort()
+    if global_noe_filter:
+        keys.reverse()
+
     # Exclude the redundant data.
     non_redundant = collections.defaultdict(list)
     reduced_dump_log = []
