@@ -152,7 +152,7 @@ def SmotifSearch(index_array):
 
         if rmsd <= exp_data['rmsd_cutoff'][1] and no_clashes:
             # Prepare temp log array to save data at the end
-            tlog, noe_fmeasure, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
+            tlog, noe_fmeasure, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], [], []
 
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
@@ -208,7 +208,7 @@ def SmotifSearch(index_array):
 
             if 'rdc_data' in exp_data_types:
                 # if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][1]:
-                if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][1]:
+                if total_percent and total_percent >= exp_data['noe_fmeasure'][1]:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
                     tlog.append(['RDC_filter', rdc_tensor_fits])
                 elif g_seq_identity >=100:
