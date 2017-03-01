@@ -209,12 +209,13 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                         else:
                             # Nchi = Nchi / math.pow(10, noe_fmeasure * no_of_noes)
                             Nchi = Nchi / math.pow(10, noe_fmeasure )
-                        new_dict[Nchi].append(hit)
+                            #new_dict[Nchi].append(hit)
                     if filter[0] == 'GlobalNoe_filter':
                         global_noe_filter = True
                         noe_percent = filter[1]
                         total_no_of_noes = filter[2]
                         Nchi = total_no_of_noes
+                    new_dict[Nchi].append(hit)
 
                 if not noe_filter:
                     new_dict[Nchi].append(hit)

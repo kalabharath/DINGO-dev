@@ -25,12 +25,14 @@ def rank_dump_log(dump_log, exp_data, stage):
                 rdc_filter = True
                 rdc_data = data_filter
                 Nchi = s2util.rdcSumChi(rdc_data, stage)
+                new_dict[Nchi].append(hit)
                 """
                 for filter in hit:
                     if filter[0] == 'GlobalNoe_filter':
                         global_noe_filter = True
                         total_no_of_noes = filter[2]
                         Nchi = total_no_of_noes
+                        new_dict[Nchi].append(hit)
 
                     elif filter[0] == 'NOE_filter':
                         noe_filter = True
