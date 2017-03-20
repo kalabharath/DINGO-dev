@@ -160,6 +160,7 @@ def SmotifSearch(index_array):
 
     # Save all of the hits in pickled arrays
     if dump_log:
+        # testing for rdc_plus_pcs
 
         if 'rank_top_hits' in exp_data_types:
             dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
