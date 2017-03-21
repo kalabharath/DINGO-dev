@@ -175,15 +175,6 @@ def SmotifSearch(index_array):
             g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
-            # ************************************************
-            # Pseudocontact Shift filter
-            # uses experimental PCS data to filter Smotifs
-            # scoring based on normalised chisqr
-            # ************************************************
-
-            if 'pcs_data' in exp_data_types:
-                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
-                tlog.append(['PCS_filter', pcs_tensor_fits])
 
             # ************************************************
             # Ambiguous NOE score filter
@@ -207,6 +198,14 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
+                rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
+                if rdc_tensor_fits:
+                    tlog.append(['RDC_filter', rdc_tensor_fits])
+                else:
+                    continue
+
+            """
+            if 'rdc_data' in exp_data_types:
                 # if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][1]:
                 if total_percent and total_percent >= exp_data['noe_fmeasure'][1]:
                     rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
@@ -216,6 +215,17 @@ def SmotifSearch(index_array):
                     tlog.append(['RDC_filter', rdc_tensor_fits])
                 else:
                     continue
+            """
+
+            # ************************************************
+            # Pseudocontact Shift filter
+            # uses experimental PCS data to filter Smotifs
+            # scoring based on normalised chisqr
+            # ************************************************
+
+            if 'pcs_data' in exp_data_types:
+                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=2)
+                tlog.append(['PCS_filter', pcs_tensor_fits])
 
 
             # ************************************************
@@ -228,8 +238,8 @@ def SmotifSearch(index_array):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=50.0)
                 tlog.append(['Ref2_RMSD', ref_rmsd, g_seq_identity])
 
-
-            if pcs_tensor_fits or rdc_tensor_fits:
+            # if pcs_tensor_fits or rdc_tensor_fits:
+            if pcs_tensor_fits:
                 #dump data to the disk
                 print "hit", tpdbid, rdc_tensor_fits, ref_rmsd
                 dump_log.append(tlog)

@@ -266,7 +266,7 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     :param s2_def:
     :param smotif:
     :param threshold:
-    :return:
+    return:
     """
 
     ss1_list = range(s1_def[4], s1_def[5] + 1)

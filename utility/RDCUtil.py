@@ -68,7 +68,10 @@ def FormatRdc(seqlen, rdcfile):
     rdc_l = io.readFile(rdcfile)
     rdcs = {}
     for l in rdc_l:
-        r1, v1, r2, v2, rdc, tol = l.split()
+        try:
+            r1, v1, r2, v2, rdc, tol = l.split()
+        except:
+            r1, v1, r2, v2, rdc = l.split()
         rdcs.setdefault(int(r1), []).append([int(r1), v1, int(r2), v2, float(rdc)])
     return rdcs
 

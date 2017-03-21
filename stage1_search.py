@@ -105,6 +105,46 @@ def SmotifSearch(index_array):
             Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
+
+
+        # ************************************************
+        # Unambiguous NOE score filter
+        # uses experimental ambiguous noe data to filter Smotifs
+        # scoring based on f-measure?
+        # ************************************************
+
+        if 'noe_data' in exp_data_types:
+            # noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            noe_fmeasure, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
+            tlog.append(['GlobalNoe_filter', noe_fmeasure, no_of_noes])
+
+        # ************************************************
+        # Residual dipolar coupling filter
+        # uses experimental RDC data to filter Smotifs
+        # scoring based on normalised chisqr.
+        # ************************************************
+
+        if 'rdc_data' in exp_data_types:
+            rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+            if rdc_tensor_fits:
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+            else:
+                continue
+
+        """
+        if 'rdc_data' in exp_data_types:
+
+            if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][0]:
+                rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+
+            elif seq_identity >=100:
+                rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+            else:
+                continue
+        """
         # ************************************************
         # Pseudocontact Shift filter
         # uses experimental PCS data to filter Smotifs
@@ -117,35 +157,6 @@ def SmotifSearch(index_array):
 
 
         # ************************************************
-        # Ambiguous NOE score filter
-        # uses experimental ambiguous noe data to filter Smotifs
-        # scoring based on f-measure?
-        # ************************************************
-
-        if 'noe_data' in exp_data_types:
-            # noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            noe_fmeasure, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
-            tlog.append(['GlobalNoe_filter', noe_fmeasure, no_of_noes])
-        # ************************************************
-        # Residual dipolar coupling filter
-        # uses experimental RDC data to filter Smotifs
-        # scoring based on normalised chisqr.
-        # ************************************************
-
-        if 'rdc_data' in exp_data_types:
-
-            if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][0]:
-                rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
-                tlog.append(['RDC_filter', rdc_tensor_fits])
-
-            elif seq_identity >=100:
-                rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
-                tlog.append(['RDC_filter', rdc_tensor_fits])
-            else:
-                continue
-
-        # ************************************************
         # Calc RMSD of the reference structure.
         # Used to identify the lowest possible RMSD
         # structure for the target, from the Smotif library.
@@ -155,7 +166,8 @@ def SmotifSearch(index_array):
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
 
         # Dump the data to the disk
-        if pcs_tensor_fits or rdc_tensor_fits:
+        # if pcs_tensor_fits or rdc_tensor_fits:
+        if pcs_tensor_fits:
             dump_log.append(tlog)
 
     # Save all of the hits in pickled arrays
