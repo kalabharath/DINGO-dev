@@ -194,7 +194,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
             if data_filter[0] == 'Ref_RMSD':
                 ref_rmsd_filter = True
                 new_dict[data_filter[1]].append(hit)
-
+            """
             if data_filter[0] == 'RDC_filter':
                 rdc_filter = True
                 rdc_data = data_filter
@@ -219,7 +219,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
 
                 if not noe_filter:
                     new_dict[Nchi].append(hit)
-
+            """
     # ************************************************
     # Exclude the redundant entries and rank top hits
     # ************************************************
@@ -255,10 +255,10 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                     Nchi = ent[1]
                 if ent[0] == 'Ref_RMSD':
                     Nchi = ent[1]
+                """
                 if ent[0] == 'RDC_filter':
                     rdc_data = ent
                     Nchi = rdcSumChi(rdc_data, stage)
-                    """
                     if noe_filter:
                         for ent in entry:
                             if ent[0] == 'NOE_filter':
@@ -272,7 +272,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                                     #Nchi = Nchi / math.pow(10, noe_fmeasure * 10)
                     else:
                         Nchi = rdcSumChi(rdc_data, stage)
-                    """
+                """
 
             if smotif_seq not in seqs:
                 seqs.append(smotif_seq)
