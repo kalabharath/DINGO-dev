@@ -241,7 +241,6 @@ def SmotifSearch(index_array):
             # if pcs_tensor_fits or rdc_tensor_fits:
             if pcs_tensor_fits:
                 #dump data to the disk
-                print "hit", tpdbid, rdc_tensor_fits, ref_rmsd
                 dump_log.append(tlog)
 
     # prevent dumping empty arrays with no data

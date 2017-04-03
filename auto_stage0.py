@@ -194,6 +194,20 @@ if 'database_cutoff' in datatypes:
 else:
     pass
 
+if 'metal_spheres' in datatypes:
+    metals_def = data['metal_spheres']
+    metals_def = metals_def.split()
+    metals_def = [int(i) for i in metals_def]
+    print metals_def
+    npts = PCSmap.countPointsOnSpheres([metals_def[0], metals_def[1]], metals_def[2])
+    metals_def.append(npts)
+    print metals_def
+    data_dict['metal_spheres'] = metals_def
+else:
+    metals_def = [1, 45, 200, 198000]
+    data_dict['metal_spheres'] = metals_def
+    pass
+
 io.dumpPickle("exp_data.pickle", data_dict)
 
 fout = open("run.sh", 'w')

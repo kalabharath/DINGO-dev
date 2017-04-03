@@ -236,7 +236,6 @@ def SmotifSearch(index_array):
 
             # if pcs_tensor_fits or rdc_tensor_fits:
             if pcs_tensor_fits:
-                print "hit", tpdbid, rdc_tensor_fits, g_seq_identity, ref_rmsd
                 dump_log.append(tlog)
 
     if len(dump_log) > 0:

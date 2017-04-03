@@ -120,3 +120,35 @@ def getRoute(ss_seq, pcsdata):
                     direction = 'right'
                     map_route.append([ti, j, direction])
     return map_route
+
+
+def countPointsOnSpheres(M, sN):
+    """
+    quick way from wikipedia
+    :param M:
+    :param sN: num of points on the starting sphere
+    :param rMx:
+    :param rMy:
+    :param rMz:
+    :return:
+    Hardcoded increments from 200 pts innershell * number of shells
+    """
+
+    import math
+    j = 0
+    npts = 0
+    for i in range(M[0], M[1]):
+        N = i * sN
+        npts = npts + N
+        node = []
+        dlong = 2.39996322973
+        dz = 2.0 / N
+        xlong = 0
+        z = 1 - 0.5 * dz
+
+        for l in range(N):
+            r = math.sqrt(1 - z * z)
+            node.append([math.cos(xlong) * r, math.sin(xlong) * r, z])
+            z -= dz
+            xlong += dlong
+    return npts
