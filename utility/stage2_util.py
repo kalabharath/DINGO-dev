@@ -254,6 +254,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 if ent[0] == 'Evofilter':
                     Nchi = ent[1]
                 if ent[0] == 'Ref_RMSD':
+                    # Ref_RMSD overwrites the previous Nchis
                     Nchi = ent[1]
                 """
                 if ent[0] == 'RDC_filter':
