@@ -386,6 +386,7 @@ def start_top_hits(num_hits, stage):
 
     top_hit_file = str((next_index)-1)+"_tophits.pickle"
 
+    top_hits = []
     if os.path.isfile(top_hit_file):
         top_hits = io.readPickle(top_hit_file)
         print len(top_hits)
@@ -405,6 +406,9 @@ def start_top_hits(num_hits, stage):
             for j in range(len(next_ss_list)):
                 run_seq.append([i, j])
         return run_seq, next_index
+    else:
+        return False, False
+
 def getPreviousSmotif(index):
 
     if os.path.isfile("contacts_route.pickle"):
