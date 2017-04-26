@@ -5,21 +5,21 @@ Project_Name: main, File_name: stage_1_mpi_run.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 13/04/15 , Time:10:05 AM
 
-Perform stage 3 in parallel
+Perform stage 1 in perfect parallel
 """
+
 import sys
+
 sys.path.append('../../main/')
 import time
-import traceback
 from   mpi4py import MPI
 
-import stage3x_search as S3search
-import utility.stage2_util as util
+import stage1_search as S1search
+import utility.stage1_util as util
 
 # Define MPI messaage tags
-tags = util.enum('READY', 'DONE', 'EXIT', 'START')
 
-# Init MPI comm
+tags = util.enum('READY', 'DONE', 'EXIT', 'START')
 
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
@@ -27,41 +27,10 @@ rank = comm.Get_rank()
 name = MPI.Get_processor_name()
 status = MPI.Status()
 
-##
+# on the master process
 if rank == 0:
-    num_hits = int(sys.argv[1])
-    print num_hits
-    sse_index = 999
-    #tasks, sse_index = util.getRunSeq(num_hits, stage=3)
-    try:
-        try:
-            tasks, sse_index = util.start_top_hits(num_hits, stage=3)
-        except:
-            tasks, sse_index = util.getRunSeq(num_hits, stage=3)
-    except:
-        traceback.print_exc()
-        print "Couldn't extract top hits within the specified cutoffs: Exiting..."
-        for i in range(0, size - 1):
-            data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-            source = status.Get_source()
-            tag = status.Get_tag()
-            if tag == tags.READY:
-                comm.send(None, dest=source, tag=tags.EXIT)
-        exit()
 
-    if sse_index == 999:
-        # kill all slaves if there is there is EOL
-        # only makes sense for self submitting jobs
-        for i in range(0, size - 1):
-            data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-            source = status.Get_source()
-            tag = status.Get_tag()
-            if tag == tags.READY:
-                comm.send(None, dest=source, tag=tags.EXIT)
-        exit()
-
-    # print tasks, sse_index
-    # tasks = [[0,0]]
+    tasks = util.getRunSeq()
     stime = time.time()
 
     # print tasks, len(tasks) # this will be the new tasks
@@ -70,7 +39,7 @@ if rank == 0:
     num_workers = size - 1  # 1 processor is reserved for master.
     closed_workers = 0  # control the workers with no more work that can be assigned
 
-    # print ("Master starting with {} workers".format(num_workers))
+    print ("Master starting with {} workers".format(num_workers))
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop
         data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
@@ -91,15 +60,14 @@ if rank == 0:
             ctime = time.time()
             elapsed = ctime - stime
             finished_task += 1
-            print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed) / (60), 0), "mins"
+            print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed) / (60), 2), "mins"
             # print ("Got data from  worker {}".format(source))
         elif tag == tags.EXIT:
             # print ("Worker {} exited".format(source))
             closed_workers += 1
-
-    print "All Done, Master exiting"
-    util.rename_pickle(sse_index)
+    # print "All Done, Master exiting"
     exit()
+
 
 # On the worker processes
 else:
@@ -107,12 +75,13 @@ else:
     while True:  # initiaite infinite loop
         comm.send(None, dest=0, tag=tags.READY)
         # tell the master that you are ready and waiting for new assignment
+
         task = comm.recv(source=0, tag=MPI.ANY_SOURCE, status=status)
         tag = status.Get_tag()
 
         if tag == tags.START:
             # TODO this is where you actually do something
-            result = S3search.SmotifSearch(task)
+            result = S1search.SmotifSearch(task)
 
             comm.send(result, dest=0, tag=tags.DONE)
 

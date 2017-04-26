@@ -69,13 +69,14 @@ def orderSSE(previous_smotif, current_sse, direction):
             return previous_sse
 
 
-def SmotifSearch(index_array):
+def SmotifSearch(task):
     """
     Main()
     :param index_array:
     :return:
     """
-
+    index_array = task[0]
+    stage = task[1]
 
     preSSE = uts2.getPreviousSmotif(index_array[0])
     current_ss, direction = uts2.getSS2(index_array[1])
@@ -194,7 +195,7 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
+                rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage)
                 if rdc_tensor_fits:
                     tlog.append(['RDC_filter', rdc_tensor_fits])
                 else:
@@ -220,7 +221,7 @@ def SmotifSearch(index_array):
             # ************************************************
 
             if 'pcs_data' in exp_data_types:
-                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage=3)
+                pcs_tensor_fits = Pfilter.PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage)
                 tlog.append(['PCS_filter', pcs_tensor_fits])
 
 
@@ -240,7 +241,7 @@ def SmotifSearch(index_array):
 
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
-            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=3)
+            dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
 
         print "num of hits", len(dump_log)
         io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)

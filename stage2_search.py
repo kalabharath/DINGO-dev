@@ -71,12 +71,16 @@ def orderSSE(previous_smotif, current_sse, direction):
         ordered_SSE.append(current_sse)
     return ordered_SSE
 
-def SmotifSearch(index_array):
+
+def SmotifSearch(task):
     """
     Main()
     :param index_array:
     :return:
     """
+    index_array = task[0]
+    stage = task[1]
+
 
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']

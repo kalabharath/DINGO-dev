@@ -21,6 +21,7 @@ import master_search as msearch
 import utility.masterutil as mutil
 import utility.stage2_util as util
 import stage2_search as S2search
+import stage3x_search as S3search
 
 # Define MPI message tags
 
@@ -33,6 +34,11 @@ status = MPI.Status()
 
 
 def killall(processes):
+    """
+    Kill all the subprocess when requested
+    :param processes:
+    :return: True or False
+    """
     for i in range(0, processes - 1):
         data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
         source = status.Get_source()
@@ -104,7 +110,10 @@ if rank == 0:
                 if args.stage == 1:
                     comm.send([tasks[task_index], args.stage], dest=source, tag=tags.START)
                 if args.stage == 2:
-                    comm.send(tasks[task_index], dest=source, tag=tags.START)
+                    comm.send([tasks[task_index], args.stage], dest=source, tag=tags.START)
+                    # comm.send(tasks[task_index], dest=source, tag=tags.START)
+                if args.stage > 2:
+                    comm.send([tasks[task_index], args.stage], dest=source, tag=tags.START)
                 task_index += 1  # increment its
             else:
                 # everything is done, send exit signal
@@ -139,7 +148,8 @@ else:
                 result = msearch.SmotifSearch(task)
             if args.stage == 2:
                 result = S2search.SmotifSearch(task)
-
+            if args.stage > 2:
+                result = S3search.SmotifSearch(task)
             comm.send(result, dest=0, tag=tags.DONE)
 
 

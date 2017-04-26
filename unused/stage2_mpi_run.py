@@ -8,9 +8,10 @@ Date: 13/04/15 , Time:10:05 AM
 Perform stage 2 in parallel
 """
 import sys
+
 sys.path.append('../../main/')
 import time
-from   mpi4py import  MPI
+from   mpi4py import MPI
 
 import stage2_search as S2search
 import utility.stage2_util as util
@@ -49,19 +50,17 @@ if rank == 0:
             # comm.send(None, dest = source, tag = tags.EXIT)
         exit()
 
-
     stime = time.time()
 
-
-    task_index =0 # control the number of processes with this index number
+    task_index = 0  # control the number of processes with this index number
     finished_task = 0
-    num_workers = size -1 # 1 processor is reserved for master.
-    closed_workers = 0 # control the workers with no more work that can be assigned
+    num_workers = size - 1  # 1 processor is reserved for master.
+    closed_workers = 0  # control the workers with no more work that can be assigned
 
     # print ("Master starting with {} workers".format(num_workers))
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop
-        data = comm.recv(source = MPI.ANY_SOURCE, tag = MPI.ANY_TAG, status = status)
+        data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
         source = status.Get_source()
         tag = status.Get_tag()
         if tag == tags.READY:
@@ -69,17 +68,17 @@ if rank == 0:
             if task_index < len(tasks):
                 comm.send(tasks[task_index], dest=source, tag=tags.START)
                 # print ("Sending task {} to worker {}".format(task_index, source))
-                task_index +=1 # increment its
+                task_index += 1  # increment its
             else:
                 # everything is done, lets grant freedom to all
-                comm.send(None, dest = source, tag = tags.EXIT)
+                comm.send(None, dest=source, tag=tags.EXIT)
         elif tag == tags.DONE:
             # take the result from the worker
             results = data
             ctime = time.time()
-            elapsed = ctime-stime
+            elapsed = ctime - stime
             finished_task += 1
-            print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed)/(60), 1), "mins"
+            print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed) / (60), 1), "mins"
             # print ("Got data from  worker {}".format(source))
         elif tag == tags.EXIT:
             # print ("Worker {} exited".format(source))
@@ -93,9 +92,9 @@ if rank == 0:
 else:
     # print ("I am a worker with rank {} on {}".format(rank, name))
     while True:  # initiaite infinite loop
-        comm.send(None, dest= 0, tag= tags.READY)
+        comm.send(None, dest=0, tag=tags.READY)
         # tell the master that you are ready and waiting for new assignment
-        task = comm.recv(source = 0, tag = MPI.ANY_SOURCE, status = status)
+        task = comm.recv(source=0, tag=MPI.ANY_SOURCE, status=status)
         tag = status.Get_tag()
 
         if tag == tags.START:
@@ -109,4 +108,4 @@ else:
             break
 
     # Tell the master respectfully that you are exiting
-    comm.send(None, dest= 0, tag= tags.EXIT)
+    comm.send(None, dest=0, tag=tags.EXIT)
