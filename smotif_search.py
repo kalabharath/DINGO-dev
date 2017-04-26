@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Project_Name: main, File_name: master_search.py
+Project_Name: main, File_name: smotif_search.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 
 """

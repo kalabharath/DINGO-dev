@@ -18,11 +18,9 @@ import time
 import argparse
 import traceback
 from   mpi4py import MPI
-import master_search as msearch
+import smotif_search as msearch
 import utility.masterutil as mutil
 import utility.stage2_util as util
-import stage2_search as S2search
-import stage3x_search as S3search
 
 # Define MPI message tags
 
@@ -108,13 +106,7 @@ if rank == 0:
         if tag == tags.READY:
             # worker process is ready, send some task to do.
             if task_index < len(tasks):
-                if args.stage == 1:
-                    comm.send([tasks[task_index], args.stage], dest=source, tag=tags.START)
-                if args.stage == 2:
-                    comm.send([tasks[task_index], args.stage], dest=source, tag=tags.START)
-                    # comm.send(tasks[task_index], dest=source, tag=tags.START)
-                if args.stage > 2:
-                    comm.send([tasks[task_index], args.stage], dest=source, tag=tags.START)
+                comm.send([tasks[task_index], args.stage], dest=source, tag=tags.START)
                 task_index += 1  # increment its
             else:
                 # everything is done, send exit signal
@@ -143,16 +135,13 @@ else:
 
         task = comm.recv(source=0, tag=MPI.ANY_SOURCE, status=status)
         tag = status.Get_tag()
-
         if tag == tags.START:
-            # TODO expand this
             result = False
             if args.stage == 1:
                 result = msearch.S1SmotifSearch(task)
-            if args.stage == 2:
-                result = S2search.SmotifSearch(task)
-            if args.stage > 2:
-                result = S3search.SmotifSearch(task)
+            else:
+                result = msearch.sXSmotifSearch(task)
+
             comm.send(result, dest=0, tag=tags.DONE)
         elif tag == tags.EXIT:
             # break the infinite loop because there is no more work that can be assigned
