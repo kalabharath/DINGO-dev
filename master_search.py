@@ -172,7 +172,7 @@ def S1SmotifSearch(task):
     return True
 
 
-def s2SmotifSearch(task):
+def sXSmotifSearch(task):
     """
     Main()
     :param task:
@@ -184,20 +184,29 @@ def s2SmotifSearch(task):
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
-    psmotif = uts2.getPreviousSmotif(index_array[0])
+    if stage == 2:
 
-    current_ss, direction = uts2.getSS2(index_array[1])
-    csmotif_data, smotif_def = mutil.getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'], stage)
+        psmotif = uts2.getPreviousSmotif(index_array[0])
+        current_ss, direction = uts2.getSS2(index_array[1])
+        csmotif_data, smotif_def = mutil.getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'], stage)
+        sse_ordered = mutil.orderSSE(psmotif, current_ss, direction, stage)
+    else:
 
+        preSSE = uts2.getPreviousSmotif(index_array[0])
+        current_ss, direction = uts2.getSS2(index_array[1])
+        csmotif_data, smotif_def = mutil.getfromDB(preSSE, current_ss, direction, exp_data['database_cutoff'], stage)
+        sse_ordered = mutil.orderSSE(preSSE, current_ss, direction, stage)
+
+    print current_ss, direction
     if not csmotif_data:
-        # If the smotif library doesn't exist
-        # Terminate further execution
+        # If the smotif library doesn't exist.
+        # Terminate further execution by return value.
         return True
 
     """
-    always narrow down to previous sse and current sse and operate on them individually
+        always narrow down to previous sse and current sse and operate on them individually
     """
-    sse_ordered = mutil.orderSSE(psmotif, current_ss, direction, stage)
+
     dump_log = []
     ref_rmsd = 0.0
     no_clashes = False
@@ -241,9 +250,13 @@ def s2SmotifSearch(task):
         # quickly filters non-overlapping smotifs
         # ************************************************
 
-        rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
+        if stage == 2:
 
-        if rmsd <= exp_data['rmsd_cutoff'][1]:
+            rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
+        else:
+            rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
+
+        if rmsd <= exp_data['rmsd_cutoff'][stage - 1]:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
             if loop_constraint:
@@ -252,7 +265,7 @@ def s2SmotifSearch(task):
             else:
                 no_clashes = False
 
-        if rmsd <= exp_data['rmsd_cutoff'][1] and no_clashes:
+        if rmsd <= exp_data['rmsd_cutoff'][stage - 1] and no_clashes:
             # Prepare temp log array to save data at the end
             tlog, noe_fmeasure, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], [], []
 

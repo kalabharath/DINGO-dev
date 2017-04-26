@@ -1,5 +1,9 @@
-import collections, glob, os, math
+import collections
+import glob
+import os
+
 import io_util as io
+
 
 def enum(*sequential, **named):
     """
@@ -362,7 +366,10 @@ def start_top_hits(num_hits, stage):
     generate run seq, a seq list of pairs of
     indexes of profiles for job scheduling
     """
-
+    if stage > 2:
+        pass
+    else:
+        return "crap"
     ss_profiles = io.readPickle("ss_profiles.pickle")
     if os.path.isfile("contacts_route.pickle"):
         map_route = io.readPickle("contacts_route.pickle")
@@ -389,9 +396,10 @@ def start_top_hits(num_hits, stage):
     top_hits = []
     if os.path.isfile(top_hit_file):
         top_hits = io.readPickle(top_hit_file)
-        print len(top_hits)
+        print "loading from prevously assembled tophits.pickle file"
+        print "# hits :", len(top_hits)
     else:
-        print "WTF: Somethis is wrong somewhere"
+        print "WTF: Something is wrong somewhere"
     # delete two stages down pickled files
     check_pickle = str(next_index - 2) + str("_*_*.pickle")
     file_list = glob.glob(check_pickle)
@@ -458,7 +466,7 @@ def rename_pickle(index):
 
 
 def rename_pickle2(index):
-    import glob, os
+    import os
     rename_cmd = "rename 's/tx_/"+str(index)+"_/' tx_*.pickle"
     os.system(rename_cmd)
     return True
