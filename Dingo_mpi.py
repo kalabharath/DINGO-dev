@@ -15,8 +15,9 @@ import sys
 
 sys.path.append('../../main/')
 import time
-from   mpi4py import MPI
 import argparse
+import traceback
+from   mpi4py import MPI
 import master_search as msearch
 import utility.masterutil as mutil
 import utility.stage2_util as util
@@ -127,6 +128,8 @@ if rank == 0:
             print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed) / (60), 2), "mins"
         elif tag == tags.EXIT:
             closed_workers += 1
+    # Rename temprary files
+    util.rename_pickle(sse_index)
     print "All Done, Master exiting"
     exit()
 
@@ -143,16 +146,14 @@ else:
 
         if tag == tags.START:
             # TODO expand this
-
+            result = False
             if args.stage == 1:
-                result = msearch.SmotifSearch(task)
+                result = msearch.S1SmotifSearch(task)
             if args.stage == 2:
                 result = S2search.SmotifSearch(task)
             if args.stage > 2:
                 result = S3search.SmotifSearch(task)
             comm.send(result, dest=0, tag=tags.DONE)
-
-
         elif tag == tags.EXIT:
             # break the infinite loop because there is no more work that can be assigned
             break
