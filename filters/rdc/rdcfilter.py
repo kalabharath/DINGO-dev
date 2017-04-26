@@ -143,6 +143,7 @@ def getVectorData(s1_def, s2_def, smotif, exp_data):
         for res in sse_list:
             res_no = smotif_list[sse_list.index(res)]
             try:
+                # TODO change the vector length to new modification (ottinger and bax 98), NH vector should be 1.04 A
                 for entry in data[res_no]:
                     # [58, 'H', 58, 'N', 0.725]
                     for coor in smotif_coors:

@@ -41,10 +41,10 @@ if rank == 0:
                 comm.send(None, dest=source, tag=tags.EXIT)
         exit()
 
-    if sse_index == 999 :
+    if sse_index == 999:
         # kill all slaves if there is there is EOL
         # only makes sense for self submitting jobs
-        for i in range(0, size-1):
+        for i in range(0, size - 1):
             source = status.Get_source()
             # comm.send(None, dest = source, tag = tags.EXIT)
         exit()
@@ -67,7 +67,7 @@ if rank == 0:
         if tag == tags.READY:
             # worker is ready, send her something to do
             if task_index < len(tasks):
-                comm.send(tasks[task_index], dest = source, tag = tags.START)
+                comm.send(tasks[task_index], dest=source, tag=tags.START)
                 # print ("Sending task {} to worker {}".format(task_index, source))
                 task_index +=1 # increment its
             else:
@@ -102,7 +102,7 @@ else:
             # TODO this is where you actually do something
             result = S2search.SmotifSearch(task)
 
-            comm.send(result, dest=0, tag= tags.DONE)
+            comm.send(result, dest=0, tag=tags.DONE)
 
         elif tag == tags.EXIT:
             # break the (while) infinite loop because there is no more work that can be assigned
