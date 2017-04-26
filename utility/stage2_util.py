@@ -366,7 +366,7 @@ def start_top_hits(num_hits, stage):
     generate run seq, a seq list of pairs of
     indexes of profiles for job scheduling
     """
-
+    map_route = []
     ss_profiles = io.readPickle("ss_profiles.pickle")
     if os.path.isfile("contacts_route.pickle"):
         map_route = io.readPickle("contacts_route.pickle")
@@ -460,11 +460,4 @@ def rename_pickle(index):
     for file in file_list:
         mv_cmd = "mv " + file + " " + str(index) + file[2:]
         os.system(mv_cmd)
-    return True
-
-
-def rename_pickle2(index):
-    import os
-    rename_cmd = "rename 's/tx_/"+str(index)+"_/' tx_*.pickle"
-    os.system(rename_cmd)
     return True

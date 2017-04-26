@@ -8,11 +8,12 @@ Date: 14/04/15 , Time:01:05 PM
 stage 1 in parallel
 """
 
-import filters.contacts.evfoldContacts as Evofilter
+import filters.noe.allNoes   as Noe
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
-import filters.noe.noefilter as Nfilter
+import filters.rmsd.RefRmsd as ref
 import filters.sequence.sequence_similarity as Sfilter
+import ranking.RDCStageRank as rank
 import utility.io_util as io
 import utility.smotif_util as sm
 import utility.stage1_util as uts1
@@ -35,10 +36,9 @@ def SmotifSearch(index_array):
     :return:
     """
 
-    # print index_array
+
     s1_def, s2_def = getSSdef(index_array)
     smotif_def = sm.getSmotif(s1_def, s2_def)
-    # print s1_def, s2_def
 
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
@@ -56,28 +56,40 @@ def SmotifSearch(index_array):
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
 
+
     for i in range(0, len(smotif_data)):
+
         # loop over for all of the entries in the smotif_db file
 
         # ************************************************
         # Excluding the natives
         # ************************************************
+        natives = exp_data['natives']
+        tpdbid = smotif_data[i][0][0]
+        pdbid = tpdbid[0:4]
 
         if 'natives' in exp_data_types:
-            natives = exp_data['natives']
-            tpdbid = smotif_data[i][0][0]
-            pdbid = tpdbid[0:4]
             if pdbid in natives:
-            #if pdbid not in ['2z2i']:
+                continue
+                # Stop further execution, but, iterate.
+            else:
+                pass
+
+        if 'homologs' in exp_data_types:
+            homologs = exp_data['homologs']
+            if pdbid not in homologs:
                 # Stop further execution, but, iterate.
                 continue
+            else:
+                pass
 
         # ************************************************
         # Applying different filters to Smotifs
         # Prepare temp log array to save data at the end
         # ************************************************
 
-        tlog, contact_fmeasure, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
+        tlog, pcs_tensor_fits, rdc_tensor_fits, noe_fmeasure, = [], [], [], []
+        ref_rmsd = 0.0
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
         tlog.append(['cathcodes', [smotif_data[i][0]]])
@@ -92,28 +104,46 @@ def SmotifSearch(index_array):
             Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
+
+
         # ************************************************
-        # Contacts filter
-        # uses the contact data obtained from EVfold server
-        # tp score a given smotif
+        # Unambiguous NOE score filter
+        # uses experimental ambiguous noe data to filter Smotifs
+        # scoring based on f-measure?
         # ************************************************
 
-        if 'contact_matrix' in exp_data_types:
-            contact_fmeasure, plm_score = Evofilter.s1EVcouplings(s1_def, s2_def, smotif_data[i],
-                                                                  exp_data['contact_matrix'],
-                                                                  exp_data['plm_scores'],
-                                                                  contacts_cutoff=9.0)
-            if contact_fmeasure and plm_score:
+        if 'noe_data' in exp_data_types:
+            # noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            noe_fmeasure, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
+            tlog.append(['GlobalNoe_filter', noe_fmeasure, no_of_noes])
 
-                if contact_fmeasure >= 0.6:
-                    contact_score = (contact_fmeasure * 2) + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
-                elif contact_fmeasure > 0.5 and contact_fmeasure < 0.6:
-                    contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
-                else:
-                    contact_score = contact_fmeasure + (plm_score * 0.1) + (seq_identity * (0.01) * (5))
-                    # continue
-                tlog.append(['Evofilter', contact_score])
+        # ************************************************
+        # Residual dipolar coupling filter
+        # uses experimental RDC data to filter Smotifs
+        # scoring based on normalised chisqr.
+        # ************************************************
 
+        if 'rdc_data' in exp_data_types:
+            rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+            if rdc_tensor_fits:
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+            else:
+                continue
+
+        """
+        if 'rdc_data' in exp_data_types:
+
+            if noe_fmeasure and noe_fmeasure >= exp_data['noe_fmeasure'][0]:
+                rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+
+            elif seq_identity >=100:
+                rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+                tlog.append(['RDC_filter', rdc_tensor_fits])
+            else:
+                continue
+        """
         # ************************************************
         # Pseudocontact Shift filter
         # uses experimental PCS data to filter Smotifs
@@ -124,41 +154,27 @@ def SmotifSearch(index_array):
             pcs_tensor_fits = Pfilter.PCSAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             tlog.append(['PCS_filter', pcs_tensor_fits])
 
-
         # ************************************************
-        # Ambiguous NOE score filter
-        # uses experimental ambiguous noe data to filter Smotifs
-        # scoring based on f-measure?
-        # ************************************************
-
-        if 'noe_data' in exp_data_types:
-            noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            tlog.append(['noe_filter', noe_fmeasure ])
-
-
-
-        # ************************************************
-        # Residual dipolar coupling filter
-        # uses experimental RDC data to filter Smotifs
-        # scoring based on normalised chisqr
+        # Calc RMSD of the reference structure.
+        # Used to identify the lowest possible RMSD
+        # structure for the target, from the Smotif library.
         # ************************************************
 
-        if 'rdc_data' in exp_data_types:
-
-            if noe_fmeasure and noe_fmeasure > 0.5:
-                rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
-                tlog.append(['RDC_filter', rdc_tensor_fits])
-            else:
-                pass
-
+        if 'reference_ca' in exp_data_types:
+            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
+            tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
         # Dump the data to the disk
-        if pcs_tensor_fits or contact_fmeasure or rdc_tensor_fits:
-            # print smotif_data[i][0][0], "seq_id", seq_identity, "i=", i, "/", len(smotif_data)
-            print tpdbid, noe_fmeasure, rdc_tensor_fits
+        # if pcs_tensor_fits or rdc_tensor_fits:
+        if pcs_tensor_fits:
             dump_log.append(tlog)
 
     # Save all of the hits in pickled arrays
     if dump_log:
+        # testing for rdc_plus_pcs
+
+        if 'rank_top_hits' in exp_data_types:
+            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
+
         print "num of hits", len(dump_log)
         io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
 

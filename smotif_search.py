@@ -168,6 +168,9 @@ def sXSmotifSearch(task):
 
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+    psmotif, preSSE, dump_log = [], [], []
+    ref_rmsd = 0.0
+    no_clashes = False
 
     if stage == 2:
 
@@ -191,10 +194,6 @@ def sXSmotifSearch(task):
     """
     always narrow down to previous sse and current sse and operate on them individually
     """
-
-    dump_log = []
-    ref_rmsd = 0.0
-    no_clashes = False
 
     # ************************************************************************************************
     # Main
