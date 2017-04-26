@@ -323,7 +323,7 @@ def getRunSeq(num_hits, stage):
     generate run seq, a seq list of pairs of
     indexes of profiles for job scheduling
     """
-
+    map_route = []
     ss_profiles = io.readPickle("ss_profiles.pickle")
     if os.path.isfile("contacts_route.pickle"):
         map_route = io.readPickle("contacts_route.pickle")
@@ -366,10 +366,7 @@ def start_top_hits(num_hits, stage):
     generate run seq, a seq list of pairs of
     indexes of profiles for job scheduling
     """
-    if stage > 2:
-        pass
-    else:
-        return "crap"
+
     ss_profiles = io.readPickle("ss_profiles.pickle")
     if os.path.isfile("contacts_route.pickle"):
         map_route = io.readPickle("contacts_route.pickle")
@@ -399,7 +396,9 @@ def start_top_hits(num_hits, stage):
         print "loading from prevously assembled tophits.pickle file"
         print "# hits :", len(top_hits)
     else:
-        print "WTF: Something is wrong somewhere"
+        print "No previous tophits file found, Generating a new one"
+        return "exception"
+
     # delete two stages down pickled files
     check_pickle = str(next_index - 2) + str("_*_*.pickle")
     file_list = glob.glob(check_pickle)
@@ -418,7 +417,7 @@ def start_top_hits(num_hits, stage):
         return False, False
 
 def getPreviousSmotif(index):
-
+    map_route = []
     if os.path.isfile("contacts_route.pickle"):
         map_route = io.readPickle("contacts_route.pickle")
     elif os.path.isfile("pcs_route.pickle"):
@@ -433,8 +432,7 @@ def getPreviousSmotif(index):
 
 
 def getSS2(index):
-
-
+    map_route = []
     if os.path.isfile("contacts_route.pickle"):
         map_route = io.readPickle("contacts_route.pickle")
     elif os.path.isfile("pcs_route.pickle"):
