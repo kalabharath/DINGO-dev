@@ -50,11 +50,10 @@ def S1SmotifSearch(task):
 
     for i in range(0, len(smotif_data)):
 
-        # loop over for all of the entries in the smotif_db file
-
         # ************************************************
         # Excluding the natives
         # ************************************************
+
         natives = exp_data['natives']
         tpdbid = smotif_data[i][0][0]
         pdbid = tpdbid[0:4]
@@ -66,7 +65,7 @@ def S1SmotifSearch(task):
             else:
                 pass
 
-        if 'homologs' in exp_data_types:
+        if 'homologs' in exp_data_types:  # Smotif assembly only from the specified pdb files
             homologs = exp_data['homologs']
             if pdbid not in homologs:
                 # Stop further execution, but, iterate.
@@ -78,9 +77,10 @@ def S1SmotifSearch(task):
         # Applying different filters to Smotifs
         # Prepare temp log array to save data at the end
         # ************************************************
-
+        # initialize variables
         tlog, pcs_tensor_fits, rdc_tensor_fits, noe_fmeasure, = [], [], [], []
         ref_rmsd = 0.0
+
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
         tlog.append(['cathcodes', [smotif_data[i][0]]])
@@ -159,7 +159,7 @@ def S1SmotifSearch(task):
 
 def sXSmotifSearch(task):
     """
-    Main()
+     Main()
     :param task:
     :return:
     """
@@ -188,20 +188,16 @@ def sXSmotifSearch(task):
     print current_ss, direction
     if not csmotif_data:
         # If the smotif library doesn't exist.
-        # Terminate further execution by return value.
+        # Terminate further execution.
         return True
 
-    """
-    always narrow down to previous sse and current sse and operate on them individually
-    """
+
 
     # ************************************************************************************************
     # Main
     # The 'for' loop below iterates over all of the Smotifs and applies various filters
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
-
-    # print "no of entries: ", len(csmotif_data)
 
     for i in range(0, len(csmotif_data)):
 
@@ -221,7 +217,7 @@ def sXSmotifSearch(task):
             else:
                 pass
 
-        if 'homologs' in exp_data_types:
+        if 'homologs' in exp_data_types:  # Smotif assembly only from the specified pdb files
             homologs = exp_data['homologs']
             if pdbid not in homologs:
                 # Stop further execution, but, iterate.
@@ -250,7 +246,7 @@ def sXSmotifSearch(task):
                 no_clashes = False
 
         if rmsd <= exp_data['rmsd_cutoff'][stage - 1] and no_clashes:
-            # Prepare temp log array to save data at the end
+            # Prepare temporary log to save data at the end
             tlog, noe_fmeasure, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], [], []
 
             tlog.append(['smotif', csmotif_data[i]])
@@ -335,7 +331,7 @@ def sXSmotifSearch(task):
                 # dump data to the disk
                 dump_log.append(tlog)
 
-    # prevent dumping empty arrays with no data
+    # Dumping hits as a pickle array.
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
             dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
