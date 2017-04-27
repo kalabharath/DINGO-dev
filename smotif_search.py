@@ -257,7 +257,11 @@ def sXSmotifSearch(task):
             tlog.append(['smotif_def', sse_ordered])
 
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
-            cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
+            if stage == 2:
+                cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
+            else:
+                cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
+
             tlog.append(['cathcodes', cathcodes])
 
             # ************************************************
@@ -270,7 +274,11 @@ def sXSmotifSearch(task):
                                                                                   direction, exp_data)
 
             # concat current to previous seq
-            concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
+            if stage == 2:
+                concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
+            else:
+                concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
+
             g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
