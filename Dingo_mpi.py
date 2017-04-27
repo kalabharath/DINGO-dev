@@ -11,13 +11,13 @@ should be called as a part of the sequence of smotif assembly files
 
 """
 
-import sys
-
-sys.path.append('../../main/')
-import time
+# sys.path.append('../../main/')
 import argparse
+import time
 import traceback
 from   mpi4py import MPI
+
+import ranking.SmotifRanking as srank
 import smotif_search as msearch
 import utility.masterutil as mutil
 import utility.stage2_util as util
@@ -53,6 +53,7 @@ parser = argparse.ArgumentParser(description='DINGO-PCS Master MPI process that 
 parser.add_argument('--stage', type=int, help='specify the stage of  the Smotif assembly')
 parser.add_argument('--numhits', type=int, help='Top number of hits to be selected from previous assembly')
 args = parser.parse_args()
+#####################################  Define cmd line argument parser #############################################
 
 # Rank '0' specifies the master process
 
@@ -73,7 +74,8 @@ if rank == 0:
                 tasks, sse_index = util.start_top_hits(args.numhits, args.stage)
             except:
                 # Assemble top hits from the previously generated hits
-                tasks, sse_index = util.getRunSeq(args.numhits, args.stage)
+                tasks, sse_index = srank.getRunSeq(args.numhits, args.stage)
+
         except:
             # print what went wrong and terminate the slave processes
             traceback.print_exc()

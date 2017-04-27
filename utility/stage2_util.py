@@ -5,6 +5,23 @@ import os
 import io_util as io
 
 
+def deprecated(func):
+    import warnings
+    import functools
+    """This is a decorator which can be used to mark functions
+    as deprecated. It will result in a warning being emmitted
+    when the function is used."""
+
+    @functools.wraps(func)
+    def new_func(*args, **kwargs):
+        warnings.simplefilter('always', DeprecationWarning)  # turn off filter
+        warnings.warn("Call to deprecated function {}.".format(func.__name__), category=DeprecationWarning,
+                      stacklevel=2)
+        warnings.simplefilter('default', DeprecationWarning)  # reset filter
+        return func(*args, **kwargs)
+
+    return new_func
+
 def enum(*sequential, **named):
     """
 
@@ -153,8 +170,10 @@ def rdcSumChi(rdc_data, stage):
             snchi += nchi
 
     return snchi
+
 def makeTopPickle(previous_smotif_index, num_hits, stage):
     """
+
     Concatenate data from all of the threads, organize, remove redundancies, rank
      and extract top hits as defined
     :param previous_smotif_index:
@@ -318,6 +337,8 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     print "actual number in top hits ", len(dump_pickle)
     return range(count_top_hits)
 
+
+@deprecated
 def getRunSeq(num_hits, stage):
     """
     generate run seq, a seq list of pairs of

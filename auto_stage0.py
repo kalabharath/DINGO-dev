@@ -204,6 +204,7 @@ if 'metal_spheres' in datatypes:
     print metals_def
     data_dict['metal_spheres'] = metals_def
 else:
+    # default metal definitions
     metals_def = [1, 45, 200, 198000]
     data_dict['metal_spheres'] = metals_def
     pass
@@ -218,21 +219,20 @@ for i in range(0, len(map_route)):
     smotif = map_route[i]
     print smotif
     if i == 0:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage1_mpi_run.py\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 1" + "  --numhits 0 \n"
         print run_line
         fout.write(run_line)
     elif i == 1:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage2_mpi_run.py 1000\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 2" + "  --numhits 1000 \n"
         print run_line
         fout.write(run_line)
     elif i != 1 and i <= len(map_route) - 3:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage3x_mpi_run.py 1000\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 3" + "  --numhits 1000 \n"
         print run_line
         fout.write(run_line)
     else:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/stage4x_mpi_run.py 5000\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 4" + "  --numhits 1000 \n"
         print run_line
         fout.write(run_line)
-
 fout.close()
 exit()

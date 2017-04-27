@@ -104,14 +104,14 @@ io.dumpPickle("rdc_route.pickle", map_route)
 
 database_cutoff = data['database_cutoff']
 
-data_keys = ['ss_seq', 'rdc_data', 'aa_seq', 'natives', 'clash_distance', 'database_cutoff', 'rmsd_cutoff', \
-             'reference_ca', 'pred_axial', 'exp_error', 'abs_exp_error', 'noe_data', 'noe_fmeasure', 'rank_top_hits' \
+data_keys = ['ss_seq', 'rdc_data', 'aa_seq', 'natives', 'clash_distance', 'database_cutoff', 'rmsd_cutoff',
+             'reference_ca', 'pred_axial', 'exp_error', 'abs_exp_error', 'noe_data', 'noe_fmeasure', 'rank_top_hits'
                                                                                                      'B0inT', 'TinK',
              'homologs']
 
-data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives': native_pdbs, \
-             'clash_distance': clash_distance, 'database_cutoff': database_cutoff, \
-             'rmsd_cutoff': rmsd_cutoff, 'reference_ca': reference_ca, \
+data_dict = {'ss_seq': ss_seq, 'rdc_data': rdc_data, 'aa_seq': aa_seq, 'natives': native_pdbs,
+             'clash_distance': clash_distance, 'database_cutoff': database_cutoff,
+             'rmsd_cutoff': rmsd_cutoff, 'reference_ca': reference_ca,
              'pred_axial': pred_axial, 'exp_error': exp_error, 'abs_exp_error': abs_exp_error, 'noe_data': noe_data,
              'noe_fmeasure': noe_fmeasure, 'rank_top_hits': rank_top_hits, 'B0inT': B0inT, 'TinK': TinK,
              }
