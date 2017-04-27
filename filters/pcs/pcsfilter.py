@@ -265,13 +265,12 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     :param s1_def:
     :param s2_def:
     :param smotif:
-    :param threshold:
-    return:
+    :param exp_data:
+    :return:
     """
 
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)
-
 
     rH1, rH2 = getHN(ss1_list, ss2_list, smotif, atom_type='H')
     pcs_data = exp_data['pcs_data']
@@ -283,17 +282,9 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
     nM = metal_def[2]
     npts = metal_def[3]
 
-    # nM = 400  # 1000 pts in each sphere
-    # M = [1, 45]  # 40 spheres 10-50 Angstrom
-    #M = [1, 25]  # 40 spheres 10-50 Angstrom
-    # npts = 198000
-    #npts = 120000
-
-
     rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
-    # PointsOnSpheres(M, nM, rMx, rMy, rMz)
     fixedPointsOnSpheres(M, nM, rMx, rMy, rMz)
 
     # Temp storage of tensor values
@@ -449,10 +440,10 @@ def matchPCS(nh_dict, pcs_data):
 def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     """
 
-    :param s1_def:
-    :param s2_def:
-    :param smotif:
-    :param threshold:
+    :param transformed_coos:
+    :param sse_ordered:
+    :param exp_data:
+    :param stage:
     :return:
     """
 
@@ -470,19 +461,9 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     nM = metal_def[2]
     npts = metal_def[3]
 
-    # nM = 400  # 200 pts in starting sphere
-    # M = [1, 45]  # 40 spheres 10-50 Angstrom
-    # M = [1, 25]  # 40 spheres 10-50 Angstrom
-
-    # npts = (M[1] - M[0]) * nM  # 50 spheres * 1000 pts each
-    # npts = 198000
-    # npts = 120000
-
-
     rMx = fastT1FM.MakeDvector(npts)  # allocate memmory
     rMy = fastT1FM.MakeDvector(npts)
     rMz = fastT1FM.MakeDvector(npts)
-    # PointsOnSpheres(M, nM, rMx, rMy, rMz)
     fixedPointsOnSpheres(M, nM, rMx, rMy, rMz)
 
     # Temp storage of tensor values
