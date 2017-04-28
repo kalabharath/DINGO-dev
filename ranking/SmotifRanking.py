@@ -194,7 +194,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 # calculate the total score and append the hit
         if total_score:
             keys = total_score.keys()
-            keys = ['rmsd_score']
+            keys = ['pcs_score']
             tscore = 0
             for key in keys:
                 tscore = tscore + total_score[key]
