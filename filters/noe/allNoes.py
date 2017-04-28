@@ -2,6 +2,14 @@ from filters.constraints.looplengthConstraint import get_dist
 
 
 def s1NOEfit(s1_def, s2_def, smotif, exp_data):
+    """
+
+    :param s1_def:
+    :param s2_def:
+    :param smotif:
+    :param exp_data:
+    :return:
+    """
     noe_matrix = exp_data['noe_data']
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)

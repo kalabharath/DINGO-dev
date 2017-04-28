@@ -96,18 +96,6 @@ def S1SmotifSearch(task):
         tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
 
         # ************************************************
-        # Unambiguous NOE score filter
-        # uses experimental ambiguous noe data to filter Smotifs
-        # scoring based on f-measure?
-        # ************************************************
-
-        if 'noe_data' in exp_data_types:
-            # noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            noe_fmeasure, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
-            tlog.append(['GlobalNoe_filter', noe_fmeasure, no_of_noes])
-
-        # ************************************************
         # Residual dipolar coupling filter
         # uses experimental RDC data to filter Smotifs
         # scoring based on normalised chisqr.
@@ -119,6 +107,18 @@ def S1SmotifSearch(task):
                 tlog.append(['RDC_filter', rdc_tensor_fits])
             else:
                 continue
+        # ************************************************
+        # Unambiguous NOE score filter
+        # uses experimental ambiguous noe data to filter Smotifs
+        # scoring based on f-measure?
+        # ************************************************
+
+        if 'noe_data' in exp_data_types:
+            # noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            noe_fmeasure, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
+            tlog.append(['GlobalNoe_filter', noe_fmeasure, no_of_noes])
+
 
         # ************************************************
         # Pseudocontact Shift filter
@@ -190,8 +190,6 @@ def sXSmotifSearch(task):
         # If the smotif library doesn't exist.
         # Terminate further execution.
         return True
-
-
 
     # ************************************************************************************************
     # Main
