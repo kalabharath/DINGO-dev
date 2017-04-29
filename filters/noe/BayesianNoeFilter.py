@@ -33,7 +33,7 @@ def s1NOEfit(s1_def, s2_def, smotif, exp_data):
         for j in range(i + 1, len(smotif_ss1)):
             sres2 = smotif_ss1[j]
             nres2 = ss1_list[j]
-            print nres1, nres2, noe_matrix[nres1, nres2]
+            # print nres1, nres2, noe_matrix[nres1, nres2]
             if noe_matrix[nres1, nres2]:
                 noe_cutoff = noe_matrix[nres1, nres2]
                 for entry1 in smotif[1]:
