@@ -150,8 +150,8 @@ if 'rdc_input_files' in datatypes:
 else:
     pass
 if 'noe_input_files' in datatypes:
-    noe_data = nu.getNOEData(data['noe_input_files'], ss_seq)
-    data_dict['noe_data'] = noe_data
+    noe_data, total_noe_count = nu.getNOEData(data['noe_input_files'], ss_seq)
+    data_dict['noe_data'] = [noe_data, total_noe_count]
 else:
     pass
 

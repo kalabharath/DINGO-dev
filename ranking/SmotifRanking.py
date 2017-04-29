@@ -186,7 +186,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 Nchi = rdcSumChi(rdc_data, stage)
                 total_score['rdc_score'] = Nchi
 
-            if data_filter[0] == 'GlobalNoe_filter':
+            if data_filter[0] == 'NOE_filter':
                 noe_percent = data_filter[1]
                 log_likelihood = -(math.log(noe_percent))
                 total_score['noe_score'] = log_likelihood
@@ -194,7 +194,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 # calculate the total score and append the hit
         if total_score:
             keys = total_score.keys()
-            keys = ['pcs_score']
+            keys = ['noe_score']
             tscore = 0
             for key in keys:
                 tscore = tscore + total_score[key]

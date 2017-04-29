@@ -6,7 +6,7 @@ Aufthor: kalabharath, Email: kalabharath@gmail.com
 
 """
 import filters.constraints.looplengthConstraint as llc
-import filters.noe.allNoes   as Noe
+import filters.noe.BayesianNoeFilter  as Noe
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.rmsd.RefRmsd as ref
@@ -78,8 +78,8 @@ def S1SmotifSearch(task):
         # Prepare temp log array to save data at the end
         # ************************************************
         # initialize variables
-        tlog, pcs_tensor_fits, rdc_tensor_fits, noe_fmeasure, = [], [], [], []
-        ref_rmsd = 0.0
+        tlog, pcs_tensor_fits, rdc_tensor_fits, = [], [], []
+        ref_rmsd, noe_probability = 0.0, 0.0
 
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
@@ -114,11 +114,8 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'noe_data' in exp_data_types:
-            # noe_fmeasure = Nfilter.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            noe_fmeasure, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
-            tlog.append(['GlobalNoe_filter', noe_fmeasure, no_of_noes])
-
+            noe_probability, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            tlog.append(['NOE_filter', noe_probability, no_of_noes])
 
         # ************************************************
         # Pseudocontact Shift filter
@@ -141,7 +138,7 @@ def S1SmotifSearch(task):
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
         # Dump the data to the disk
         # if pcs_tensor_fits or rdc_tensor_fits:
-        if pcs_tensor_fits:
+        if pcs_tensor_fits or noe_probability:
             dump_log.append(tlog)
 
     # Save all of the hits in pickled arrays
@@ -169,7 +166,7 @@ def sXSmotifSearch(task):
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
     psmotif, preSSE, dump_log = [], [], []
-    ref_rmsd = 0.0
+    ref_rmsd, noe_probability = 0.0, 0.0
     no_clashes = False
 
     if stage == 2:
@@ -245,17 +242,16 @@ def sXSmotifSearch(task):
 
         if rmsd <= exp_data['rmsd_cutoff'][stage - 1] and no_clashes:
             # Prepare temporary log to save data at the end
-            tlog, noe_fmeasure, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], [], []
+            tlog, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
 
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
-
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
+
             if stage == 2:
                 cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
             else:
                 cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
-
             tlog.append(['cathcodes', cathcodes])
 
             # ************************************************
@@ -276,20 +272,6 @@ def sXSmotifSearch(task):
             g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
             tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
 
-            # ************************************************
-            # Ambiguous NOE score filter
-            # uses experimental ambiguous noe data to filter Smotifs
-            # scoring based on f-measure?
-            # ************************************************
-
-            if 'noe_data' in exp_data_types:
-                # noe_fmeasure = Nfilter.s3NOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
-                noe_fmeasure, no_of_noes = Noe.sXNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
-                total_percent, total_noes = Noe.sXGlobalNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
-                tlog.append(['NOE_filter', noe_fmeasure, no_of_noes])
-                tlog.append(['GlobalNoe_filter', total_percent, total_noes])
-            else:
-                noe_fmeasure = False
 
             # ************************************************
             # Residual dipolar coupling filter
@@ -302,7 +284,19 @@ def sXSmotifSearch(task):
                 if rdc_tensor_fits:
                     tlog.append(['RDC_filter', rdc_tensor_fits])
                 else:
+                    # Do not execute any further
                     continue
+
+            # ************************************************
+            # NOE score filter
+            # uses experimental noe data to filter Smotifs
+            # scoring based on log-likelihood?
+            # ************************************************
+
+            if 'noe_data' in exp_data_types:
+                noe_probability, total_noes = Noe.sXGlobalNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
+                tlog.append(['NOE_filter', noe_probability, total_noes])
+
 
             # ************************************************
             # Pseudocontact Shift filter
@@ -325,7 +319,7 @@ def sXSmotifSearch(task):
             tlog.append(['Ref_RMSD', ref_rmsd, g_seq_identity])
 
             # if pcs_tensor_fits or rdc_tensor_fits:
-            if pcs_tensor_fits:
+            if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
                 dump_log.append(tlog)
 

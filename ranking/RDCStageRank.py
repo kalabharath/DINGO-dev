@@ -1,6 +1,7 @@
-import utility.stage2_util as s2util
 import collections
-import math
+
+import utility.stage2_util as s2util
+
 
 def rank_dump_log(dump_log, exp_data, stage):
 
@@ -26,27 +27,6 @@ def rank_dump_log(dump_log, exp_data, stage):
                 rdc_data = data_filter
                 Nchi = s2util.rdcSumChi(rdc_data, stage)
                 new_dict[Nchi].append(hit)
-                """
-                for filter in hit:
-                    if filter[0] == 'GlobalNoe_filter':
-                        global_noe_filter = True
-                        total_no_of_noes = filter[2]
-                        Nchi = total_no_of_noes
-                        new_dict[Nchi].append(hit)
-
-                    elif filter[0] == 'NOE_filter':
-                        noe_filter = True
-                        noe_fmeasure = filter[1]
-                        no_of_noes = filter[2]
-                        #Nchi = Nchi / math.pow(10, noe_fmeasure * no_of_noes)
-                        Nchi = Nchi / math.pow(10, noe_fmeasure )
-                        new_dict[Nchi].append(hit)
-                    else:
-                        new_dict[Nchi].append(hit)
-
-                if not noe_filter:
-                    new_dict[Nchi].append(hit)
-                """
 
     # ************************************************
     # Exclude the redundant entries and rank top hits
