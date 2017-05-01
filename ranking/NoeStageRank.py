@@ -65,6 +65,10 @@ def rank_dump_log(dump_log, exp_data, stage):
                 seqs.append(smotif_seq)
                 reduced_dump_log.append(entry)
                 count_hits += 1
+                if count_hits >= num_hits:
+                    break
+            if count_hits >= num_hits:
+                break
         if count_hits >= num_hits:
             break
     print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(reduced_dump_log), len(dump_log)
