@@ -187,8 +187,8 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
                 total_score['rdc_score'] = Nchi
 
             if data_filter[0] == 'NOE_filter':
-                noe_percent = data_filter[1]
-                log_likelihood = -(math.log(noe_percent))
+                noe_probability = data_filter[1]
+                log_likelihood = -(math.log(noe_probability))
                 total_score['noe_score'] = log_likelihood
 
                 # calculate the total score and append the hit

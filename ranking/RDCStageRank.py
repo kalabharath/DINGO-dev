@@ -5,7 +5,6 @@ import utility.stage2_util as s2util
 
 def rank_dump_log(dump_log, exp_data, stage):
 
-
     rank_top_hits=exp_data['rank_top_hits']
     num_hits = rank_top_hits[stage-1]
     new_dict = collections.defaultdict(list)

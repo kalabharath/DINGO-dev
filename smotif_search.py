@@ -12,7 +12,7 @@ import filters.rdc.rdcfilter as Rfilter
 import filters.rmsd.RefRmsd as ref
 import filters.rmsd.qcp as qcp
 import filters.sequence.sequence_similarity as Sfilter
-import ranking.RDCStageRank as rank
+import ranking.NoeStageRank as rank
 import utility.io_util as io
 import utility.masterutil as mutil
 import utility.smotif_util as sm
