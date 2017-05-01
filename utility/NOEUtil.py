@@ -4,7 +4,14 @@ import io_util as io
 
 
 def getNOEData(noe_files, ss_seq):
+    """
+    Depreciated
+    :param noe_files:
+    :param ss_seq:
+    :return:
+    """
     print noe_files
+
     noe_lines = io.readFile(noe_files)
     noe_matrix = zeros((len(ss_seq) + 1, len(ss_seq) + 1))
     total_noe_count = 0
@@ -19,3 +26,23 @@ def getNOEData(noe_files, ss_seq):
             noe_matrix[int(res2), int(res1)] = float(noe)
 
     return noe_matrix, total_noe_count
+
+
+def parseNOEData(noe_files):
+    """
+    New NOE scoring function
+    :param noe_files:
+    :return:
+    """
+    print noe_files
+    noe_lines = io.readFile(noe_files)
+    noe_data = []
+    total_noe_count = 0
+    for noe in noe_lines:
+        if len(noe) <= 1:
+            pass
+        else:
+            res1, atm1, res2, atom2, noe = noe.split()
+            total_noe_count += 1
+            noe_data.append([res1, atm1, res2, atom2, noe])
+    return noe_data, total_noe_count

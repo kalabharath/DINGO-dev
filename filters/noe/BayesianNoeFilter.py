@@ -1,6 +1,29 @@
 from filters.constraints.looplengthConstraint import get_dist
 
 
+def getCoorMatrix(ss_list, smotif_ss, smotif):
+    noe_matrix = {}
+    for i in range(0, len(smotif_ss)):
+        pass
+    return True
+
+
+def S1NOEprobs(s1_def, s2_def, smotif, exp_data):
+    noe_data = exp_data['noe_data']
+    noes = noe_data[0]
+    total_noes = noe_data[1]
+
+    ss1_list = range(s1_def[4], s1_def[5] + 1)
+    ss2_list = range(s2_def[4], s2_def[5] + 1)
+
+    smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
+    smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
+
+    coor_matrix = getCoorMatrix(ss1_list, smotif_ss1, smotif[1])
+
+    return True
+
+
 def s1NOEfit(s1_def, s2_def, smotif, exp_data):
     """
 
@@ -140,6 +163,27 @@ def getNHandresi(frag):
     return resi, [x, y, z]
 
 
+def getCoorMatrix():
+    return True
+
+
+def newNOEcheck(transformed_coors, native_sse_order, current_ss, exp_data):
+    """
+
+    :param transformed_coors:
+    :param native_sse_order:
+    :param current_ss:
+    :param exp_data:
+    :return:
+    """
+    import copy
+    sse_coors = copy.deepcopy(transformed_coors)
+
+    noe_data = exp_data['noe_data']
+    noe_matrix = noe_data[0]
+    total_noes = noe_data[1]
+
+    return True
 def sXGlobalNOEfit(transformed_coors, native_sse_order, current_ss, exp_data):
     import copy
     sse_coors = copy.deepcopy(transformed_coors)
