@@ -44,5 +44,5 @@ def parseNOEData(noe_files):
         else:
             res1, atm1, res2, atom2, noe = noe.split()
             total_noe_count += 1.0
-            noe_data.append([int(res1), atm1, int(res2), atom2, float(noe)])
+            noe_data.append([int(res1), atm1, int(res2), atom2, float(noe)+0.5])
     return noe_data, total_noe_count

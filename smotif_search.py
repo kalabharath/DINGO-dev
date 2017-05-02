@@ -249,7 +249,7 @@ def sXSmotifSearch(task):
                 no_clashes = False
 
         if  no_clashes:
-            # Prepare temporary log to save data at the end
+            # Prepare temporary arrays to log the data.
             tlog, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
 
             tlog.append(['smotif', csmotif_data[i]])
