@@ -114,8 +114,13 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'noe_data' in exp_data_types:
-            noe_probability, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            tlog.append(['NOE_filter', noe_probability, no_of_noes])
+            # noe_probability, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
+            noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
+            if local_noe_probability > 0.7:
+                print "HIT HIT HIT", noe_probability, local_noe_probability, no_of_noes
+                tlog.append(['NOE_filter', noe_probability, no_of_noes])
+            else:
+                noe_probability = False
 
         # ************************************************
         # Pseudocontact Shift filter

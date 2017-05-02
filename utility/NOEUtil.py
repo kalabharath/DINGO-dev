@@ -37,12 +37,12 @@ def parseNOEData(noe_files):
     print noe_files
     noe_lines = io.readFile(noe_files)
     noe_data = []
-    total_noe_count = 0
+    total_noe_count = 0.0
     for noe in noe_lines:
         if len(noe) <= 1:
             pass
         else:
             res1, atm1, res2, atom2, noe = noe.split()
-            total_noe_count += 1
-            noe_data.append([res1, atm1, res2, atom2, noe])
+            total_noe_count += 1.0
+            noe_data.append([int(res1), atm1, int(res2), atom2, float(noe)])
     return noe_data, total_noe_count
