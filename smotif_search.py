@@ -116,8 +116,8 @@ def S1SmotifSearch(task):
         if 'noe_data' in exp_data_types:
             # noe_probability, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
             noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
-            if local_noe_probability > 0.7:
-                print "HIT HIT HIT", noe_probability, local_noe_probability, no_of_noes
+
+            if local_noe_probability >= exp_data['noe_fmeasure'][stage-1]:
                 tlog.append(['NOE_filter', noe_probability, no_of_noes])
             else:
                 noe_probability = False
@@ -239,6 +239,7 @@ def sXSmotifSearch(task):
             rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
 
         if rmsd <= exp_data['rmsd_cutoff'][stage - 1]:
+
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
             if loop_constraint:
@@ -247,7 +248,7 @@ def sXSmotifSearch(task):
             else:
                 no_clashes = False
 
-        if rmsd <= exp_data['rmsd_cutoff'][stage - 1] and no_clashes:
+        if  no_clashes:
             # Prepare temporary log to save data at the end
             tlog, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
 
@@ -301,8 +302,14 @@ def sXSmotifSearch(task):
             # ************************************************
 
             if 'noe_data' in exp_data_types:
-                noe_probability, total_noes = Noe.sXGlobalNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
-                tlog.append(['NOE_filter', noe_probability, total_noes])
+                #noe_probability, total_noes = Noe.sXGlobalNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
+                noe_probability, local_noe_probability, no_of_noes = Noe.SxNOEprob(transformed_coos, sse_ordered, current_ss, exp_data)
+                if local_noe_probability >= exp_data['noe_fmeasure'][stage-1]:
+                    tlog.append(['NOE_filter', noe_probability, no_of_noes])
+                else:
+                     # Do not execute any further
+                    continue
+
 
 
             # ************************************************

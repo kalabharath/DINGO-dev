@@ -120,6 +120,7 @@ if 'noe_fmeasure' in datatypes:
     noe_fmeasure = data['noe_fmeasure']
     noe_fmeasure = noe_fmeasure.split()
     noe_fmeasure = [float(i) for i in noe_fmeasure]
+    print "noe_fmeasure", noe_fmeasure
     data_dict['noe_fmeasure'] = noe_fmeasure
 else:
     pass
