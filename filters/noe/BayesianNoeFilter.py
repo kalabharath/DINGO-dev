@@ -102,14 +102,14 @@ def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
 
     for noe in noes:
 
-        res1, atm1, res2, atom2, noe_cutoff = noe[0], noe[1], noe[2], noe[3], noe[4]
+        res1, atm1, res2, atom2, noe_cutoff, tol = noe[0], noe[1], noe[2], noe[3], noe[4], noe[5]
 
         if res1 in resi and res2 in resi:
             smotif_noes += 1.0
             coo1 = coor_matrix[res1]
             coo2 = coor_matrix[res2]
             dist = get_dist(coo1, coo2)
-            if dist <= noe_cutoff:
+            if dist <= noe_cutoff+tol:
                 noes_found += 1.0
 
     if smotif_noes > 0:
