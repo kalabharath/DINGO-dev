@@ -102,9 +102,9 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'rdc_data' in exp_data_types:
-            rdc_tensor_fits = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+            rdc_tensor_fits, log_likelihood = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             if rdc_tensor_fits:
-                tlog.append(['RDC_filter', rdc_tensor_fits])
+                tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood])
             else:
                 continue
         # ************************************************
@@ -288,9 +288,9 @@ def sXSmotifSearch(task):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                rdc_tensor_fits = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage)
+                rdc_tensor_fits, log_likelihood = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage)
                 if rdc_tensor_fits:
-                    tlog.append(['RDC_filter', rdc_tensor_fits])
+                    tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood])
                 else:
                     # Do not execute any further
                     continue

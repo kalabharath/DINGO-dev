@@ -170,6 +170,14 @@ def getVectorData(s1_def, s2_def, smotif, exp_data):
         rdc_vector.append(t_rdc_vector)
     return rdc_vector
 
+def getloglikelihood(error_array, cutoff):
+
+    below_error = 0.0
+    for entry in error_array:
+        if abs(entry) <= cutoff:
+            below_error += 1.0
+    likelihood = (float(len(error_array))/below_error)
+    return -math.log(likelihood)
 
 def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     """
@@ -188,7 +196,7 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     total_chisqr = 0
     all_tensors = []
     temp_tensor = []
-
+    tlog_likelihood = []
     for i in range(0, len(rdc_vectors)):
         # B0 = 21.1
         # TinK = 313.0
@@ -210,7 +218,6 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
             tensor = ConvertUTR.AnglesUTR(soln)
 
             if abs(tensor[0]) > pred_axial[0]:
-
                 chisq = 999.999
             if chisq > exp_error[0]:
                 chisq = 999.999
@@ -219,10 +226,11 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
 
         if chisq < 999.999:
             temp_tensor.append([chisq, tensor])
+            tlog_likelihood.append(getloglikelihood(info["fvec"], exp_error[0]))
     if len(temp_tensor) == len(rdc_vectors):
-        return temp_tensor
+        return temp_tensor, np.product(tlog_likelihood)
     else:
-        return []
+        return [], 0.0
 
 
 def getNHvectors(coo_arrays, sse_list):
@@ -290,6 +298,7 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     B0inTs = exp_data['B0inT']
     TinKs = exp_data['TinK']
     temp_tensor = []
+    tlog_likelihood = []
 
     for i in range(0, len(rdc_vectors)):
         # B0 = 21.1
@@ -321,9 +330,10 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
             chisq = 999.999
 
         if chisq < 999.999:
+            tlog_likelihood.append(getloglikelihood(info["fvec"], exp_error[stage-1]))
             temp_tensor.append([chisq, tensor])
 
     if len(temp_tensor) == len(rdc_vectors):
-        return temp_tensor
+        return temp_tensor, np.product(tlog_likelihood)
     else:
-        return []
+        return [], 0.0

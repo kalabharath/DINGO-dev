@@ -22,8 +22,9 @@ def rank_dump_log(dump_log, exp_data, stage):
 
             if data_filter[0] == 'RDC_filter':
                 rdc_data = data_filter
-                Nchi = s2util.rdcSumChi(rdc_data, stage)
-                total_score['rdc_score'] = Nchi
+                #Nchi = s2util.rdcSumChi(rdc_data, stage)
+                log_likelihood = data_filter[2]
+                total_score['rdc_score'] = log_likelihood
 
             if data_filter[0] == 'NOE_filter':
                 noe_probability = data_filter[1]
@@ -33,7 +34,7 @@ def rank_dump_log(dump_log, exp_data, stage):
                 # calculate the total score and append the hit
         if total_score:
             keys = total_score.keys()
-            keys = ['noe_score']
+            keys = ['noe_score','rdc_score']
             tscore = 0
             for key in keys:
                 tscore = tscore + total_score[key]
