@@ -233,7 +233,6 @@ def sXSmotifSearch(task):
         # ************************************************
 
         if stage == 2:
-
             rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
         else:
             rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)

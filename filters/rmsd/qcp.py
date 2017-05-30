@@ -185,20 +185,23 @@ def rmsdQCP(psmotif, csmotif, direction):
     :return:
     """
 
-    psmotif = copy.copy(psmotif[1])
+    #psmotif = copy.copy(psmotif[1])
+    psmotif = psmotif[1][:]
 
     if direction == 'left':
         native_fraga = getcoo(psmotif[1])
         frag_a = getcoo(psmotif[1])
         frag_b = getcoo(csmotif[2])
-        native_fragb_2ndsse = copy.copy(csmotif[1])
+        #native_fragb_2ndsse = copy.copy(csmotif[1])
+        native_fragb_2ndsse = csmotif[1][:]
         native_fraga_2ndsse = getcoo(psmotif[2])
     else:
 
         native_fraga = getcoo(psmotif[2])
         frag_a = getcoo(psmotif[2])
         frag_b = getcoo(csmotif[1])
-        native_fragb_2ndsse = copy.copy(csmotif[2])
+        #native_fragb_2ndsse = copy.copy(csmotif[2])
+        native_fragb_2ndsse = csmotif[2][:]
         native_fraga_2ndsse = getcoo(psmotif[1])
 
     frag_a, a_cen = centerCoo(frag_a)
@@ -273,10 +276,11 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
             temp_holder = entry[1]
             presse = temp_holder[:]
 
-    #print csmotif
+    #print csmotif 
     try:
         if direction == 'left':
             frag_b = getcoo(csmotif[2])
+            native_fragb_2ndsse = copy.copy(csmotif[1])
             native_fragb_2ndsse = copy.copy(csmotif[1])
             frag_a = copy.deepcopy(presse[0])
 

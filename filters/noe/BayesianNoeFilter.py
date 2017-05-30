@@ -93,7 +93,6 @@ def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
     smotif_noes = 0.0
     coor_matrix = {}
 
-
     for i in range(0, len(sse_coors)):
         tcoor = getSxCoorMatrix(sse_coors[i], native_sse_order[i])
         coor_matrix.update(tcoor)
