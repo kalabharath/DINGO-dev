@@ -185,23 +185,20 @@ def rmsdQCP(psmotif, csmotif, direction):
     :return:
     """
 
-    #psmotif = copy.copy(psmotif[1])
-    psmotif = psmotif[1][:]
+    psmotif = (psmotif[1])[:]
 
     if direction == 'left':
         native_fraga = getcoo(psmotif[1])
         frag_a = getcoo(psmotif[1])
         frag_b = getcoo(csmotif[2])
-        #native_fragb_2ndsse = copy.copy(csmotif[1])
-        native_fragb_2ndsse = csmotif[1][:]
+        native_fragb_2ndsse = (csmotif[1])[:]
         native_fraga_2ndsse = getcoo(psmotif[2])
     else:
 
         native_fraga = getcoo(psmotif[2])
         frag_a = getcoo(psmotif[2])
         frag_b = getcoo(csmotif[1])
-        #native_fragb_2ndsse = copy.copy(csmotif[2])
-        native_fragb_2ndsse = csmotif[2][:]
+        native_fragb_2ndsse = (csmotif[2])[:]
         native_fraga_2ndsse = getcoo(psmotif[1])
 
     frag_a, a_cen = centerCoo(frag_a)
@@ -234,23 +231,17 @@ def rmsdQCP(psmotif, csmotif, direction):
     for i in range(0, 9):
         rotmat.append(qcprot.GetDvector(i, rot))
 
-    rotated_fragb = applyRot(frag_b, rotmat)
-
-    # trans_fragb = applyTranslation(rotated_fragb, a_cen)
-
     # translate the other SSE of the current smotif
     sse_2nd_coos = getcoo(native_fragb_2ndsse)
-    # sse_2nd_coos, sec_cm = centerCoo(sse_2nd_coos)
+
     cm_sse2nd = translateCM(sse_2nd_coos,b_cen)
     rot_sse_2nd = applyRot(cm_sse2nd, rotmat)
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
 
     #return 3 arrays of coordinates
     if direction == 'left':
-        #transformed_coor = [native_fraga, native_fraga_2ndsse, trans_sse2nd]
-
         transformed_coor = [trans_sse2nd, native_fraga, native_fraga_2ndsse]
-        #
+
     else:
 
         transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
@@ -270,25 +261,23 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     :param direction:
     :return:
     """
-
+    presse = []
     for entry in previous_smotif:
         if 'qcp_rmsd' == entry[0]:
-            temp_holder = entry[1]
-            presse = temp_holder[:]
+            presse = (entry[1])[:]
 
-    #print csmotif 
+    #print csmotif
     try:
         if direction == 'left':
             frag_b = getcoo(csmotif[2])
-            native_fragb_2ndsse = copy.copy(csmotif[1])
-            native_fragb_2ndsse = copy.copy(csmotif[1])
+            native_fragb_2ndsse = (csmotif[1])[:]
             frag_a = copy.deepcopy(presse[0])
 
         else:
 
             frag_a = copy.deepcopy(presse[-1])
             frag_b = getcoo(csmotif[1])
-            native_fragb_2ndsse = copy.copy(csmotif[2])
+            native_fragb_2ndsse = (csmotif[2])[:]
     except:
         print "Error in format of data"
         print "Wrong stage for the data format"
@@ -335,7 +324,7 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
 
     # append the translated coordinates
-    temp_holder = copy.deepcopy(presse)
+    temp_holder = (presse)[:]
 
     if direction == 'left':
         temp_holder.insert(0, trans_sse2nd)
@@ -366,15 +355,5 @@ def clahses(coo_arrays, cdist):
                     dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
                     if dist < cdist:
                         return False
-    """
-    for i in range(0, len(coo_arrays)-1):
-        sse1 = getCcoo(coo_arrays[i])
-        for p in range(i+1,len(coo_arrays)):
-            sse2 = getCcoo(coo_arrays[p])
-            for j in range(0, len(sse1[0])):
-                for k in range(0, len(sse2[0])):
-                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                    if dist < cdist:
-                        return False
-    """
+
     return True
