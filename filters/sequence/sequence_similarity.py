@@ -172,17 +172,11 @@ def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
     for sse in sse_ordered:
         sse_seq = aa_seq[sse[4]-1 : sse[5]]
         native_sse_seq = native_sse_seq + sse_seq
-
     k=0.0
-
     for i in range(0, len(concat_seq)):
         #print native_sse_seq[i], concat_seq[i]
-
         if native_sse_seq[i] == concat_seq[i]:
-
             k += 1
-
     seq_id = (k / float(len(concat_seq))) * 100
-
     return seq_id
 

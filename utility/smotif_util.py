@@ -17,6 +17,7 @@ def getSmotif(s1, s2):
     new_smotif_file = hh_6_23.db
     ['helix', 6, 9, 4, 146, 151] ['helix', 23, 4, 1, 156, 178]
     """
+    s1_type, s2_type = '', ''
     print s1, s2
     if s1[0] == 'helix':
         s1_type = 'h'
@@ -70,7 +71,8 @@ def readSmotifDatabase(smotif, *database_cutoff):
 
 def orderSeq(previous_smotif, current_seq, direction):
     """
-    :param previous_seq:
+
+    :param previous_smotif:
     :param current_seq:
     :param direction:
     :return:
@@ -99,10 +101,10 @@ def orderCATH(previous_smotif, current_smotif, direction):
     :return:
     """
     previous_cath = []
+
     for entry in previous_smotif:
         if entry[0] == 'cathcodes':
-            t_cath = entry[1]
-            previous_cath = t_cath[:]
+            previous_cath = (entry[1])[:]
 
     if direction == 'left':
         previous_cath.insert(0, current_smotif)

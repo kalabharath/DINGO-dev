@@ -85,14 +85,15 @@ def getcoo(frag):
     :return:
     """
     #[41, 'ASP', 'N', 28.117, -17.694, 7.215]
-    x, y, z, atom_type, res_no, res = [], [], [], [], [], []
+    x, y, z, atom_type = [None] * len(frag),[None] * len(frag), [None] * len(frag), [None] * len(frag)
+    res_no, res = [None] * len(frag) , [None] * len(frag)
     for i in range(0, len(frag)):
-        x.append(frag[i][3])
-        y.append(frag[i][4])
-        z.append(frag[i][5])
-        atom_type.append(frag[i][2])
-        res_no.append(frag[i][0])
-        res.append(frag[i][1])
+        x[i] = frag[i][3]
+        y[i]= frag[i][4]
+        z[i] = frag[i][5]
+        atom_type[i] = frag[i][2]
+        res_no[i] = frag[i][0]
+        res[i] = frag[i][1]
     return [x, y, z, atom_type, res_no, res]
 
 
@@ -176,7 +177,7 @@ def get_dist(r1, r2):
     return math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))
 
 
-def rmsdQCP(psmotif, csmotif, direction):
+def rmsdQCP(psmotif, csmotif, direction, cutoff):
     """
     use rmsdQCP
     :param psmotif:
@@ -227,9 +228,17 @@ def rmsdQCP(psmotif, csmotif, direction):
     rmsd = qcprot.CalcRMSDRotationalMatrix(xyz1, xyz2, fraglen, rot)
     # *********
 
-    rotmat = []
+    if rmsd > cutoff:
+        # exit without further computation
+        # free memory
+        qcprot.FreeDMatrix(xyz1)
+        qcprot.FreeDMatrix(xyz2)
+        qcprot.FreeDArray(rot)
+        return rmsd, []
+
+    rotmat = [None] * 9
     for i in range(0, 9):
-        rotmat.append(qcprot.GetDvector(i, rot))
+        rotmat[i] = qcprot.GetDvector(i, rot)
 
     # translate the other SSE of the current smotif
     sse_2nd_coos = getcoo(native_fragb_2ndsse)
@@ -246,6 +255,7 @@ def rmsdQCP(psmotif, csmotif, direction):
 
         transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
 
+    # free memory
     qcprot.FreeDMatrix(xyz1)
     qcprot.FreeDMatrix(xyz2)
     qcprot.FreeDArray(rot)
@@ -253,7 +263,7 @@ def rmsdQCP(psmotif, csmotif, direction):
     return rmsd, transformed_coor
 
 
-def rmsdQCP3(previous_smotif, csmotif, direction):
+def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
     """
 
     :param previous_smotif:
@@ -310,11 +320,18 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     rmsd = qcprot.CalcRMSDRotationalMatrix(xyz1, xyz2, fraglen, rot)
     # *********
 
-    # print rmsd
+    if rmsd > cutoff:
+        # exit without further computation
+        # free memory
+        qcprot.FreeDMatrix(xyz1)
+        qcprot.FreeDMatrix(xyz2)
+        qcprot.FreeDArray(rot)
+        return rmsd, []
 
-    rotmat = []
+
+    rotmat = [None] * 9
     for i in range(0, 9):
-        rotmat.append(qcprot.GetDvector(i, rot))
+        rotmat[i] = qcprot.GetDvector(i, rot)
 
     # translate the other SSE of the current smotif
 
@@ -331,7 +348,7 @@ def rmsdQCP3(previous_smotif, csmotif, direction):
     else:
         temp_holder.append(trans_sse2nd)
 
-
+    # free memory
     qcprot.FreeDMatrix(xyz1)
     qcprot.FreeDMatrix(xyz2)
     qcprot.FreeDArray(rot)

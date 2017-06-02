@@ -232,12 +232,14 @@ def sXSmotifSearch(task):
         # quickly filters non-overlapping smotifs
         # ************************************************
 
-        if stage == 2:
-            rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction)
-        else:
-            rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction)
+        rmsd_cutoff = exp_data['rmsd_cutoff'][stage - 1]
 
-        if rmsd <= exp_data['rmsd_cutoff'][stage - 1]:
+        if stage == 2:
+            rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction, rmsd_cutoff)
+        else:
+            rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction, rmsd_cutoff)
+
+        if rmsd <= rmsd_cutoff:
 
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
@@ -266,6 +268,8 @@ def sXSmotifSearch(task):
             # Aligns the smotif seq to target seq and calculates
             # sequence identity and the alignment score
             # ************************************************
+
+            # TODO delete this sequence smilarityfilter it is of no use but to waste CPU cycles
 
             csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],
                                                                                   direction, exp_data)
