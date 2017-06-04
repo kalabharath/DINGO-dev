@@ -187,7 +187,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
     :param stage:
     :return:
     """
-    if stage <=2:
+    if stage <= 2:
 
         if (chisqr / total_pcs) > 0.0025:  # no error limit
             return 1.0e+30
@@ -197,7 +197,7 @@ def checkAxRh(axrh, chisqr, total_pcs, stage):
         if (chisqr / total_pcs) > (0.01):  # 4 times the standard error limit
             return 1.0e+30
     if stage == 4:
-        if (chisqr / total_pcs) > (0.015 ): #6 times the standard limit
+        if (chisqr / total_pcs) > (0.015):  # 6 times the standard limit
             return 1.0e+30
 
     for metal in axrh:
@@ -243,7 +243,7 @@ def checkAxRhCutoffs(axrh, chisqr, total_pcs, exp_data, stage):
     # Apply Axial and Rhombic cutoffs
     for metal in axrh:
         for parameter in metal:
-            if stage == 1 :
+            if stage == 1:
                 if abs(parameter) > axrh_cutoffs[0]:
                     return 1.0e+30
             elif stage == 2:
@@ -346,11 +346,10 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             z = fastT1FM.GetDArray(0, 2, tensor)
             metal_pos = [x + cm[0], y + cm[1], z + cm[2]]
 
-
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
 
-            #chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage=1)  # modifies the values of chisqr
+            # chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage=1)  # modifies the values of chisqr
             chisqr = checkAxRhCutoffs(AxRh, chisqr, total_pcs, exp_data, stage=1)  # modifies the values of chisqr
             AxRh.append(metal_pos)  # add metal pos
 
@@ -363,7 +362,6 @@ def PCSAxRhFit(s1_def, s2_def, smotif, exp_data):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
-
             nchisqr = chisqr / float(total_pcs - (nsets * 5))
             snchisqr = nchisqr / float(math.pow(total_pcs, 1 / 3.0))
             temp_tensor.append([tag, snchisqr, AxRh])
@@ -527,7 +525,7 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
             # Compute and check Axial and Rhombic parameters
             AxRh = calcAxRh(saupe_array)
 
-            #chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage)  # modifies the values of chisqr
+            # chisqr = checkAxRh(AxRh, chisqr, total_pcs, stage)  # modifies the values of chisqr
             chisqr = checkAxRhCutoffs(AxRh, chisqr, total_pcs, exp_data, stage)  # modifies the values of chisqr
             AxRh.append(metal_pos)  # add metal pos
 
@@ -540,11 +538,9 @@ def PCSAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
             chisqr = 1.0e+30
 
         if chisqr < 1.0e+30:
-
             nchisqr = chisqr / float(total_pcs - (nsets * 5))
             snchisqr = nchisqr / float(math.pow(total_pcs, 1 / 3.0))
             temp_tensor.append([tag, snchisqr, AxRh])
-
 
         if stage <= 3:
             if len(temp_tensor) < tag:

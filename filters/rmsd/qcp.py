@@ -250,9 +250,7 @@ def rmsdQCP(psmotif, csmotif, direction, cutoff):
     #return 3 arrays of coordinates
     if direction == 'left':
         transformed_coor = [trans_sse2nd, native_fraga, native_fraga_2ndsse]
-
     else:
-
         transformed_coor = [native_fraga_2ndsse, native_fraga, trans_sse2nd]
 
     # free memory

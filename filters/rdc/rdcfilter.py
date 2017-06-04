@@ -247,9 +247,7 @@ def getNHvectors(coo_arrays, sse_list):
         sse_def = sse_list[i]
         h_array = pcs.getAtomCoo(coo_arrays[i], atom_type='H')
         n_array = pcs.getAtomCoo(coo_arrays[i], atom_type='N')
-
         sse_range = range(sse_def[4], sse_def[5] + 1)
-
         for j in range(0, len(sse_range)):
             try:
                 nh_dict[sse_range[j]] = [getVector([h_array[0][j], h_array[1][j], h_array[2][j]],

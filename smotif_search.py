@@ -175,8 +175,7 @@ def sXSmotifSearch(task):
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
     psmotif, preSSE, dump_log = [], [], []
-    ref_rmsd, noe_probability = 0.0, 0.0
-    no_clashes = False
+
 
     if stage == 2:
 
@@ -210,6 +209,9 @@ def sXSmotifSearch(task):
         # ************************************************
 
         # Exclude natives if needed
+        ref_rmsd, noe_probability = 0.0, 0.0
+        no_clashes = False
+
         tpdbid = csmotif_data[i][0][0]
         pdbid = tpdbid[0:4]
 
@@ -242,7 +244,6 @@ def sXSmotifSearch(task):
             rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction, rmsd_cutoff)
 
         if rmsd <= rmsd_cutoff:
-
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
             if loop_constraint:
@@ -252,6 +253,7 @@ def sXSmotifSearch(task):
                 no_clashes = False
 
         if  no_clashes:
+
             # Prepare temporary arrays to log the data.
             tlog, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
 
