@@ -15,7 +15,7 @@ def getSmotifAASeq(ss1, ss2):
                   'ARG': 'R', 'LYS': 'K', 'SER': 'S', 'THR': 'T', 'MET': 'M', 'ALA': 'A',
                   'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'D', 'GLX': 'G', 'UNK': 'A'}
     seq = ''
-
+    # TODO try to optimize this for loop
     for entry in ss1:
         if entry[2] == 'CA':
             aa = entry[1]
@@ -77,9 +77,7 @@ def SequenceSimilarity(s1_def, s2_def, smotif, exp_data):
                 k += 1
     # seq_id = (k/j)*100
     seq_id = (k / len(smotif_seq)) * 100
-
     return smotif_seq, seq_id, score
-
 
 def S2SequenceSimilarity(ss_def, smotif, direction, exp_data):
     """
@@ -95,7 +93,6 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data):
     hit = True
 
     aa_seq = exp_data['aa_seq']
-
 
     # change below such that previous and current sses are chosen for the native seq
     # NO, only current sse , based on the direction should be chosen and only one SSE seq is aligned
@@ -123,54 +120,41 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data):
                 k += 1
     # seq_id = (k/j)*100
     seq_id = (k / len(smotif_seq)) * 100
-
     return smotif_seq, seq_id, score
 
-def getGlobalSequenceIdentityBACK(concat_seq, exp_data, sse_ordered):
-
-
+def getS1SeqIdentity(s1_def, s2_def, smotif, exp_data):
     aa_seq = exp_data['aa_seq']
-    # [['helix', 12, 3, 6, 4, 15], ['helix', 11, 4, 10, 24, 34], ['helix', 7, 10, 8, 45, 51]]
+    # get the target and smotif seq information alone and exclude the loop regions
+    native_seq = aa_seq[s1_def[4] - 1:s1_def[5]] + aa_seq[s2_def[4] - 1:s2_def[5]]  # -1 to fix residue numbering
+    smotif_seq = getSmotifAASeq(smotif[1], smotif[2])
+    k = 0.0
+    for i in range(0, len(native_seq)):
+        if native_seq[i] == smotif_seq[i]:
+            k += 1.0
+    seq_id = k/float(len(native_seq))
+    return smotif_seq, seq_id
+
+def getS2SeqIdentity(ss_def, smotif, direction, exp_data):
+    aa_seq = exp_data['aa_seq']
+
+    # change below such that previous and current sses are chosen for the native seq
+    # NO, only current sse , based on the direction should be chosen and only one SSE seq is aligned
     native_sse_seq = ''
     for sse in sse_ordered:
-        sse_seq = aa_seq[sse[4]-1 : sse[5]]
+        sse_seq = aa_seq[sse[4] - 1: sse[5]]
         native_sse_seq = native_sse_seq + sse_seq
 
 
-    from Bio import pairwise2
-    from Bio.SubsMat import MatrixInfo as matlist
+    k = 0.0
 
-    matrix = matlist.blosum62
-    gap_open = -10
-    gap_extend = -0.5
-
-    # Perform alignment
-    alns = pairwise2.align.globalds(native_sse_seq, concat_seq, matrix, gap_open, gap_extend)
-    # the best alignment is in the first entry
-    top_aln = alns[0]
-
-    # Calculate the sequence identity
-    seqa, qseqa, score, begin, end = top_aln
-    j, k = 0.0, 0.0
-    for i in range(0, len(qseqa)):
-        if qseqa[i] != '-' and seqa[i] != '-':
-            j += 1
-            if qseqa[i] == seqa[i]:
-                k += 1
-    # seq_id = (k/j)*100
-    seq_id = (k / len(concat_seq)) * 100
-
-    return seq_id
-
+    return True
 
 def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
-
-
     aa_seq = exp_data['aa_seq']
     # [['helix', 12, 3, 6, 4, 15], ['helix', 11, 4, 10, 24, 34], ['helix', 7, 10, 8, 45, 51]]
     native_sse_seq = ''
     for sse in sse_ordered:
-        sse_seq = aa_seq[sse[4]-1 : sse[5]]
+        sse_seq = aa_seq[sse[4] - 1: sse[5]]
         native_sse_seq = native_sse_seq + sse_seq
     k=0.0
     for i in range(0, len(concat_seq)):
@@ -179,4 +163,3 @@ def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
             k += 1
     seq_id = (k / float(len(concat_seq))) * 100
     return seq_id
-

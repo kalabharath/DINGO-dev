@@ -62,7 +62,6 @@ def dumpPickle(filename, data):
     """
     with open(filename, 'w') as f:
         pickle.dump(data, f)
-    f.close()
     return True
 
 
@@ -73,9 +72,8 @@ def readPickle(filename):
     :return:
     """
     if os.path.isfile(filename):
-        fin = open(filename, 'r')
-        data = pickle.load(fin)
-        fin.close()
+        with open(filename) as fin:
+            data = pickle.load(fin)
         return data
     else:
         return False

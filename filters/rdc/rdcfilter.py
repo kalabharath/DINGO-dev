@@ -177,7 +177,7 @@ def getloglikelihood(error_array, cutoff):
         if abs(entry) <= cutoff:
             below_error += 1.0
     likelihood = (float(len(error_array))/below_error)
-    return -math.log(likelihood)
+    return -1 * (math.log(likelihood))
 
 def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     """

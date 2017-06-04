@@ -40,9 +40,7 @@ def S1NOEprob(s1_def, s2_def, smotif, exp_data):
     resi = coor_matrix.keys()
 
     for noe in noes:
-
         res1, atm1, res2, atom2, noe_cutoff, tol = noe[0], noe[1], noe[2], noe[3], noe[4], noe[5]
-
         if res1 in resi and res2 in resi:
             smotif_noes += 1.0
             coo1 = coor_matrix[res1]
@@ -55,10 +53,7 @@ def S1NOEprob(s1_def, s2_def, smotif, exp_data):
         local_prob = (noes_found / smotif_noes)
     else:
         local_prob = 0.0
-
     return (noes_found / total_noes), local_prob, noes_found
-
-
 
 def getSxCoorMatrix(coor_array, native_sse):
 
@@ -72,8 +67,8 @@ def getSxCoorMatrix(coor_array, native_sse):
             z =  (coor_array[2][i])
             resi[native_sse_range[count_array]] = [x, y, z]
             count_array += 1
-
     return resi
+
 def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
     """
 

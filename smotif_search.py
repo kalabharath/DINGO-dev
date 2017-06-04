@@ -41,6 +41,7 @@ def S1SmotifSearch(task):
         return True
 
     dump_log = []
+
     # ************************************************************************************************
     # Main
     # The 'for' loop below iterates over all of the Smotifs and applies various filters
@@ -90,10 +91,15 @@ def S1SmotifSearch(task):
         # Aligns the smotif seq to target seq and calculates
         # sequence identity and the alignment score
         # ************************************************
+        smotif_seq, seq_identtify = Sfilter.getS1SeqIdentity(s1_def, s2_def, smotif_data[i], exp_data)
 
+        """
         smotif_seq, seq_identity, blosum62_score = \
             Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
+        """
+
+        tlog.append(['seq_filter', smotif_seq, seq_identity])
 
         # ************************************************
         # Residual dipolar coupling filter
@@ -114,13 +120,11 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'noe_data' in exp_data_types:
-            # noe_probability, no_of_noes = Noe.s1NOEfit(s1_def, s2_def, smotif_data[i], exp_data)
-            noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
 
+            noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
             if local_noe_probability >= exp_data['noe_fmeasure'][stage-1]:
                 tlog.append(['NOE_filter', noe_probability, no_of_noes])
             else:
-                noe_probability = False
                 continue
 
         # ************************************************
@@ -143,18 +147,16 @@ def S1SmotifSearch(task):
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
 
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
+
         # Dump the data to the disk
-        # if pcs_tensor_fits or rdc_tensor_fits:
         if pcs_tensor_fits or noe_probability:
             dump_log.append(tlog)
 
     # Save all of the hits in pickled arrays
     if dump_log:
         # testing for rdc_plus_pcs
-
         if 'rank_top_hits' in exp_data_types:
             dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
-
         print "num of hits", len(dump_log)
         io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
 
