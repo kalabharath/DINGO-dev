@@ -8,6 +8,27 @@ Date: 14/04/15 , Time: 04:52 PM
 Globally align the amino acid sequences in smotifs against the target sequence
 """
 
+def orderSeq(previous_smotif, current_seq, direction):
+    """
+
+    :param previous_smotif:
+    :param current_seq:
+    :param direction:
+    :return:
+    """
+    previous_seq = ''
+
+    for entry in previous_smotif:
+        if entry[0] == 'seq_filter':
+            seq_filter = entry
+            previous_seq = seq_filter[1]
+
+    if direction == 'left':
+        concat_seq = current_seq + previous_seq
+    else:
+        concat_seq = previous_seq + current_seq
+
+    return concat_seq
 
 def getSmotifAASeq(ss1, ss2):
     one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q',
@@ -134,20 +155,33 @@ def getS1SeqIdentity(s1_def, s2_def, smotif, exp_data):
     seq_id = k/float(len(native_seq))
     return smotif_seq, seq_id
 
-def getS2SeqIdentity(ss_def, smotif, direction, exp_data):
+def getSXSeqIdentity(ss_def, smotif, direction, exp_data, psmotif, sse_ordered):
     aa_seq = exp_data['aa_seq']
 
     # change below such that previous and current sses are chosen for the native seq
     # NO, only current sse , based on the direction should be chosen and only one SSE seq is aligned
+
+    if direction == 'left':
+        smotif_sse = smotif[1]
+    else:
+        smotif_sse = smotif[2]
+
+    smotif_seq = getSmotifAASeq_v2(smotif_sse)
+
+    concat_seq = orderSeq(psmotif, smotif_seq, direction)
+
     native_sse_seq = ''
     for sse in sse_ordered:
         sse_seq = aa_seq[sse[4] - 1: sse[5]]
         native_sse_seq = native_sse_seq + sse_seq
-
-
     k = 0.0
 
-    return True
+    for i in range(0, len(concat_seq)):
+        # print native_sse_seq[i], concat_seq[i]
+        if native_sse_seq[i] == concat_seq[i]:
+            k += 1
+    seq_id = (k / float(len(concat_seq))) * 100
+    return seq_id, concat_seq
 
 def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
     aa_seq = exp_data['aa_seq']
@@ -158,7 +192,7 @@ def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
         native_sse_seq = native_sse_seq + sse_seq
     k=0.0
     for i in range(0, len(concat_seq)):
-        #print native_sse_seq[i], concat_seq[i]
+        # print native_sse_seq[i], concat_seq[i]
         if native_sse_seq[i] == concat_seq[i]:
             k += 1
     seq_id = (k / float(len(concat_seq))) * 100

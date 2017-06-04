@@ -92,13 +92,6 @@ def S1SmotifSearch(task):
         # sequence identity and the alignment score
         # ************************************************
         smotif_seq, seq_identity = Sfilter.getS1SeqIdentity(s1_def, s2_def, smotif_data[i], exp_data)
-
-        """
-        smotif_seq, seq_identity, blosum62_score = \
-            Sfilter.SequenceSimilarity(s1_def, s2_def, smotif_data[i], exp_data)
-        tlog.append(['seq_filter', smotif_seq, seq_identity, blosum62_score])
-        """
-
         tlog.append(['seq_filter', smotif_seq, seq_identity])
 
         # ************************************************
@@ -252,7 +245,7 @@ def sXSmotifSearch(task):
             else:
                 no_clashes = False
 
-        if  no_clashes:
+        if no_clashes:
 
             # Prepare temporary arrays to log the data.
             tlog, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
@@ -275,17 +268,20 @@ def sXSmotifSearch(task):
 
             # TODO delete this sequence S2Smilarityfilter it is of no use but to waste CPU cycles
 
-            csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],
-                                                                                  direction, exp_data)
+            #csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],                                                                                  direction, exp_data)
 
             # concat current to previous seq
             if stage == 2:
-                concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
+                seq_identity, concat_seq = Sfilter.getSXSeqIdentity(current_ss, csmotif_data[i], direction, exp_data,
+                                                                    psmotif, sse_ordered)
+                #concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
             else:
-                concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
-
-            g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
-            tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
+                seq_identity, concat_seq = Sfilter.getSXSeqIdentity(current_ss, csmotif_data[i], direction, exp_data,
+                                                                    preSSE, sse_ordered)
+                #concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
+            #g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
+            #tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
+            tlog.append(['seq_filter', concat_seq, seq_identity])
 
 
             # ************************************************
@@ -337,7 +333,7 @@ def sXSmotifSearch(task):
 
             if 'reference_ca' in exp_data_types:
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=50.0)
-            tlog.append(['Ref_RMSD', ref_rmsd, g_seq_identity])
+            tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
 
             # if pcs_tensor_fits or rdc_tensor_fits:
             if pcs_tensor_fits or noe_probability:

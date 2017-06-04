@@ -79,6 +79,7 @@ def orderSeq(previous_smotif, current_seq, direction):
     :param direction:
     :return:
     """
+    # This function is depreciated
     previous_seq = ''
 
     for entry in previous_smotif:
