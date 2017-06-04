@@ -72,7 +72,7 @@ def loopConstraint(coo_arrays, sseorder, direction, smotif_def):
     else:
         csse = sseorder[0]
         psse = sseorder[1]
-        loop_length = float(psse[-2] - csse[-1])
+        loop_length = (psse[-2] - csse[-1])
 
         c_coo = getCAcoo(coo_arrays[0])
         p_coo = getCAcoo(coo_arrays[1])
@@ -84,7 +84,7 @@ def loopConstraint(coo_arrays, sseorder, direction, smotif_def):
     if loop_length > 30.0 or loop_length == 0.0:
         return False
 
-    Ndist = round(dist / loop_length, 2)
+    Ndist = round(dist / float(loop_length), 2)
 
     stat_dist = 0
     stat_std = 0
