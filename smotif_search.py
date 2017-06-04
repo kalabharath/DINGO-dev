@@ -91,7 +91,7 @@ def S1SmotifSearch(task):
         # Aligns the smotif seq to target seq and calculates
         # sequence identity and the alignment score
         # ************************************************
-        smotif_seq, seq_identtify = Sfilter.getS1SeqIdentity(s1_def, s2_def, smotif_data[i], exp_data)
+        smotif_seq, seq_identity = Sfilter.getS1SeqIdentity(s1_def, s2_def, smotif_data[i], exp_data)
 
         """
         smotif_seq, seq_identity, blosum62_score = \
@@ -271,7 +271,7 @@ def sXSmotifSearch(task):
             # sequence identity and the alignment score
             # ************************************************
 
-            # TODO delete this sequence smilarityfilter it is of no use but to waste CPU cycles
+            # TODO delete this sequence S2Smilarityfilter it is of no use but to waste CPU cycles
 
             csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],
                                                                                   direction, exp_data)
