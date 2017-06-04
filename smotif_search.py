@@ -266,8 +266,6 @@ def sXSmotifSearch(task):
             # sequence identity and the alignment score
             # ************************************************
 
-            # TODO delete this sequence S2Smilarityfilter it is of no use but to waste CPU cycles
-
             #csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],                                                                                  direction, exp_data)
 
             # concat current to previous seq
