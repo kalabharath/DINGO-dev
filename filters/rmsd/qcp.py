@@ -55,12 +55,14 @@ def getCAcoo(frag):
     :return:
     """
     #print frag
-    x, y, z = [], [], []
-    for i in range(0, len(frag[0])):
-        if frag[3][i] == 'CA':
-            x.append(frag[0][i])
-            y.append(frag[1][i])
-            z.append(frag[2][i])
+    factor = len(frag[0])/5
+    x, y, z = [None] * factor, [None]* factor, [None] * factor
+    index = 0
+    for i in range(2, len(frag[0]), 5):
+        x[index] = (frag[0][i])
+        y[index] = (frag[1][i])
+        z[index] = (frag[2][i])
+        index += 1
     return [x, y, z]
 
 def getCcoo(frag):
@@ -69,14 +71,15 @@ def getCcoo(frag):
     :return:
     """
     #print frag
-    x, y, z = [], [], []
-    for i in range(0, len(frag[0])):
-        if frag[3][i] == 'C':
-            x.append(frag[0][i])
-            y.append(frag[1][i])
-            z.append(frag[2][i])
+    factor = len(frag[0])/5
+    x, y, z = [None] * factor, [None]* factor, [None] * factor
+    index = 0
+    for i in range(3, len(frag[0]), 5):
+        x[index] = (frag[0][i])
+        y[index] = (frag[1][i])
+        z[index] = (frag[2][i])
+        index += 1
     return [x, y, z]
-
 
 def getcoo(frag):
     """
@@ -280,9 +283,7 @@ def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
             frag_b = getcoo(csmotif[2])
             native_fragb_2ndsse = (csmotif[1])[:]
             frag_a = copy.deepcopy(presse[0])
-
         else:
-
             frag_a = copy.deepcopy(presse[-1])
             frag_b = getcoo(csmotif[1])
             native_fragb_2ndsse = (csmotif[2])[:]

@@ -5,22 +5,7 @@ Project_Name: constraints/looplengthConstraint, File_name: looplengthConstraint.
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 27/11/15 , Time:2:28 PM
 """
-
-
-def getCAcoo(frag):
-    """
-    :param frag:
-    :return:
-    """
-    # TODO I just need first and last CA coors no need to parse through all
-    x, y, z = [], [], []
-    for i in range(0, len(frag[0])):
-        if frag[3][i] == 'CA':
-            x.append(frag[0][i])
-            y.append(frag[1][i])
-            z.append(frag[2][i])
-    return [x, y, z]
-
+from filters.rmsd.qcp import getCAcoo
 
 def get_dist(r1, r2):
     import math

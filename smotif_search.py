@@ -311,8 +311,6 @@ def sXSmotifSearch(task):
                      # Do not execute any further
                     continue
 
-
-
             # ************************************************
             # Pseudocontact Shift filter
             # uses experimental PCS data to filter Smotifs

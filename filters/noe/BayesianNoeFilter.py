@@ -1,15 +1,12 @@
 from filters.constraints.looplengthConstraint import get_dist
 
-
-def getCoorMatrix(ss_list, smotif_ss, smotif):
+def getHCoorMatrix(ss_list, smotif):
     noe_matrix = {}
-    for i in range(0, len(smotif_ss)):
-        actual_res = ss_list[i]
-        smotif_res = smotif_ss[i]
-        for entry in smotif:
-            if entry[2] == 'H' and entry[0] == smotif_res:
-                coo1 = [entry[3], entry[4], entry[5]]
-                noe_matrix[actual_res] = coo1
+    count = 0
+    for i in range(1, len(smotif), 5):
+        coo1 = [smotif[i][3], smotif[i][4], smotif[i][5]]
+        noe_matrix[ss_list[count]] = coo1
+        count += 1
     return noe_matrix
 
 
@@ -31,11 +28,11 @@ def S1NOEprob(s1_def, s2_def, smotif, exp_data):
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)
 
-    smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
-    smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
+    #smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
+    #smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
 
-    coor_matrix = getCoorMatrix(ss1_list, smotif_ss1, smotif[1])
-    coor2_matrix = getCoorMatrix(ss2_list, smotif_ss2, smotif[2])
+    coor_matrix = getHCoorMatrix(ss1_list,  smotif[1])
+    coor2_matrix = getHCoorMatrix(ss2_list, smotif[2])
     coor_matrix.update(coor2_matrix)
     resi = coor_matrix.keys()
 
@@ -60,13 +57,12 @@ def getSxCoorMatrix(coor_array, native_sse):
     resi ={}
     native_sse_range = range(native_sse[4], native_sse[5] + 1)
     count_array = 0
-    for i in range(0, len(coor_array[0])):
-        if coor_array[3][i] == 'H':
-            x =  (coor_array[0][i])
-            y =  (coor_array[1][i])
-            z =  (coor_array[2][i])
-            resi[native_sse_range[count_array]] = [x, y, z]
-            count_array += 1
+    for i in range(1, len(coor_array[0]), 5):
+        x = (coor_array[0][i])
+        y = (coor_array[1][i])
+        z = (coor_array[2][i])
+        resi[native_sse_range[count_array]] = [x, y, z]
+        count_array += 1
     return resi
 
 def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
