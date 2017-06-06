@@ -1,7 +1,8 @@
-import ConvertUTR
 import math
 import numpy as np
 from scipy.optimize import leastsq
+
+import ConvertUTR
 
 """
 Module to provide subroutines to parse and fit RDC data
@@ -52,14 +53,14 @@ def getGMR(spin_type1, spin_type2):
     Return the gyromagnetic ratio(s) for the given spin type.
     From: http://nmrwiki.org/wiki/index.php?title=Gyromagnetic_ratio
     The values defined are consistent with those in Xplor-NIH.
-    :param spin_type: The atom identifier for the spin (can be H, C, N)
-    :type spin_type: String (H, C, N)
+    :param spin_type1: The atom identifier for the spin (can be H, C, N)
+    :type spin_type2: String (H, C, N)
     :rtype: float
     """
     from math import pi
-    mgr = {'H': ((2 * pi) * 42.576) * 1e6, \
-           'C': ((2 * pi) * 10.705) * 1e6, \
-           'CA': ((2 * pi) * 10.705) * 1e6, \
+    mgr = {'H': ((2 * pi) * 42.576) * 1e6,
+           'C': ((2 * pi) * 10.705) * 1e6,
+           'CA': ((2 * pi) * 10.705) * 1e6,
            'N': ((2 * pi) * -4.315) * 1e6,}
 
     return mgr[spin_type1] * mgr[spin_type2]
@@ -146,6 +147,7 @@ def getVectorData(s1_def, s2_def, smotif, exp_data):
                 # TODO change the vector length to new modification (ottinger and bax 98), NH vector should be 1.04 A
                 for entry in data[res_no]:
                     # [58, 'H', 58, 'N', 0.725]
+                    atco1, atco2 = [], []
                     for coor in smotif_coors:
                         # [31, 'PHE', 'H', 9.467, -2.327, 10.206]
                         if coor[0] == res_no and coor[2] == 'N':
@@ -156,17 +158,6 @@ def getVectorData(s1_def, s2_def, smotif, exp_data):
                     t_rdc_vector.append([getVector(atco2, atco1), getGMR('H', 'N'), entry[4]])
             except:
                 pass
-                """
-                res1 = sse_list[smotif_list.index(entry[0])]
-                res2 = sse_list[smotif_list.index(entry[2])]
-                for coor in smotif_coors:
-                    #[31, 'PHE', 'H', 9.467, -2.327, 10.206]
-                    if coor[0] == res1 and coor[2] == entry[1]:
-                        atco1 = coor[3:]
-                    if coor[0] == res2 and coor[2] == entry[1]:
-                        atco2 = coor[3:]
-                print res1, res2, atco1, atco2
-                """
         rdc_vector.append(t_rdc_vector)
     return rdc_vector
 
@@ -185,7 +176,7 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     :param s1_def:
     :param s2_def:
     :param smotif:
-    :param threshold:
+    :param exp_data:
     :return:
     """
     rdc_vectors = getVectorData(s1_def, s2_def, smotif, exp_data)
@@ -193,8 +184,8 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     exp_error = exp_data['exp_error']
     B0inTs = exp_data['B0inT']
     TinKs = exp_data['TinK']
-    total_chisqr = 0
-    all_tensors = []
+
+    tensor = []
     temp_tensor = []
     tlog_likelihood = []
     for i in range(0, len(rdc_vectors)):
@@ -296,6 +287,8 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     B0inTs = exp_data['B0inT']
     TinKs = exp_data['TinK']
     temp_tensor = []
+    info = []
+    tensor = []
     tlog_likelihood = []
 
     for i in range(0, len(rdc_vectors)):

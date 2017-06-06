@@ -8,7 +8,7 @@ def rank_dump_log(dump_log, exp_data, stage):
     rank_top_hits = exp_data['rank_top_hits']
     num_hits = rank_top_hits[stage - 1]
     new_dict = collections.defaultdict(list)
-
+    rdc_constant = 0.0
     for hit in dump_log:
         # thread_data contains data from each search and filter thread.
         # initialize total score array
@@ -24,6 +24,10 @@ def rank_dump_log(dump_log, exp_data, stage):
                 rdc_data = data_filter
                 #Nchi = s2util.rdcSumChi(rdc_data, stage)
                 log_likelihood = data_filter[2]
+                rdc_tensors = data_filter[1]
+                for tensor in rdc_tensors:
+                    rdc_constant = rdc_constant + tensor[0]
+                rdc_constant = rdc_constant * 1e-10
                 total_score['rdc_score'] = log_likelihood
 
             if data_filter[0] == 'NOE_filter':
@@ -38,6 +42,8 @@ def rank_dump_log(dump_log, exp_data, stage):
             tscore = 0
             for key in keys:
                 tscore = tscore + total_score[key]
+            tscore = tscore + rdc_constant
+
             if tscore < 999.999:
                 new_dict[tscore].append(hit)
 

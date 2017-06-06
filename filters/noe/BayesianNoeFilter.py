@@ -92,7 +92,7 @@ def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
 
     for noe in noes:
 
-        res1, atm1, res2, atom2, noe_cutoff, tol = noe[0], noe[1], noe[2], noe[3], noe[4], noe[5]
+        res1, res2, noe_cutoff, tol = noe[0], noe[2], noe[4], noe[5]
 
         if res1 in resi and res2 in resi:
             smotif_noes += 1.0
@@ -106,6 +106,5 @@ def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
         local_prob = (noes_found / smotif_noes)
     else:
         local_prob = 0.0
-
 
     return (noes_found / total_noes), local_prob, noes_found
