@@ -106,4 +106,4 @@ def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
     else:
         local_prob = 0.0
 
-    return (noes_found / total_noes), local_prob, noes_found, smotif_noes
+    return (noes_found / total_noes), local_prob, noes_found
