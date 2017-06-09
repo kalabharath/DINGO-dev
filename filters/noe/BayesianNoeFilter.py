@@ -91,10 +91,9 @@ def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
     resi = coor_matrix.keys()
 
     for noe in noes:
-
         res1, res2, noe_cutoff, tol = noe[0], noe[2], noe[4], noe[5]
 
-        if res1 in resi and res2 in resi:
+        if (res1 in resi) and (res2 in resi):  # this make sure that the resi are in the SSEs
             smotif_noes += 1.0
             coo1 = coor_matrix[res1]
             coo2 = coor_matrix[res2]
@@ -107,4 +106,4 @@ def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
     else:
         local_prob = 0.0
 
-    return (noes_found / total_noes), local_prob, noes_found
+    return (noes_found / total_noes), local_prob, noes_found, smotif_noes

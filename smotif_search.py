@@ -95,6 +95,20 @@ def S1SmotifSearch(task):
         tlog.append(['seq_filter', smotif_seq, seq_identity])
 
         # ************************************************
+        # Unambiguous NOE score filter
+        # uses experimental ambiguous noe data to filter Smotifs
+        # scoring based on f-measure?
+        # ************************************************
+
+        if 'noe_data' in exp_data_types:
+
+            noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
+            if local_noe_probability >= exp_data['noe_fmeasure'][stage - 1]:
+                tlog.append(['NOE_filter', noe_probability, no_of_noes])
+            else:
+                continue
+
+        # ************************************************
         # Residual dipolar coupling filter
         # uses experimental RDC data to filter Smotifs
         # scoring based on normalised chisqr.
@@ -104,19 +118,6 @@ def S1SmotifSearch(task):
             rdc_tensor_fits, log_likelihood = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             if rdc_tensor_fits:
                 tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood])
-            else:
-                continue
-        # ************************************************
-        # Unambiguous NOE score filter
-        # uses experimental ambiguous noe data to filter Smotifs
-        # scoring based on f-measure?
-        # ************************************************
-
-        if 'noe_data' in exp_data_types:
-
-            noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
-            if local_noe_probability >= exp_data['noe_fmeasure'][stage-1]:
-                tlog.append(['NOE_filter', noe_probability, no_of_noes])
             else:
                 continue
 
@@ -266,21 +267,30 @@ def sXSmotifSearch(task):
             # sequence identity and the alignment score
             # ************************************************
 
-            #csse_seq, seq_identity, blosum62_score = Sfilter.S2SequenceSimilarity(current_ss, csmotif_data[i],                                                                                  direction, exp_data)
-
             # concat current to previous seq
             if stage == 2:
                 seq_identity, concat_seq = Sfilter.getSXSeqIdentity(current_ss, csmotif_data[i], direction, exp_data,
                                                                     psmotif, sse_ordered)
-                #concat_seq = sm.orderSeq(psmotif, csse_seq, direction)
             else:
                 seq_identity, concat_seq = Sfilter.getSXSeqIdentity(current_ss, csmotif_data[i], direction, exp_data,
                                                                     preSSE, sse_ordered)
-                #concat_seq = sm.orderSeq(preSSE, csse_seq, direction)
-            #g_seq_identity = Sfilter.getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered)
-            #tlog.append(['seq_filter', concat_seq, csse_seq, seq_identity, blosum62_score])
+
             tlog.append(['seq_filter', concat_seq, seq_identity])
 
+            # ************************************************
+            # NOE score filter
+            # uses experimental noe data to filter Smotifs
+            # scoring based on log-likelihood?
+            # ************************************************
+
+            if 'noe_data' in exp_data_types:
+                noe_probability, local_noe_probability, no_of_noes = Noe.SxNOEprob(transformed_coos, sse_ordered,
+                                                                                   current_ss, exp_data)
+                if local_noe_probability >= exp_data['noe_fmeasure'][stage - 1]:
+                    tlog.append(['NOE_filter', noe_probability, no_of_noes])
+                else:
+                    # Do not execute any further
+                    continue
 
             # ************************************************
             # Residual dipolar coupling filter
@@ -294,21 +304,6 @@ def sXSmotifSearch(task):
                     tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood])
                 else:
                     # Do not execute any further
-                    continue
-
-            # ************************************************
-            # NOE score filter
-            # uses experimental noe data to filter Smotifs
-            # scoring based on log-likelihood?
-            # ************************************************
-
-            if 'noe_data' in exp_data_types:
-                #noe_probability, total_noes = Noe.sXGlobalNOEfit(transformed_coos, sse_ordered, current_ss, exp_data)
-                noe_probability, local_noe_probability, no_of_noes = Noe.SxNOEprob(transformed_coos, sse_ordered, current_ss, exp_data)
-                if local_noe_probability >= exp_data['noe_fmeasure'][stage-1]:
-                    tlog.append(['NOE_filter', noe_probability, no_of_noes])
-                else:
-                     # Do not execute any further
                     continue
 
             # ************************************************
@@ -331,7 +326,6 @@ def sXSmotifSearch(task):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=50.0)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
 
-            # if pcs_tensor_fits or rdc_tensor_fits:
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
                 dump_log.append(tlog)
