@@ -139,7 +139,6 @@ def S1SmotifSearch(task):
 
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
-
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
 
         # Dump the data to the disk
@@ -170,9 +169,7 @@ def sXSmotifSearch(task):
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
     psmotif, preSSE, dump_log = [], [], []
 
-
     if stage == 2:
-
         psmotif = uts2.getPreviousSmotif(index_array[0])
         current_ss, direction = uts2.getSS2(index_array[1])
         csmotif_data, smotif_def = mutil.getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'], stage)
@@ -245,6 +242,8 @@ def sXSmotifSearch(task):
                 no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
             else:
                 no_clashes = False
+        else:
+            continue
 
         if no_clashes:
 
@@ -329,7 +328,8 @@ def sXSmotifSearch(task):
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
                 dump_log.append(tlog)
-
+        else:
+            continue
     # Dumping hits as a pickle array.
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:

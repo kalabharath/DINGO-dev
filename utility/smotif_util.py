@@ -71,6 +71,7 @@ def readSmotifDatabase(smotif, *database_cutoff):
             smotif_db_path = "/home/kalabharath/projects/dingo_libraries/redundant_db/"
 
     file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db"
+    print "Reading in smotif database: ", file_name
     fin = smotif_db_path + file_name
     smotif_data = io.readPickle(fin)
     return smotif_data

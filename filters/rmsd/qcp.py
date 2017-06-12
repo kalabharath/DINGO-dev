@@ -7,6 +7,7 @@ Date: 8/05/15 , Time:4:27 AM
 """
 
 import copy
+
 import qcprot
 
 
@@ -362,10 +363,20 @@ def clahses(coo_arrays, cdist):
     :return:
     """
 
-    for i in range(0, len(coo_arrays)-1):
+    for i in range(0, len(coo_arrays) - 1):
         sse1 = getCAcoo(coo_arrays[i])
-        for p in range(i+1,len(coo_arrays)):
+        for p in range(i + 1, len(coo_arrays)):
             sse2 = getCAcoo(coo_arrays[p])
+            for j in range(0, len(sse1[0])):
+                for k in range(0, len(sse2[0])):
+                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
+                    if dist < cdist:
+                        return False
+
+    for i in range(0, len(coo_arrays) - 1):
+        sse1 = getCcoo(coo_arrays[i])
+        for p in range(i + 1, len(coo_arrays)):
+            sse2 = getCcoo(coo_arrays[p])
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
                     dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
