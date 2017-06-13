@@ -58,7 +58,8 @@ def readSmotifDatabase(smotif, *database_cutoff):
         elif os.path.isdir("/home/kalabharath/projects/dingo_libraries/redundant_db/"):
             smotif_db_path = "/home/kalabharath/projects/dingo_libraries/redundant_db/"
         else:
-            smotif_db_path = "/home/502/kbp502/short/non_redundant_idealized/database_cutoff_0.05/"
+            smotif_db_path = "/home/502/kbp502/short/non_redundant_scripts/database_cutoff_0.25/"
+            # smotif_db_path = "/home/502/kbp502/short/non_redundant_idealized/database_cutoff_0.05/"
     else:
         # Backwards compatible with my old code
         # I should retire this soon and keep everything clean
