@@ -66,6 +66,22 @@ def getCAcoo(frag):
         index += 1
     return [x, y, z]
 
+
+def getXcoo(frag, atom_num):
+    """
+    :param frag:
+    :return:
+    """
+    # print frag
+    factor = len(frag[0]) / 5
+    x, y, z = [None] * factor, [None] * factor, [None] * factor
+    index = 0
+    for i in range(atom_num, len(frag[0]), 5):
+        x[index] = (frag[0][i])
+        y[index] = (frag[1][i])
+        z[index] = (frag[2][i])
+        index += 1
+    return [x, y, z]
 def getCcoo(frag):
     """
     :param frag:
@@ -356,7 +372,7 @@ def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
     return rmsd, temp_holder
 
 
-def clahses(coo_arrays, cdist):
+def clahsesOLD(coo_arrays, cdist):
     """
     Find the clashes between all the SSEs
     :param coo_arrays:
@@ -383,4 +399,24 @@ def clahses(coo_arrays, cdist):
                     if dist < cdist:
                         return False
     """
+    return True
+
+
+def clahses(coo_arrays, cdist):
+    """
+    Find the clashes between all the SSEs
+    :param coo_arrays:
+    :return:
+    """
+    import random
+    for i in range(0, len(coo_arrays) - 1):
+        atom_num = random.randint(0, 5)
+        sse1 = getXcoo(coo_arrays[i], atom_num)
+        for p in range(i + 1, len(coo_arrays)):
+            sse2 = getXcoo(coo_arrays[p], atom_num)
+            for j in range(0, len(sse1[0])):
+                for k in range(0, len(sse2[0])):
+                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
+                    if dist < cdist:
+                        return False
     return True

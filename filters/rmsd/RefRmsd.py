@@ -1,6 +1,9 @@
 import copy
-import qcprot
+
 import qcp
+import qcprot
+
+
 def getRefCA(ref_ca, s1_def, s2_def):
     x, y, z = [], [], []
 
@@ -92,10 +95,7 @@ def getRefCA2(ref_ca, sse_ordered):
     return [x, y, z]
 
 
-
-
-
-def calcRefRMSD2(ref_ca, sse_ordered, transformed_coos, rmsd_cutoff):
+def calcRefRMSD2(ref_ca, sse_ordered, transformed_coos):
 
     ref_coo = getRefCA2(ref_ca, sse_ordered)
     ref_coo, ref_coo_cen = qcp.centerCoo(ref_coo)
@@ -133,13 +133,4 @@ def calcRefRMSD2(ref_ca, sse_ordered, transformed_coos, rmsd_cutoff):
     qcprot.FreeDMatrix(xyz2)
     qcprot.FreeDArray(rot)
 
-    #print rmsd
-    if rmsd < rmsd_cutoff:
-        return rmsd
-    else:
-        return False
-
-
-
-
-
+    return rmsd

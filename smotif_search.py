@@ -322,7 +322,7 @@ def sXSmotifSearch(task):
             # ************************************************
 
             if 'reference_ca' in exp_data_types:
-                ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos, rmsd_cutoff=50.0)
+                ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
 
             if pcs_tensor_fits or noe_probability:
