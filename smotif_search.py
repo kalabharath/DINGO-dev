@@ -328,8 +328,7 @@ def sXSmotifSearch(task):
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
                 dump_log.append(tlog)
-        else:
-            continue
+
     # Dumping hits as a pickle array.
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
