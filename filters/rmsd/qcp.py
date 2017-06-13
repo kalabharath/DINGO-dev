@@ -408,12 +408,13 @@ def clahses(coo_arrays, cdist):
     :param coo_arrays:
     :return:
     """
-    import random
+
+    rand_30 = [2, 0, 1, 0, 3, 4, 4, 3, 3, 3, 0, 4, 1, 1, 2, 2, 1, 0, 4, 0, 2, 2, 1, 2, 1, 4, 3, 2, 4, 3]
+
     for i in range(0, len(coo_arrays) - 1):
-        atom_num = random.randint(0, 4)
-        sse1 = getXcoo(coo_arrays[i], atom_num)
+        sse1 = getXcoo(coo_arrays[i], rand_30[i])
         for p in range(i + 1, len(coo_arrays)):
-            sse2 = getXcoo(coo_arrays[p], atom_num)
+            sse2 = getXcoo(coo_arrays[p], rand_30[i])
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
                     dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
