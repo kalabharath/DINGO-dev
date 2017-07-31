@@ -75,8 +75,12 @@ def readSmotifDatabase(smotif, *database_cutoff):
 
     fin = smotif_db_path + file_name
     print "Reading in smotif database: ", fin
-    smotif_data = io.readPickle(fin)
-    return smotif_data
+    try:
+        smotif_data = io.readPickle(fin)
+        return smotif_data
+    except:
+        print "Error in reading smotif database: ", fin
+        return False
 
 
 def orderSeq(previous_smotif, current_seq, direction):
