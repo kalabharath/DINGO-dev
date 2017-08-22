@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import gzip
 import os
 import pickle
 
@@ -63,6 +64,32 @@ def dumpPickle(filename, data):
     with open(filename, 'w') as f:
         pickle.dump(data, f)
     return True
+
+
+def dumpGzipPickle(filename, data):
+    """
+
+    :param filename:
+    :param data:
+    :return:
+    """
+    with gzip.open(filename, 'wb') as f:
+        pickle.dump(data, f)
+    return True
+
+
+def readGzipPickle(filename):
+    """
+
+    :param filename:
+    :return:
+    """
+    if os.path.isfile(filename):
+        with gzip.open(filename, 'rb') as fin:
+            data = pickle.load(fin)
+        return data
+    else:
+        return False
 
 
 def readPickle(filename):
@@ -137,11 +164,10 @@ def readContacts(filename, probability):
 
 def auto_readContacts(probability):
     """
-    Parses MetaPSICOV's contact file and returns the
-	:param filename:
-	:param probability:
-	:return contacts array
-	"""
+    
+    :param probability:
+    :return:
+    """
     import glob
 
     filename = glob.glob("*.metapsicov")

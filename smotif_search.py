@@ -151,7 +151,8 @@ def S1SmotifSearch(task):
         if 'rank_top_hits' in exp_data_types:
             dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
         print "num of hits", len(dump_log)
-        io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
+        # io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
+        io.dumpGzipPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
 
     return True
 
@@ -335,6 +336,6 @@ def sXSmotifSearch(task):
             dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
 
         print "num of hits", len(dump_log),
-        io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
-
+        # io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
+        io.dumpGzipPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
     return True

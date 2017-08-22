@@ -7,7 +7,8 @@ import utility.io_util as io
 
 
 def checkFile(i):
-    regex = str(i) + "_*.pickle"
+    # regex = str(i) + "_*.pickle"
+    regex = str(i) + "_*.gzip"
     file_list = glob.glob(regex)
     if len(file_list) > 0:
         return True
@@ -154,7 +155,8 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     :return:
     """
     hits = []
-    regex = str(previous_smotif_index) + "_*_*.pickle"
+    # regex = str(previous_smotif_index) + "_*_*.pickle"
+    regex = str(previous_smotif_index) + "_*_*.gzip"
     file_list = glob.glob(regex)
     for f in file_list:
         t_hits = io.readPickle(f)
@@ -258,7 +260,8 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
             print "could only extract ", count_top_hits
             break
 
-    io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
+    # io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
+    io.dumpGzipPickle(str(previous_smotif_index) + "_tophits.gzip", dump_pickle)
     print "actual number in top hits ", len(dump_pickle)
     return range(count_top_hits)
 
@@ -292,7 +295,8 @@ def getRunSeq(num_hits, stage):
     top_hits = makeTopPickle(next_index - 1, num_hits, stage)  # send the previous Smotif index
 
     # delete two stages down pickled files
-    check_pickle = str(next_index - 2) + str("_*_*.pickle")
+    # check_pickle = str(next_index - 2) + str("_*_*.pickle")
+    check_pickle = str(next_index - 2) + str("_*_*.gzip")
     file_list = glob.glob(check_pickle)
 
     if len(file_list) > 10:

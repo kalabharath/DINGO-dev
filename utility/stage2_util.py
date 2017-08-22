@@ -409,7 +409,8 @@ def start_top_hits(num_hits, stage):
         next_ss_list = ss_profiles[next_smotif[1]]
     # get and make a list of top 10(n) of the previous run
 
-    top_hit_file = str((next_index)-1)+"_tophits.pickle"
+    # top_hit_file = str((next_index) - 1) + "_tophits.pickle"
+    top_hit_file = str((next_index) - 1) + "_tophits.gzip"
 
     top_hits = []
     if os.path.isfile(top_hit_file):
@@ -421,7 +422,8 @@ def start_top_hits(num_hits, stage):
         return "exception"
 
     # delete two stages down pickled files
-    check_pickle = str(next_index - 2) + str("_*_*.pickle")
+    # check_pickle = str(next_index - 2) + str("_*_*.pickle")
+    check_pickle = str(next_index - 2) + str("_*_*.gzip")
     file_list = glob.glob(check_pickle)
 
     if len(file_list) > 10:
@@ -447,7 +449,8 @@ def getPreviousSmotif(index):
         map_route = io.readPickle("rdc_route.pickle")
 
     next_index, next_smotif = getNextSmotif(map_route)
-    top_hits = io.readPickle(str(next_index - 1) + "_tophits.pickle")  # Read in previous index hits
+    # top_hits = io.readPickle(str(next_index - 1) + "_tophits.pickle")  # Read in previous index hits
+    top_hits = io.readPickle(str(next_index - 1) + "_tophits.gzip")  # Read in previous index hits
     # print len(top_hits)
     return top_hits[index]
 
@@ -477,7 +480,8 @@ def getSS2(index):
 def rename_pickle(index):
     import glob, os
 
-    file_list = glob.glob("tx_*.pickle")
+    # file_list = glob.glob("tx_*.pickle")
+    file_list = glob.glob("tx_*.gzip")
     for file in file_list:
         mv_cmd = "mv " + file + " " + str(index) + file[2:]
         os.system(mv_cmd)
