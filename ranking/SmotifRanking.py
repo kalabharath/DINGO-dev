@@ -159,7 +159,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     regex = str(previous_smotif_index) + "_*_*.gzip"
     file_list = glob.glob(regex)
     for f in file_list:
-        t_hits = io.readPickle(f)
+        t_hits = io.readGzipPickle(f)
         for t_hit in t_hits:
             hits.append(t_hit)
     """
