@@ -182,10 +182,11 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     :return:
     """
     hits = []
-    regex = str(previous_smotif_index) + "_*_*.pickle"
+    # regex = str(previous_smotif_index) + "_*_*.pickle"
+    regex = str(previous_smotif_index) + "_*_*.gzip"
     file_list = glob.glob(regex)
     for f in file_list:
-        t_hits = io.readPickle(f)
+        t_hits = io.readGzipPickle(f)
         for t_hit in t_hits:
             hits.append(t_hit)
     """
@@ -414,7 +415,7 @@ def start_top_hits(num_hits, stage):
 
     top_hits = []
     if os.path.isfile(top_hit_file):
-        top_hits = io.readPickle(top_hit_file)
+        top_hits = io.readGzipPickle(top_hit_file)
         print "loading from prevously assembled tophits.pickle file"
         print "# hits :", len(top_hits)
     else:
