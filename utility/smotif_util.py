@@ -71,12 +71,13 @@ def readSmotifDatabase(smotif, *database_cutoff):
         else:
             smotif_db_path = "/home/kalabharath/projects/dingo_libraries/redundant_db/"
 
-    file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db"
+    # file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db"
+    file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db.tar.gz"
 
     fin = smotif_db_path + file_name
-    print "Reading in smotif database: ", fin
     try:
-        smotif_data = io.readPickle(fin)
+        smotif_data = io.readTarPickle(fin)
+        print "Reading in smotif database: ", fin
         return smotif_data
     except:
         print "Error in reading smotif database: ", fin

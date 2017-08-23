@@ -2,7 +2,7 @@
 import gzip
 import os
 import pickle
-
+import tarfile
 """
 Project_Name: setup, File_name: util.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
@@ -95,10 +95,10 @@ def readGzipPickle(filename):
 
 def readPickle(filename):
     """
-    read pickle objects
-    :param filename:
-    :return:
-    """
+        read pickle objects
+        :param filename:
+        :return:
+        """
     if os.path.isfile(filename):
         with open(filename) as fin:
             data = pickle.load(fin)
@@ -107,6 +107,18 @@ def readPickle(filename):
         return False
 
 
+def readTarPickle(filename):
+    """
+
+    :param filename:
+    :return:
+    """
+    if os.path.isfile(filename):
+        with tarfile.open(filename, "r:gz") as fin:
+            data = pickle.load(fin)
+        return data
+    else:
+        return False
 def readFasta(filename):
     """
 	reads in FastA file and returns seq output
