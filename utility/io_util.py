@@ -84,6 +84,7 @@ def readGzipPickle(filename):
     :param filename:
     :return:
     """
+    print filename
     if os.path.isfile(filename):
         with gzip.open(filename, 'rb') as fin:
             data = pickle.load(fin)

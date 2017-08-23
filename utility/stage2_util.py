@@ -452,6 +452,7 @@ def getPreviousSmotif(index):
     next_index, next_smotif = getNextSmotif(map_route)
     # top_hits = io.readPickle(str(next_index - 1) + "_tophits.pickle")  # Read in previous index hits
     top_hits = io.readGzipPickle(str(next_index - 1) + "_tophits.gzip")  # Read in previous index hits
+    print top_hits
     # print len(top_hits)
     return top_hits[index]
 
