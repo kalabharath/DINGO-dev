@@ -40,40 +40,18 @@ def readSmotifDatabase(smotif, *database_cutoff):
     :param smotif:
     :return:
     """
-    # TODO option to parse in database path
+
     import os
 
-    if database_cutoff:
-        # ['', 'home', 'kalabharath', 'projects', 'boss-evo', 'zinr', 'utility']
-        cwd = (os.path.dirname(os.path.realpath(__file__))).split("/")
-        root_dir = ''
-        for entry in cwd[:-2]:
-            if entry == '':
-                pass
-            else:
-                root_dir = root_dir + '/' + entry
-        smotif_db_path = root_dir + '/databases/database_cutoff_' + database_cutoff[0] + '/'
-        if os.path.isdir(smotif_db_path):
-            pass
-        elif os.path.isdir("/home/kalabharath/projects/dingo_libraries/redundant_db/"):
-            smotif_db_path = "/home/kalabharath/projects/dingo_libraries/redundant_db/"
-        else:
-            smotif_db_path = "/home/502/kbp502/short/non_redundant_scripts/database_cutoff_0.25/"
-            # smotif_db_path = "/home/502/kbp502/short/non_redundant_idealized/database_cutoff_0.05/"
-    else:
-        # Backwards compatible with my old code
-        # I should retire this soon and keep everything clean
-
-        smotif_db_path = "/short/xc4/kbp502/zinr/main/smotif_cen_db/"
-
-        if os.path.exists(smotif_db_path):
+    cwd = (os.path.dirname(os.path.realpath(__file__))).split("/")
+    root_dir = ''
+    for entry in cwd[:-2]:
+        if entry == '':
             pass
         else:
-            smotif_db_path = "/home/kalabharath/projects/dingo_libraries/redundant_db/"
-
-    # file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db"
+            root_dir = root_dir + '/' + entry
+    smotif_db_path = root_dir + '/databases/database_cutoff_' + database_cutoff[0] + '/'
     file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db.tar.gz"
-
     fin = smotif_db_path + file_name
     try:
         smotif_data = io.readTarPickle(fin)

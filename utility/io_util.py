@@ -114,11 +114,17 @@ def readTarPickle(filename):
     :return:
     """
     if os.path.isfile(filename):
-        with tarfile.open(filename, "r:gz") as fin:
-            data = pickle.load(fin)
-        return data
+        with  tarfile.open(filename, "r:gz") as tar:
+
+            for member in tar.getmembers():
+                f = tar.extractfile(member)
+                if f:
+                    data = pickle.load(f)
+                    return data
     else:
         return False
+
+
 def readFasta(filename):
     """
 	reads in FastA file and returns seq output
