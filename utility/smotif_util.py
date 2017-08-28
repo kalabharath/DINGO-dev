@@ -51,6 +51,7 @@ def readSmotifDatabase(smotif, *database_cutoff):
         else:
             root_dir = root_dir + '/' + entry
     smotif_db_path = root_dir + '/databases/database_cutoff_' + database_cutoff[0] + '/'
+    # smotif_db_path = "/home/kalabharath/projects/boss_pnmr/databases/database_cutoff_0.25/"
     file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db.tar.gz"
     fin = smotif_db_path + file_name
     try:

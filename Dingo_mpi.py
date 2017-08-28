@@ -75,7 +75,6 @@ if rank == 0:
             except:
                 # Assemble top hits from the previously generated hits
                 tasks, sse_index = srank.getRunSeq(args.numhits, args.stage)
-
         except:
             # print what went wrong and terminate the slave processes
             traceback.print_exc()
@@ -115,7 +114,8 @@ if rank == 0:
                 comm.send(None, dest=source, tag=tags.EXIT)
         elif tag == tags.DONE:
             # take the result from the worker
-            results = data
+            if data:
+                print "Receiving data"
             ctime = time.time()
             elapsed = ctime - stime
             finished_task += 1

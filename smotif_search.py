@@ -153,7 +153,7 @@ def S1SmotifSearch(task):
         print "num of hits", len(dump_log)
         # io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
         io.dumpGzipPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
-
+        # return dump_log
     return True
 
 

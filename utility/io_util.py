@@ -115,7 +115,6 @@ def readTarPickle(filename):
     """
     if os.path.isfile(filename):
         with  tarfile.open(filename, "r:gz") as tar:
-
             for member in tar.getmembers():
                 f = tar.extractfile(member)
                 if f:
