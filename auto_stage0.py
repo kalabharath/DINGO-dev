@@ -150,6 +150,15 @@ if 'rdc_input_files' in datatypes:
     data_dict['rdc_data'] = rdc_data
 else:
     pass
+
+if 'noe_bmrb_mr' in datatypes:
+    if 'bmrb_sequence_correction' in datatypes:
+        seq_correction = int(data['bmrb_sequence_correction'])
+        noe_data, total_noe_count = nu.parseBMRBblockMR(data['noe_bmrb_mr'], data_dict['aa_seq'],seq_correction)
+        data_dict['noe_data'] = [noe_data, total_noe_count]
+else:
+    pass
+
 if 'noe_input_files' in datatypes:
     # noe_data, total_noe_count = nu.getNOEData(data['noe_input_files'], ss_seq)
     noe_data, total_noe_count = nu.parseNOEData(data['noe_input_files'])

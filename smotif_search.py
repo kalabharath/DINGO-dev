@@ -6,7 +6,7 @@ Aufthor: kalabharath, Email: kalabharath@gmail.com
 
 """
 import filters.constraints.looplengthConstraint as llc
-import filters.noe.BayesianNoeFilter  as Noe
+import filters.noe.SidechainBayesianNoeFilter  as Noe
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.rmsd.RefRmsd as ref
@@ -37,6 +37,7 @@ def S1SmotifSearch(task):
     smotif_data = sm.readSmotifDatabase(smotif_def, exp_data['database_cutoff'])
 
     if not smotif_data:
+
         # If the smotif library doesn't exist, terminate further execution.
         return True
 
@@ -102,7 +103,8 @@ def S1SmotifSearch(task):
 
         if 'noe_data' in exp_data_types:
 
-            noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
+            #noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
+            noe_probability, local_noe_probability, no_of_noes = Noe.S1ILVANOEprob(s1_def, s2_def, smotif_data[i], exp_data)
             if local_noe_probability >= exp_data['noe_fmeasure'][stage - 1]:
                 tlog.append(['NOE_filter', noe_probability, no_of_noes])
             else:

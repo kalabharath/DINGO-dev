@@ -37,7 +37,7 @@ def checkMethyl(res, atom):
     return False
 
 
-def identify_noe_type(tline, sequence, seq_correction):
+def identify_noe_type(tline, aa_seq, seq_correction):
     methyls = ['I', 'L', 'V', 'A']
     count_ors = 0
     for t in tline:
@@ -227,26 +227,44 @@ def parseMethylNoes(seq_file, cyana_file, seq_correction):
                 all_noes.append(noes)
     return all_noes
 
+def methylNOEParser(block_file, aa_seq, seq_correction):
+    print  aa_seq
+    with open(block_file) as fin:
+        lines = fin.readlines()
+    all_noes = []
+    for line in lines:
+        tline = line.split()
+        if len(tline) > 1 and (tline[0].strip() == 'assign'):
+            noes = identify_noe_type(tline, aa_seq, seq_correction)
+            if noes:
+                all_noes.append(noes)
 
-with open('seq.fasta') as fin:
-    aa_lines = fin.readlines()
-aa_seq = ''
-for i in range(1, len(aa_lines)):
-    taa = aa_lines[i].strip()
-    aa_seq = aa_seq + taa
+    return all_noes, len(all_noes)
 
-with open('block_515450.mr') as fin:
-    lines = fin.readlines()
-seq_correction = 78
+def main():
+    with open('seq.fasta') as fin:
+        aa_lines = fin.readlines()
+    aa_seq = ''
+    for i in range(1, len(aa_lines)):
+        taa = aa_lines[i].strip()
+        aa_seq = aa_seq + taa
 
-all_noes = []
-for line in lines:
-    tline = line.split()
-    if len(tline) > 1 and (tline[0].strip() == 'assign'):
-        noes = identify_noe_type(tline, aa_seq, seq_correction)
-        if noes:
-            all_noes.append(noes)
-for n in all_noes:
-    print n
+    with open('block_515450.mr') as fin:
+        lines = fin.readlines()
+    seq_correction = 78
 
-print len(all_noes)
+    all_noes = []
+    for line in lines:
+        tline = line.split()
+        if len(tline) > 1 and (tline[0].strip() == 'assign'):
+            noes = identify_noe_type(tline, aa_seq, seq_correction)
+            if noes:
+                all_noes.append(noes)
+    for n in all_noes:
+        print n
+
+    print len(all_noes)
+    return True
+
+if __name__ == '__main__':
+    main()

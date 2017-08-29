@@ -1,7 +1,7 @@
 from numpy import zeros
 
 import io_util as io
-
+import methyl_noe_parser
 
 def getNOEData(noe_files, ss_seq):
     """
@@ -48,3 +48,7 @@ def parseNOEData(noe_files):
                 tol = 0.1
             noe_data.append([int(res1), atm1, int(res2), atom2, float(noe), float(tol)])
     return noe_data, total_noe_count
+
+def parseBMRBblockMR(block_file, aa_seq, seq_correction):
+
+    return methyl_noe_parser.methylNOEParser(block_file, aa_seq, seq_correction)
