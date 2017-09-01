@@ -22,8 +22,8 @@ def dumpPDBCoo(coo_array):
         y = coo_array[1][i]
         z = coo_array[2][i]
 
-        pdb_line = "%-6s%5d %2s%1s%s %1s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s"\
-                   %('ATOM', i+1, 'CA', "", 'ALA', 'A', i+1, " ", x, y, z, 1.0, 30.0, ' ', ' ')
+        pdb_line = "%-6s%5d %2s%1s%s %1s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s" \
+                   % ('ATOM', i + 1, 'CA', "", 'ALA', 'A', i + 1, " ", x, y, z, 1.0, 30.0, ' ', ' ')
         print pdb_line
     print 'TER'
     return True
@@ -43,8 +43,8 @@ def dumpPDBCoo2(coo_array):
         res_no = coo_array[4][i]
         res = coo_array[5][i]
 
-        pdb_line = "%-6s%5d  %-2s%5s%2s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s"\
-                   %('ATOM', i+1, atom, res, 'A', res_no, " ", x, y, z, 1.0, 30.0, ' ', ' ')
+        pdb_line = "%-6s%5d  %-2s%5s%2s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s" \
+                   % ('ATOM', i + 1, atom, res, 'A', res_no, " ", x, y, z, 1.0, 30.0, ' ', ' ')
         print pdb_line
     print 'TER'
     return True
@@ -55,9 +55,9 @@ def getCAcoo(frag):
     :param frag:
     :return:
     """
-    #print frag
-    factor = len(frag[0])/5
-    x, y, z = [None] * factor, [None]* factor, [None] * factor
+    # print frag
+    factor = len(frag[0]) / 5
+    x, y, z = [None] * factor, [None] * factor, [None] * factor
     index = 0
     for i in range(2, len(frag[0]), 5):
         x[index] = (frag[0][i])
@@ -82,14 +82,16 @@ def getXcoo(frag, atom_num):
         z[index] = (frag[2][i])
         index += 1
     return [x, y, z]
+
+
 def getCcoo(frag):
     """
     :param frag:
     :return:
     """
-    #print frag
-    factor = len(frag[0])/5
-    x, y, z = [None] * factor, [None]* factor, [None] * factor
+    # print frag
+    factor = len(frag[0]) / 5
+    x, y, z = [None] * factor, [None] * factor, [None] * factor
     index = 0
     for i in range(3, len(frag[0]), 5):
         x[index] = (frag[0][i])
@@ -98,18 +100,19 @@ def getCcoo(frag):
         index += 1
     return [x, y, z]
 
+
 def getcoo(frag):
     """
 
     :param frag:
     :return:
     """
-    #[41, 'ASP', 'N', 28.117, -17.694, 7.215]
-    x, y, z, atom_type = [None] * len(frag),[None] * len(frag), [None] * len(frag), [None] * len(frag)
-    res_no, res = [None] * len(frag) , [None] * len(frag)
+    # [41, 'ASP', 'N', 28.117, -17.694, 7.215]
+    x, y, z, atom_type = [None] * len(frag), [None] * len(frag), [None] * len(frag), [None] * len(frag)
+    res_no, res = [None] * len(frag), [None] * len(frag)
     for i in range(0, len(frag)):
         x[i] = frag[i][3]
-        y[i]= frag[i][4]
+        y[i] = frag[i][4]
         z[i] = frag[i][5]
         atom_type[i] = frag[i][2]
         res_no[i] = frag[i][0]
@@ -181,9 +184,9 @@ def applyRot(frag, rotmat):
     :return:
     """
     for i in range(0, len(frag[0])):
-        x = rotmat[0]*frag[0][i] + rotmat[1]*frag[1][i] + rotmat[2]*frag[2][i]
-        y = rotmat[3]*frag[0][i] + rotmat[4]*frag[1][i] + rotmat[5]*frag[2][i]
-        z = rotmat[6]*frag[0][i] + rotmat[7]*frag[1][i] + rotmat[8]*frag[2][i]
+        x = rotmat[0] * frag[0][i] + rotmat[1] * frag[1][i] + rotmat[2] * frag[2][i]
+        y = rotmat[3] * frag[0][i] + rotmat[4] * frag[1][i] + rotmat[5] * frag[2][i]
+        z = rotmat[6] * frag[0][i] + rotmat[7] * frag[1][i] + rotmat[8] * frag[2][i]
         frag[0][i] = x
         frag[1][i] = y
         frag[2][i] = z
@@ -194,7 +197,7 @@ def get_dist(r1, r2):
     import math
     x1, y1, z1 = r1[0], r1[1], r1[2]
     x2, y2, z2 = r2[0], r2[1], r2[2]
-    return math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))
+    return math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
 
 
 def rmsdQCP(psmotif, csmotif, direction, cutoff):
@@ -263,11 +266,11 @@ def rmsdQCP(psmotif, csmotif, direction, cutoff):
     # translate the other SSE of the current smotif
     sse_2nd_coos = getcoo(native_fragb_2ndsse)
 
-    cm_sse2nd = translateCM(sse_2nd_coos,b_cen)
+    cm_sse2nd = translateCM(sse_2nd_coos, b_cen)
     rot_sse_2nd = applyRot(cm_sse2nd, rotmat)
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
 
-    #return 3 arrays of coordinates
+    # return 3 arrays of coordinates
     if direction == 'left':
         transformed_coor = [trans_sse2nd, native_fraga, native_fraga_2ndsse]
     else:
@@ -294,7 +297,7 @@ def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
         if 'qcp_rmsd' == entry[0]:
             presse = (entry[1])[:]
 
-    #print csmotif
+    # print csmotif
     try:
         if direction == 'left':
             frag_b = getcoo(csmotif[2])
@@ -308,7 +311,6 @@ def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
         print "Error in format of data"
         print "Wrong stage for the data format"
         return 999.999, []
-
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)
@@ -343,7 +345,6 @@ def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
         qcprot.FreeDMatrix(xyz2)
         qcprot.FreeDArray(rot)
         return rmsd, []
-
 
     rotmat = [None] * 9
     for i in range(0, 9):
@@ -414,10 +415,63 @@ def clahses(coo_arrays, cdist):
     for i in range(0, len(coo_arrays) - 1):
         sse1 = getXcoo(coo_arrays[i], rand_30[i])
         for p in range(i + 1, len(coo_arrays)):
-            sse2 = getXcoo(coo_arrays[p], rand_30[i+1])
+            sse2 = getXcoo(coo_arrays[p], rand_30[i + 1])
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
                     dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
                     if dist < cdist:
+                        return False
+    return True
+
+
+def getKdist(sse_array, atom_type):
+    smotif_type = sse_array[0][0][0]+sse_array[1][0][0]
+    mean, sd = 0.0 ,0.0
+    dist_knowledge = {'ss': [['N'], [1.95, 0.09], [3.4, 0.09], [3.6, 0.19], ['O']],
+                  'hh': [['N'], [2.6, 0.09], [3.77, 0.08], [2.77, 0.04], ['O']],
+                  'hs': [['N'], [2.2, 0.10], [3.76, 0.04], [2.66, 0.03], ['O']],
+                  'sh': [['N'], [1.95, 0.09], [3.4, 0.091], [3.6, 0.186], ['O']]}
+    mean, sd = dist_knowledge[smotif_type][atom_type]
+    return mean - sd
+
+
+def kClashes(coo_arrays, sse_defs):
+    """
+    Known minimum distances between various atoms between the SSEs of smotifs
+    the first entry is mean and second entry is SD computed on a sample of 100 entries
+    :param coo_arrays:
+    :param cdist:
+    :param sse_defs:
+    :return:
+    """
+    # print coo_arrays
+    print sse_defs
+    # [['strand', 15, 10, 3, 59, 73], ['strand', 15, 3, 13, 77, 91], ['strand', 14, 11, 4, 103, 116]]
+    atom_array = ['N', 'H', 'CA', 'C', 'O']
+
+    for i in range(0, len(coo_arrays) - 1):
+        # Compute clashes for H-H
+        atom_type = 1
+        sse1 = getXcoo(coo_arrays[i], atom_type)
+        for p in range(i + 1, len(coo_arrays)):
+            kdist = getKdist([sse_defs[i], sse_defs[p]], atom_type)
+            sse2 = getXcoo(coo_arrays[p], atom_type)
+            for j in range(0, len(sse1[0])):
+                for k in range(0, len(sse2[0])):
+                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
+                    if dist < kdist:
+                        return False
+
+    for i in range(0, len(coo_arrays) - 1):
+        # Compute clashes for H-H
+        atom_type = 3
+        sse1 = getXcoo(coo_arrays[i], atom_type)
+        for p in range(i + 1, len(coo_arrays)):
+            kdist = getKdist([sse_defs[i], sse_defs[p]], atom_type)
+            sse2 = getXcoo(coo_arrays[p], atom_type)
+            for j in range(0, len(sse1[0])):
+                for k in range(0, len(sse2[0])):
+                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
+                    if dist < kdist:
                         return False
     return True
