@@ -425,12 +425,18 @@ def clahses(coo_arrays, cdist):
 
 
 def getKdist(sse_array, atom_type):
-    smotif_type = sse_array[0][0][0]+sse_array[1][0][0]
-    mean, sd = 0.0 ,0.0
+    """
+
+    :param sse_array:
+    :param atom_type:
+    :return:
+    """
+    smotif_type = sse_array[0][0][0] + sse_array[1][0][0]
+    mean, sd = 0.0, 0.0
     dist_knowledge = {'ss': [['N'], [1.95, 0.09], [3.4, 0.09], [3.6, 0.19], ['O']],
-                  'hh': [['N'], [2.6, 0.09], [3.77, 0.08], [2.77, 0.04], ['O']],
-                  'hs': [['N'], [2.2, 0.10], [3.76, 0.04], [2.66, 0.03], ['O']],
-                  'sh': [['N'], [1.95, 0.09], [3.4, 0.091], [3.6, 0.186], ['O']]}
+                      'hh': [['N'], [2.6, 0.09], [3.77, 0.08], [2.77, 0.04], ['O']],
+                      'hs': [['N'], [2.2, 0.10], [3.76, 0.04], [2.66, 0.03], ['O']],
+                      'sh': [['N'], [3.1, 0.13], [3.47, 0.36], [3.04, 0.06], ['O']]}
     mean, sd = dist_knowledge[smotif_type][atom_type]
     return mean - sd
 
@@ -445,7 +451,6 @@ def kClashes(coo_arrays, sse_defs):
     :return:
     """
     # print coo_arrays
-    print sse_defs
     # [['strand', 15, 10, 3, 59, 73], ['strand', 15, 3, 13, 77, 91], ['strand', 14, 11, 4, 103, 116]]
     atom_array = ['N', 'H', 'CA', 'C', 'O']
 
