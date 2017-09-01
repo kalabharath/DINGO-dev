@@ -438,28 +438,28 @@ def getKdist(sse_array, atom_type):
                       'hs': [['N'], [2.2, 0.10], [3.76, 0.04], [2.66, 0.03], ['O']],
                       'sh': [['N'], [3.1, 0.13], [3.47, 0.36], [3.04, 0.06], ['O']]}
     mean, sd = dist_knowledge[smotif_type][atom_type]
-    return mean - sd
+    return mean - (3*sd)
 
 
-def kClashes(coo_arrays, sse_defs):
+def kClashes(coo_arrays, sse_ordered):
     """
-    Known minimum distances between various atoms between the SSEs of smotifs
-    the first entry is mean and second entry is SD computed on a sample of 100 entries
+    Known minimum distances between various atoms between the SSEs of the smotif
+    the first entry is mean and second entry is SD, computed on a sample of 100 lowest distances observed.
     :param coo_arrays:
     :param cdist:
-    :param sse_defs:
+    :param sse_ordered:
     :return:
     """
-    # print coo_arrays
+
     # [['strand', 15, 10, 3, 59, 73], ['strand', 15, 3, 13, 77, 91], ['strand', 14, 11, 4, 103, 116]]
     atom_array = ['N', 'H', 'CA', 'C', 'O']
 
     for i in range(0, len(coo_arrays) - 1):
-        # Compute clashes for H-H
+        # Compute clashes for H-H (amide hydrogens)
         atom_type = 1
         sse1 = getXcoo(coo_arrays[i], atom_type)
         for p in range(i + 1, len(coo_arrays)):
-            kdist = getKdist([sse_defs[i], sse_defs[p]], atom_type)
+            kdist = getKdist([sse_ordered[i], sse_ordered[p]], atom_type)
             sse2 = getXcoo(coo_arrays[p], atom_type)
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
@@ -468,11 +468,11 @@ def kClashes(coo_arrays, sse_defs):
                         return False
 
     for i in range(0, len(coo_arrays) - 1):
-        # Compute clashes for H-H
+        # Compute clashes for C-C (carbonyl carbons)
         atom_type = 3
         sse1 = getXcoo(coo_arrays[i], atom_type)
         for p in range(i + 1, len(coo_arrays)):
-            kdist = getKdist([sse_defs[i], sse_defs[p]], atom_type)
+            kdist = getKdist([sse_ordered[i], sse_ordered[p]], atom_type)
             sse2 = getXcoo(coo_arrays[p], atom_type)
             for j in range(0, len(sse1[0])):
                 for k in range(0, len(sse2[0])):
