@@ -50,7 +50,8 @@ def S1NOEprob(s1_def, s2_def, smotif, exp_data):
         local_prob = (noes_found / smotif_noes)
     else:
         local_prob = 0.0
-    return (noes_found / total_noes), local_prob, noes_found
+    #return (noes_found / total_noes), local_prob, noes_found
+    return local_prob, local_prob, noes_found
 
 def getSxCoorMatrix(coor_array, native_sse):
 
@@ -106,4 +107,5 @@ def SxNOEprob(transformed_coors, native_sse_order, current_ss, exp_data):
     else:
         local_prob = 0.0
 
-    return (noes_found / total_noes), local_prob, noes_found
+    #return (noes_found / total_noes), local_prob, noes_found
+    return local_prob, local_prob, noes_found
