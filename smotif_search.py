@@ -243,7 +243,6 @@ def sXSmotifSearch(task):
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
             if loop_constraint:
                 # Check whether the SSEs with in the assembled smotifs are clashing to one another
-                #no_clashes = qcp.clahses(transformed_coos, exp_data['clash_distance'])
                 no_clashes = qcp.kClashes(transformed_coos, sse_ordered)
             else:
                 no_clashes = False

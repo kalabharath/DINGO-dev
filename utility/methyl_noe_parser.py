@@ -238,7 +238,6 @@ def methylNOEParser(block_file, aa_seq, seq_correction):
             noes = identify_noe_type(tline, aa_seq, seq_correction)
             if noes:
                 all_noes.append(noes)
-
     return all_noes, len(all_noes)
 
 def main():

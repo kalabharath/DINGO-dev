@@ -403,9 +403,10 @@ def clahsesOLD(coo_arrays, cdist):
     return True
 
 
-def clahses(coo_arrays, cdist):
+def clahsesRandom(coo_arrays, cdist):
     """
-    Find the clashes between all the SSEs
+    Find the clashes between all the SSEs, I realised that it is not a good way to do it. The next one Knowledge based
+    clashes (kClashes) is the best way to do it , so far.
     :param coo_arrays:
     :return:
     """
@@ -431,6 +432,7 @@ def getKdist(sse_array, atom_type):
     :param atom_type:
     :return:
     """
+    # atom_array = ['N', 'H', 'CA', 'C', 'O']
     smotif_type = sse_array[0][0][0] + sse_array[1][0][0]
     mean, sd = 0.0, 0.0
     dist_knowledge = {'ss': [['N'], [1.95, 0.09], [3.4, 0.09], [3.6, 0.19], ['O']],
@@ -444,7 +446,8 @@ def getKdist(sse_array, atom_type):
 def kClashes(coo_arrays, sse_ordered):
     """
     Known minimum distances between various atoms between the SSEs of the smotif
-    the first entry is mean and second entry is SD, computed on a sample of 100 lowest distances observed.
+    the first entry is mean and second entry is SD, computed on a sample of 100 lowest distances observed over single
+    digit smotifs that have the largest number of entries.
     :param coo_arrays:
     :param cdist:
     :param sse_ordered:
