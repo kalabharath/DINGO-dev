@@ -22,8 +22,7 @@ def getBackboneCoors(ss_list, smotif):
     count = 0
     j = 0
     for i in range(0, len(ss_list)):
-        t_bb = smotif[j:j+5]
-        backbone[ss_list[count]] = t_bb
+        backbone[ss_list[count]] = smotif[j:j+5]
         j = j+5
         count += 1
     return backbone
