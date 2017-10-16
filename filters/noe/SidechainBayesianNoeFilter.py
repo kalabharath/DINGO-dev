@@ -33,7 +33,7 @@ def S1ILVANOEprob(s1_def, s2_def, smotif, exp_data):
     #smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
     #smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
 
-    coor_matrix = getHCoorMatrix(ss1_list,  smotif[1])
+    coor_matrix = getHCoorMatrix(ss1_list, smotif[1])
     coor2_matrix = getHCoorMatrix(ss2_list, smotif[2])
     coor_matrix.update(coor2_matrix)
     resi = coor_matrix.keys()

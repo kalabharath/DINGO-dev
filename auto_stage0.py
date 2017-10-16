@@ -116,12 +116,12 @@ if 'rank_top_hits' in datatypes:
 else:
     pass
 
-if 'noe_fmeasure' in datatypes:
-    noe_fmeasure = data['noe_fmeasure']
-    noe_fmeasure = noe_fmeasure.split()
-    noe_fmeasure = [float(i) for i in noe_fmeasure]
-    print "noe_fmeasure", noe_fmeasure
-    data_dict['noe_fmeasure'] = noe_fmeasure
+if 'expected_noe_prob' in datatypes:
+    exp_noe_prob = data['expected_noe_prob']
+    exp_noe_prob = exp_noe_prob.split()
+    exp_noe_prob = [float(i) for i in exp_noe_prob]
+    print "expected_noe_prob", exp_noe_prob
+    data_dict['expected_noe_prob'] = exp_noe_prob
 else:
     pass
 
@@ -165,6 +165,10 @@ if 'noe_input_files' in datatypes:
     data_dict['noe_data'] = [noe_data, total_noe_count]
 else:
     pass
+
+if 'ilva_noes' in datatypes:
+    ilva_noes = io.readPickle(data['ilva_noes'])
+    data_dict['ilva_noes'] = ilva_noes
 
 if 'pcs_broker' in datatypes:
     print data['pcs_broker']

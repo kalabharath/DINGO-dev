@@ -6,7 +6,7 @@ Aufthor: kalabharath, Email: kalabharath@gmail.com
 
 """
 import filters.constraints.looplengthConstraint as llc
-#import filters.noe.SidechainBayesianNoeFilter  as Noe
+import filters.ilvaNOE.ilvanoepdf as noepdf
 import filters.noe.BayesianNoeFilter  as Noe
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
@@ -103,13 +103,15 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'noe_data' in exp_data_types:
-
             noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
-            #noe_probability, local_noe_probability, no_of_noes = Noe.S1ILVANOErob(s1_def, s2_def, smotif_data[i], exp_data)
             if local_noe_probability >= exp_data['noe_fmeasure'][stage - 1]:
                 tlog.append(['NOE_filter', noe_probability, no_of_noes])
             else:
                 continue
+
+        if 'ilva_noes' in exp_data_types:
+            print "this is working"
+            noe_probability, local_noe_probability, no_of_noes = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data)
 
         # ************************************************
         # Residual dipolar coupling filter
