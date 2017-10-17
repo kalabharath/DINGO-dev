@@ -1,4 +1,5 @@
 from utility.io_util import readPickle
+import bbRMSD
 
 def getHCoorMatrix(ss_list, smotif):
     noe_matrix = {}
@@ -9,14 +10,6 @@ def getHCoorMatrix(ss_list, smotif):
         count += 1
     return noe_matrix
 
-
-def getILVARotamers(res_type):
-    import glob, os
-    cwd = (os.path.dirname(os.path.realpath(__file__)))
-    file_name = cwd+'/sidechainRotamers/'+res_type+"_sc/*.pickle"
-    rotamers = glob.glob(file_name)
-    return rotamers
-
 def getBackboneCoors(ss_list, smotif):
     backbone= {}
     count = 0
@@ -26,6 +19,17 @@ def getBackboneCoors(ss_list, smotif):
         j = j+5
         count += 1
     return backbone
+
+
+def getILVARotamers(res_type, bbc, spin):
+    import glob, os
+    cwd = (os.path.dirname(os.path.realpath(__file__)))
+    file_name = cwd+'/sidechainRotamers/'+res_type+"_sc/*.pickle"
+    rotamers = glob.glob(file_name)
+    rmsd_cutoff = 0.1
+    spin_coors = bbRMSD.bbrmsd(bbc, rotamers, rmsd_cutoff, spin, res_type )
+
+    return spin_coors
 
 def s1ILVApdf(s1_def, s2_def, smotif, exp_data):
     """
@@ -63,15 +67,16 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data):
                 atom1_coor = coorH_matrix[noedef[0]]
             elif noedef[1] in methyls[noedef[7]]:
                 bb1_coors = bb_matrix[noedef[0]]
-                getILVARotamers(noedef[7])
+                getILVARotamers(noedef[7], bb1_coors, noedef[1])
+                print noedef
             else:
                 pass
-
             if noedef[3] == 'H':
                 atom2_coor = coorH_matrix[noedef[2]]
             elif noedef[3] in methyls[noedef[8]]:
                 bb2_coors = bb_matrix[noedef[2]]
-                getILVARotamers(noedef[8])
+                getILVARotamers(noedef[8], bb2_coors, noedef[3])
+                print noedef
             else:
                 pass
         else:
