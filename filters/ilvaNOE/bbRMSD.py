@@ -37,6 +37,7 @@ def extractSpinCoo(cluster, spin, res_type):
     repeat = []
 
     x, y, z, spin_type = [], [], [], []
+
     if res_type == 'I':
         ile = ['N', 'H', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HA', 'HB', '1HG1', '2HG1', '1HG2', '2HG2', '3HG2',
                '1HD1', '2HD1', '3HD1']
@@ -70,7 +71,7 @@ def extractSpinCoo(cluster, spin, res_type):
         repeat = len(ala)
         if spin == 'HB':
             spin_indices = [7, 8, 9]
-    print res_type, spin, spin_indices
+
     if spin_indices and repeat:
         for entry in spin_indices:
             for i in range(entry, len(cluster[0]), repeat):
@@ -82,7 +83,6 @@ def extractSpinCoo(cluster, spin, res_type):
     return [x,y,z,spin_type]
 
 def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
-
 
     bbc = processBBC(bbc)
     fraga, a_cen = centerCoo(bbc)
@@ -110,7 +110,7 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
         rmsd = qcprot.CalcRMSDRotationalMatrix(xyz1, xyz2, fraglen, rot)
         if rmsd <= rmsd_cutoff:
             print cluster
-            print "BB RMSD is :", rmsd
+            #print "BB RMSD is :", rmsd
 
             rotmat =[None] * 9
             for i in range(0,9):
@@ -122,12 +122,13 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             rot_cluster_coo = applyRot(cm_cluster_coo, rotmat)
             trans_cluster_coo = applyTranslation(rot_cluster_coo, a_cen)
             spin_coors = extractSpinCoo(trans_cluster_coo, spin, res_type )
-            print spin_coors[-1]
 
+            qcprot.FreeDMatrix(xyz1)
+            qcprot.FreeDMatrix(xyz2)
+            qcprot.FreeDArray(rot)
+            return spin_coors
 
-            
-        qcprot.FreeDMatrix(xyz1)
-        qcprot.FreeDMatrix(xyz2)
-        qcprot.FreeDArray(rot)
     return True
+
+
 
