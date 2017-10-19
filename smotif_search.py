@@ -109,9 +109,17 @@ def S1SmotifSearch(task):
             else:
                 continue
 
+        if 'reference_ca' in exp_data_types:
+            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
+            tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
+
         if 'ilva_noes' in exp_data_types:
-            print "this is working"
-            noe_probability, local_noe_probability, no_of_noes = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data)
+            noe_probability, no_of_noes, noe_data = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data)
+            if noe_probability >= exp_data['expected_noe_prob'][stage-1]:
+                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data])
+                print tpdbid, noe_probability, no_of_noes, ref_rmsd
+            else:
+                continue
 
         # ************************************************
         # Residual dipolar coupling filter
@@ -180,12 +188,14 @@ def sXSmotifSearch(task):
         current_ss, direction = uts2.getSS2(index_array[1])
         csmotif_data, smotif_def = mutil.getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'], stage)
         sse_ordered = mutil.orderSSE(psmotif, current_ss, direction, stage)
+        sorted_noe_data = mutil.fetchNOEdata(psmotif)
     else:
 
         preSSE = uts2.getPreviousSmotif(index_array[0])
         current_ss, direction = uts2.getSS2(index_array[1])
         csmotif_data, smotif_def = mutil.getfromDB(preSSE, current_ss, direction, exp_data['database_cutoff'], stage)
         sse_ordered = mutil.orderSSE(preSSE, current_ss, direction, stage)
+        sorted_noe_data = mutil.fetchNOEdata(preSSE)
 
     print current_ss, direction
     if not csmotif_data:
@@ -296,6 +306,15 @@ def sXSmotifSearch(task):
                 else:
                     # Do not execute any further
                     continue
+
+            if 'ilva_noes' in exp_data_types:
+                noe_probability, no_of_noes, noe_data = noepdf.sXILVApdf(transformed_coos, sse_ordered, current_ss, sorted_noe_data)
+                if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
+                    tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data])
+                    print tpdbid, noe_probability, no_of_noes, ref_rmsd
+                else:
+                    continue
+
 
             # ************************************************
             # Residual dipolar coupling filter

@@ -109,9 +109,6 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
         rot = qcprot.MakeDvector(9)
         rmsd = qcprot.CalcRMSDRotationalMatrix(xyz1, xyz2, fraglen, rot)
         if rmsd <= rmsd_cutoff:
-            print cluster
-            #print "BB RMSD is :", rmsd
-
             rotmat =[None] * 9
             for i in range(0,9):
                 rotmat[i] = qcprot.GetDvector(i, rot)
@@ -128,7 +125,7 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             qcprot.FreeDArray(rot)
             return spin_coors
 
-    return True
+    return False
 
 
 

@@ -1,12 +1,13 @@
 from utility.io_util import readPickle
 import bbRMSD
+import math
 
 def getHCoorMatrix(ss_list, smotif):
     # change this to match the format from bbrmsd
     noe_matrix = {}
     count = 0
     for i in range(1, len(smotif), 5):
-        coo1 = [smotif[i][3], smotif[i][4], smotif[i][5]]
+        coo1 = [[smotif[i][3]], [smotif[i][4]], [smotif[i][5]], ['H']]
         noe_matrix[ss_list[count]] = coo1
         count += 1
     return noe_matrix
@@ -32,6 +33,28 @@ def getILVARotamers(res_type, bbc, spin):
 
     return spin_coors
 
+def checkNoe(atom1_coor, atom2_coor, noedef):
+    noe_bool = False
+    dist = 999.999
+    for i in range(0, len(atom1_coor[0])):
+        x1, y1, z1 = atom1_coor[0][i], atom1_coor[1][i], atom1_coor[2][i]
+
+        for j in range(0, len(atom2_coor[0])):
+            x2, y2, z2 = atom2_coor[0][j], atom2_coor[1][j], atom2_coor[2][j]
+            dist = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
+            if dist <= (noedef[4] + noedef[6]):
+                noe_bool = True
+                return noe_bool, dist
+    return noe_bool, dist
+
+def extractUnSatisfiedNoes(noes_found, data):
+    unsatisfied = []
+    for entry in data:
+        if entry in noes_found:
+            pass
+        else:
+            unsatisfied.append(entry)
+    return unsatisfied
 def s1ILVApdf(s1_def, s2_def, smotif, exp_data):
     """
 
@@ -68,19 +91,23 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data):
     for noedef in noe_data:
         cluster_proton_entries = cluster_protons.keys()
         # noedef = [31, 'H', 47, 'HG1', 4.2, 2.4, 0.63, 'E', 'V']
-        atom1_coor, atom2_coor = 0 , 0
+        atom1_coor, atom2_coor = [] , []
+
         if (noedef[0] in resi) and (noedef[2] in resi):
+
             if noedef[1] == 'H':
                 atom1_coor = coorH_matrix[noedef[0]]
             elif noedef[1] in methyls[noedef[7]]:
                 if (noedef[0], noedef[1]) in cluster_proton_entries:
-                    atom2_coor = cluster_protons[(noedef[0], noedef[1])]
+                    atom1_coor = cluster_protons[(noedef[0], noedef[1])]
                 else:
                     bb1_coors = bb_matrix[noedef[0]]
-                    atom2_coor = getILVARotamers(noedef[7], bb1_coors, noedef[1])
-                    cluster_protons[(noedef[0], noedef[1])] = atom2_coor
+                    atom1_coor = getILVARotamers(noedef[7], bb1_coors, noedef[1])
+                    if atom1_coor:
+                        cluster_protons[(noedef[0], noedef[1])] = atom1_coor
             else:
                 print "Not a proton spin or missing residue number"
+
             if noedef[3] == 'H':
                 atom2_coor = coorH_matrix[noedef[2]]
             elif noedef[3] in methyls[noedef[8]]:
@@ -89,16 +116,28 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data):
                 else:
                     bb2_coors = bb_matrix[noedef[2]]
                     atom2_coor = getILVARotamers(noedef[8], bb2_coors, noedef[3])
-                    cluster_protons[(noedef[2], noedef[3])] = atom2_coor
+                    if atom2_coor:
+                        cluster_protons[(noedef[2], noedef[3])] = atom2_coor
             else:
                 print "Not a proton spin or missing residue number"
+
+            if atom1_coor and atom2_coor:
+                noe_bool, dist = checkNoe(atom1_coor, atom2_coor, noedef)
+                if noe_bool:
+                    satisfied_noes.append(noedef)
+                    noes_found += 1
+                    total_noes += 1
+                else:
+                    total_noes += 1
+            else:
+                total_noes +=1
         else:
             pass
+    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, noe_data)
 
-        if atom1_coor and atom2_coor:
-            print noedef
-            print atom1_coor, atom2_coor
-            pass
+    return (noes_found/total_noes), total_noes, [satisfied_noes, unsatisfied_noes]
 
-    print "Done"
-    return False
+
+def sXILVApdf(transformed_coos, sse_ordered, current_ss, sorted_noe_data):
+
+    return True
