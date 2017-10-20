@@ -38,7 +38,6 @@ def S1SmotifSearch(task):
     smotif_data = sm.readSmotifDatabase(smotif_def, exp_data['database_cutoff'])
 
     if not smotif_data:
-
         # If the smotif library doesn't exist, terminate further execution.
         return True
 
@@ -114,8 +113,9 @@ def S1SmotifSearch(task):
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
 
         if 'ilva_noes' in exp_data_types:
-            noe_probability, no_of_noes, noe_data, cluster_protons = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data)
-            if noe_probability >= exp_data['expected_noe_prob'][stage-1]:
+            noe_probability, no_of_noes, noe_data, cluster_protons = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i],
+                                                                                      exp_data)
+            if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                 tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data, cluster_protons])
                 print tpdbid, noe_probability, no_of_noes, ref_rmsd
             else:
@@ -312,14 +312,16 @@ def sXSmotifSearch(task):
                 tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
 
             if 'ilva_noes' in exp_data_types:
-                noe_probability, no_of_noes, noe_data, new_cluster_protons = noepdf.sXILVApdf(transformed_coos, sse_ordered, current_ss, sorted_noe_data, cluster_protons)
-                
+                noe_probability, no_of_noes, noe_data, new_cluster_protons = noepdf.sXILVApdf(transformed_coos,
+                                                                                              sse_ordered, current_ss,
+                                                                                              sorted_noe_data,
+                                                                                              cluster_protons)
+
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                     tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data, new_cluster_protons])
                     print tpdbid, noe_probability, no_of_noes, ref_rmsd
                 else:
                     continue
-
 
             # ************************************************
             # Residual dipolar coupling filter
