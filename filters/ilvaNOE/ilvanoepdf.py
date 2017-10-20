@@ -249,12 +249,12 @@ def sXILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, 
                 #print noe_bool, dist, noedef
                 if noe_bool:
                     satisfied_noes.append(noedef)
-                    noes_found += 1
-                    total_noes += 1
+                    noes_found += 1.0
+                    total_noes += 1.0
                 else:
-                    total_noes += 1
+                    total_noes += 1.0
             else:
-                total_noes += 1
+                total_noes += 1.0
         else:
             pass
 

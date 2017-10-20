@@ -313,6 +313,7 @@ def sXSmotifSearch(task):
 
             if 'ilva_noes' in exp_data_types:
                 noe_probability, no_of_noes, noe_data, new_cluster_protons = noepdf.sXILVApdf(transformed_coos, sse_ordered, current_ss, sorted_noe_data, cluster_protons)
+                
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                     tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data, new_cluster_protons])
                     print tpdbid, noe_probability, no_of_noes, ref_rmsd

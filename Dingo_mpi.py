@@ -114,8 +114,6 @@ if rank == 0:
                 comm.send(None, dest=source, tag=tags.EXIT)
         elif tag == tags.DONE:
             # take the result from the worker
-            if data:
-                print "Receiving data"
             ctime = time.time()
             elapsed = ctime - stime
             finished_task += 1
