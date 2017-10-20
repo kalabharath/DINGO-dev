@@ -162,4 +162,4 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
 def fetchNOEdata(previous_smotif):
     for entry in previous_smotif:
         if 'NOE_filter' == entry[0]:
-            return entry[-1]
+            return entry[-2], entry[-1]

@@ -1,14 +1,7 @@
 from filters.rmsd.qcp import *
 from utility.io_util import readPickle
 
-def processBBC(bbc):
-    tlen = len(bbc)
-    x, y, z = [None] * tlen, [None] * tlen, [None] * tlen
-    for i in range (0, tlen):
-        x[i] = bbc[i][3]
-        y[i] = bbc[i][4]
-        z[i] = bbc[i][5]
-    return [x, y, z]
+
 
 def processRBBC(cluster1):
     x, y, z = [None] * 5, [None] * 5, [None] * 5
@@ -80,11 +73,11 @@ def extractSpinCoo(cluster, spin, res_type):
                 z.append(cluster[2][i])
                 spin_type.append(cluster[3][i])
 
-    return [x,y,z,spin_type]
+    return [x, y, z, spin_type]
 
 def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
 
-    bbc = processBBC(bbc)
+
     fraga, a_cen = centerCoo(bbc)
     fraglen = 5
 
@@ -115,17 +108,28 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
 
             # translate the cluster to the smotif_coors:
             cluster_coo = formatClusterCoo(data)
+            spin_coors = extractSpinCoo(cluster_coo, spin, res_type)
+            cm_spin_coors = translateCM(spin_coors, b_cen)
+            rot_spin_coors = applyRot(cm_spin_coors, rotmat)
+            trans_spin_coors = applyTranslation(rot_spin_coors, a_cen)
+            """
+            cluster_coo = formatClusterCoo(data)
             cm_cluster_coo = translateCM(cluster_coo, b_cen)
             rot_cluster_coo = applyRot(cm_cluster_coo, rotmat)
             trans_cluster_coo = applyTranslation(rot_cluster_coo, a_cen)
             spin_coors = extractSpinCoo(trans_cluster_coo, spin, res_type )
-
+            """
             qcprot.FreeDMatrix(xyz1)
             qcprot.FreeDMatrix(xyz2)
             qcprot.FreeDArray(rot)
-            return spin_coors
+            return trans_spin_coors
 
+        qcprot.FreeDMatrix(xyz1)
+        qcprot.FreeDMatrix(xyz2)
+        qcprot.FreeDArray(rot)
     return False
 
+def sXbbrmsd():
 
+    return True
 
