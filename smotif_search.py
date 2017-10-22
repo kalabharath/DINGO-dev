@@ -108,16 +108,13 @@ def S1SmotifSearch(task):
             else:
                 continue
 
-        if 'reference_ca' in exp_data_types:
-            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
-            tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
 
         if 'ilva_noes' in exp_data_types:
             noe_probability, no_of_noes, noe_data, cluster_protons = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i],
                                                                                       exp_data)
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                 tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data, cluster_protons])
-                print tpdbid, noe_probability, no_of_noes, ref_rmsd
+
             else:
                 continue
 
@@ -153,6 +150,7 @@ def S1SmotifSearch(task):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
+            print tpdbid, noe_probability, no_of_noes, ref_rmsd
 
         # Dump the data to the disk
         if pcs_tensor_fits or noe_probability:
@@ -307,9 +305,6 @@ def sXSmotifSearch(task):
                     # Do not execute any further
                     continue
 
-            if 'reference_ca' in exp_data_types:
-                ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
-                tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
 
             if 'ilva_noes' in exp_data_types:
                 noe_probability, no_of_noes, noe_data, new_cluster_protons = noepdf.sXILVApdf(transformed_coos,
@@ -319,7 +314,7 @@ def sXSmotifSearch(task):
 
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                     tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data, new_cluster_protons])
-                    print tpdbid, noe_probability, no_of_noes, ref_rmsd
+
                 else:
                     continue
 
@@ -356,7 +351,7 @@ def sXSmotifSearch(task):
             if 'reference_ca' in exp_data_types:
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
                 tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
-
+                print tpdbid, noe_probability, no_of_noes, ref_rmsd
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
                 dump_log.append(tlog)

@@ -195,7 +195,7 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
 
             if data_filter[0] == 'NOE_filter':
                 noe_probability = data_filter[1]
-                log_likelihood = -(math.log(noe_probability))
+                log_likelihood = -1* (math.log(noe_probability))
                 total_score['noe_score'] = log_likelihood
 
                 # calculate the total score and append the hit

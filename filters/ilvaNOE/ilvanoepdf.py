@@ -134,7 +134,6 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data):
                 noe_bool, dist = checkNoe(atom1_coor, atom2_coor, noedef)
 
                 if noe_bool:
-
                     satisfied_noes.append(noedef)
                     noes_found += 1
                     total_noes += 1
