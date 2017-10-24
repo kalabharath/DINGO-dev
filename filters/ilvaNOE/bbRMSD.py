@@ -87,6 +87,7 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
     fraga, a_cen = centerCoo(bbc)
     fraglen = 5
     all_spin_coors = []
+    count = 0
     for cluster in rotamer_cluster:
 
         data = readPickle(cluster)
@@ -119,6 +120,12 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             rot_spin_coors = applyRot(cm_spin_coors, rotmat)
             trans_spin_coors = applyTranslation(rot_spin_coors, a_cen)
             all_spin_coors = extend_array(all_spin_coors,  trans_spin_coors)
+            count += 1
+            if count == 2:
+                qcprot.FreeDMatrix(xyz1)
+                qcprot.FreeDMatrix(xyz2)
+                qcprot.FreeDArray(rot)
+                return all_spin_coors
             #print trans_spin_coors
             #print all_spin_coors
             """
