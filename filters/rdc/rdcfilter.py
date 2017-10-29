@@ -188,9 +188,9 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     tensor = []
     temp_tensor = []
     tlog_likelihood = []
-    if (len(rdc_vectors) - 5) < 5.0:
+    if (len(rdc_vectors) - 5) == 0:
         return [], 0.0
-    
+
     for i in range(0, len(rdc_vectors)):
         # B0 = 21.1
         # TinK = 313.0
