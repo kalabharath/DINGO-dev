@@ -109,10 +109,10 @@ def noeinresi(noe, resi):
         else:
             return False
 
-def extractUnSatisfiedNoes(noes_found, data):
+def extractUnSatisfiedNoes(noes_found, impossible_noes, data):
     unsatisfied = []
     for entry in data:
-        if entry in noes_found:
+        if (entry in noes_found) or (entry in impossible_noes):
             pass
         else:
             unsatisfied.append(entry)
@@ -133,6 +133,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
 
     satisfied_noes = []
     unsatisfied_noes = []
+    impossible_noes = []
 
     noes_found = 0.0
     total_noes = 0.0
@@ -178,8 +179,10 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                     noes_found += 1
                     total_noes += 1
                 else:
+                    impossible_noes.append(noedef)
                     total_noes += 1
             else:
+                impossible_noes.append(noedef)
                 total_noes += 1
         else:
             dist = 999.999
@@ -194,10 +197,11 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                         total_noes += 1
                         break
             if dist == 999.99:
+                impossible_noes.append(noedef)
                 total_noes += 1
 
-    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, noe_data)
-    return (noes_found / total_noes), total_noes, [satisfied_noes, unsatisfied_noes], cluster_protons
+    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
+    return (noes_found / total_noes), total_noes, [satisfied_noes, impossible_noes, unsatisfied_noes], cluster_protons
 
 
 def getSxCoorMatrix(coor_array, native_sse):
@@ -276,10 +280,12 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
     import copy
     sse_coors = copy.deepcopy(transformed_coors)
     satisfied_noes = copy.deepcopy(sorted_noe_data[0])
-    noe_data = copy.deepcopy(sorted_noe_data[1])
+    impossible_noes = copy.deepcopy(sorted_noe_data[1])
+    noe_data = copy.deepcopy(sorted_noe_data[2])
     unsatisfied_noes = []
+
     noes_found = len(satisfied_noes)
-    total_noes = len(satisfied_noes)
+    total_noes = len(satisfied_noes) + len(impossible_noes)
 
     coorH_matrix = {}
     for i in range(0, len(sse_coors)):
@@ -318,8 +324,10 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                     noes_found += 1.0
                     total_noes += 1.0
                 else:
+                    impossible_noes.append(noedef)
                     total_noes += 1.0
             else:
+                impossible_noes.append(noedef)
                 total_noes += 1.0
         else:
             dist = 999.999
@@ -334,11 +342,12 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                         total_noes += 1.0
                         break
             if dist == 999.999 :
+                impossible_noes.append(noedef)
                 total_noes += 1.0
 
 
-    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, noe_data)
-    return (noes_found / total_noes), total_noes, [satisfied_noes, unsatisfied_noes], cluster_protons
+    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
+    return (noes_found / total_noes), total_noes, [satisfied_noes, impossible_noes, unsatisfied_noes], cluster_protons
 
 """
 def sXILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, cluster_protons):
