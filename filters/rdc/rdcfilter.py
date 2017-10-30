@@ -206,7 +206,7 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
             soln, cov, info, mesg, success = leastsq(RDC_ZYZ, p0, args=(scal, rdc_vectors[i]), full_output=True,
                                                      maxfev=maxcs)
 
-            nchisq = sum(info["fvec"] * info["fvec"]) / float(len(rdc_vectors[i]) -5 )
+            nchisq = float(sum(info["fvec"] * info["fvec"])) / float(len(rdc_vectors[i]) -5.0 )
 
             chisq = nchisq / float(math.pow(len(rdc_vectors[i]), 1 / 3.0))
 
