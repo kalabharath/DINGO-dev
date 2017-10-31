@@ -303,7 +303,7 @@ def sXSmotifSearch(task):
 
             if 'reference_ca' in exp_data_types:
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
-                if ref_rmsd < 5.0:
+                if ref_rmsd < 6.0:
                     print "hit", tpdbid, ref_rmsd
                 else:
                     continue
