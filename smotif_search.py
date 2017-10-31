@@ -95,8 +95,7 @@ def S1SmotifSearch(task):
         smotif_seq, seq_identity = Sfilter.getS1SeqIdentity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity])
 
-
-
+        """
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
@@ -104,7 +103,7 @@ def S1SmotifSearch(task):
                 print "hit", tpdbid, ref_rmsd
             else:
                 continue
-
+        """
 
         # ************************************************
         # Unambiguous NOE score filter
@@ -301,12 +300,14 @@ def sXSmotifSearch(task):
 
             tlog.append(['seq_filter', concat_seq, seq_identity])
 
+            """
             if 'reference_ca' in exp_data_types:
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
                 if ref_rmsd < 6.0:
                     print "hit", tpdbid, ref_rmsd
                 else:
                     continue
+            """
 
 
             # ************************************************
