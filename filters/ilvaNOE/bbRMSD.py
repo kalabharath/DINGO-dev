@@ -120,6 +120,9 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             rot_spin_coors = applyRot(cm_spin_coors, rotmat)
             trans_spin_coors = applyTranslation(rot_spin_coors, a_cen)
             all_spin_coors = extend_array(all_spin_coors,  trans_spin_coors)
+
+            
+            """
             count += 1
             if count == 2:
                 qcprot.FreeDMatrix(xyz1)
@@ -128,7 +131,7 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
                 return all_spin_coors
             #print trans_spin_coors
             #print all_spin_coors
-            """
+
             cluster_coo = formatClusterCoo(data)
             cm_cluster_coo = translateCM(cluster_coo, b_cen)
             rot_cluster_coo = applyRot(cm_cluster_coo, rotmat)
