@@ -266,6 +266,100 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     print "actual number in top hits ", len(dump_pickle)
     return range(count_top_hits)
 
+def makeTopPickle2(previous_smotif_index, num_hits, stage):
+    """
+    Concatenate data from all of the threads, organize, remove redundancies, rank
+     and extract top hits as defined
+    :param previous_smotif_index:
+    :param num_hits:
+    :param stage:
+    :return:
+    """
+    hits = []
+    # regex = str(previous_smotif_index) + "_*_*.pickle"
+    regex = str(previous_smotif_index) + "_*_*.gzip"
+    file_list = glob.glob(regex)
+    for f in file_list:
+        t_hits = io.readGzipPickle(f)
+        for t_hit in t_hits:
+            hits.append(t_hit)
+    """
+    identifiers: smotif, smotif_def, seq_filter, contacts_filter, PCS_filter, qcp_rmsd, Evofilter
+                 RDC_filter, NOE_filter
+    """
+
+    new_dict = collections.defaultdict(list)
+
+    for hit in hits:
+        # thread_data contains data from each search and filter thread.
+
+        if hit[4][0] == 'NOE_filter':
+            no_of_noes = hit[4][2]
+            new_dict[no_of_noes].append(hit)
+
+    keys = new_dict.keys()
+    keys.sort()
+    keys.reverse()
+    # Rank based on NOE energy
+    non_redundant = collections.defaultdict(list)
+    reduced_dump_log = []
+    seqs = []
+    count_hits = 0
+    for i in range(len(keys)):
+        entries = new_dict[keys[i]]
+        if len(entries) == 1:  # There is only one entry in this no_of_noes bin just check of existing sequences and move on
+            smotif_seq = entries[0][3][1]
+            if smotif_seq not in seqs:
+                seqs.append(smotif_seq)
+                reduced_dump_log.append(entries[0])
+                print "final sele", entries[0][0][1][0][0], keys[i]
+                count_hits += 1
+        else:
+            t_log = collections.defaultdict(list)
+            for hit in entries:  # filter on noe_energy
+                if hit[4][0] == 'NOE_filter':
+                    noe_energy = hit[4][3]
+                    noe_energy = round(noe_energy, 2)
+                    t_log[noe_energy].append(hit)
+            noe_energy_bins = t_log.keys()
+            noe_energy_bins.sort()
+
+            for j in range(len(noe_energy_bins)):  # filter on RDC score
+                t2_log = collections.defaultdict(list)
+                hits = t_log[noe_energy_bins[j]]
+                for hit in hits:
+                    if hit[5][0] == 'RDC_filter':
+                        rdc_tensors = hit[5][1]
+                        rdc_score = 0
+                        for tensor in rdc_tensors:
+                            rdc_score = rdc_score + tensor[0]
+                        t2_log[rdc_score].append(hit)
+                rdc_score_bins = t2_log.keys()
+                rdc_score_bins.sort()
+                for k in range(len(rdc_score_bins)):
+                    hits = t2_log[rdc_score_bins[k]]
+                    for hit in hits:
+                        smotif_seq = hit[3][1]
+                        if smotif_seq not in seqs:
+                            seqs.append(smotif_seq)
+                            reduced_dump_log.append(hit)
+                            print "final sele", hit[0][1][0][0], keys[i], noe_energy_bins[j], rdc_score_bins[k]
+                            count_hits += 1
+                if count_hits >= num_hits:
+                    break
+        if count_hits >= num_hits:
+            break
+    if count_hits >= num_hits:
+        pass
+    else:
+        print "could only extract ", len(reduced_dump_log), count_hits
+
+
+    # io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
+    io.dumpGzipPickle(str(previous_smotif_index) + "_tophits.gzip", reduced_dump_log)
+    print "actual number in top hits ", len(reduced_dump_log)
+    return range(len(reduced_dump_log))
+
 
 def getRunSeq(num_hits, stage):
     """
@@ -293,7 +387,8 @@ def getRunSeq(num_hits, stage):
     else:
         next_ss_list = ss_profiles[next_smotif[1]]
     # get and make a list of top 10(n) of the previous run
-    top_hits = makeTopPickle(next_index - 1, num_hits, stage)  # send the previous Smotif index
+    #top_hits = makeTopPickle(next_index - 1, num_hits, stage)  # send the previous Smotif index
+    top_hits = makeTopPickle2(next_index - 1, num_hits, stage)  # send the previous Smotif index
 
     # delete two stages down pickled files
     # check_pickle = str(next_index - 2) + str("_*_*.pickle")

@@ -99,12 +99,12 @@ def S1SmotifSearch(task):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
-            if ref_rmsd < 7.0:
+            if ref_rmsd < 8.0:
                 print "hit", tpdbid, ref_rmsd
             else:
                 continue
-        """
 
+        """
         # ************************************************
         # Unambiguous NOE score filter
         # uses experimental ambiguous noe data to filter Smotifs
@@ -120,11 +120,9 @@ def S1SmotifSearch(task):
 
         """
         if 'ilva_noes' in exp_data_types:
-            noe_probability, no_of_noes, noe_data, cluster_protons = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i],
-                                                                                      exp_data, stage)
+            noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data, stage)
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data, cluster_protons])
-
+                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons])
             else:
                 continue
 
@@ -170,11 +168,11 @@ def S1SmotifSearch(task):
     if dump_log:
         # testing for rdc_plus_pcs
         if 'rank_top_hits' in exp_data_types:
-            dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
+            #dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
+            dump_log = rank.rank_assembly(dump_log, exp_data, stage=1)
         print "num of hits", len(dump_log)
         # io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
         io.dumpGzipPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
-        # return dump_log
     return True
 
 
@@ -276,7 +274,7 @@ def sXSmotifSearch(task):
 
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
-            tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
+
 
             if stage == 2:
                 cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
@@ -327,13 +325,13 @@ def sXSmotifSearch(task):
 
 
             if 'ilva_noes' in exp_data_types:
-                noe_probability, no_of_noes, noe_data, new_cluster_protons = noepdf.sX2ILVApdf(transformed_coos,
+                noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons = noepdf.sX2ILVApdf(transformed_coos,
                                                                                               sse_ordered, current_ss,
                                                                                               sorted_noe_data,
                                                                                               cluster_protons, exp_data, stage)
                 #print "hit", tpdbid, noe_probability, no_of_noes
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                    tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_data, new_cluster_protons])
+                    tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons])
                 else:
                     continue
 
@@ -372,6 +370,7 @@ def sXSmotifSearch(task):
                 tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
                 print "hit", tpdbid, noe_probability, no_of_noes, ref_rmsd
 
+            tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
@@ -380,7 +379,8 @@ def sXSmotifSearch(task):
     # Dumping hits as a pickle array.
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
-            dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
+            #dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
+            dump_log = rank.rank_assembly(dump_log, exp_data, stage)
 
         print "num of hits", len(dump_log),
         # io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)

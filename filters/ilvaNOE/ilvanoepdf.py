@@ -1,4 +1,5 @@
 import math
+import numpy
 
 import bbRMSD
 
@@ -50,15 +51,29 @@ def getILVARotamers(res_type, bbc, spin):
 def checkNoe(atom1_coor, atom2_coor, noedef):
     noe_bool = False
     dist = 999.999
+    error_array = []
+    dist_array = []
     for i in range(0, len(atom1_coor[0])):
         x1, y1, z1 = atom1_coor[0][i], atom1_coor[1][i], atom1_coor[2][i]
         for j in range(0, len(atom2_coor[0])):
             x2, y2, z2 = atom2_coor[0][j], atom2_coor[1][j], atom2_coor[2][j]
             dist = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
-            if (dist <= (noedef[4] + noedef[6])) and (dist >= (noedef[4]-noedef[5])):
+            if (dist <= (noedef[4] + noedef[6])) and (dist >= (noedef[4] - noedef[5])):
                 noe_bool = True
-                return noe_bool, dist
-    return noe_bool, dist
+                return noe_bool, dist, 0.0, 0.0
+            else:
+                if (dist > (noedef[4] + noedef[6])):
+                    error = (dist - (noedef[4] + noedef[6])) * (dist - (noedef[4] + noedef[6]))
+                    error_array.append(error)
+                    dist_array.append(dist)
+
+                else:
+                    error = (dist - (noedef[4] - noedef[5])) * (dist - (noedef[4] - noedef[5]))
+                    error_array.append(error)
+                    dist_array.append(dist)
+    dist_array.sort()
+    error_array.sort()
+    return noe_bool, dist, dist_array[0], error_array[0]
 
 
 def getAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, resi):
@@ -92,11 +107,10 @@ def getAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, resi):
     else:
         print "Not a proton spin or missing residue number"
 
-
     return atom1_coor, atom2_coor, cluster_protons
 
-def noeinresi(noe, resi):
 
+def noeinresi(noe, resi):
     if len(noe) == 9:
         if (noe[0] in resi) and (noe[2] in resi):
             return True
@@ -109,6 +123,7 @@ def noeinresi(noe, resi):
         else:
             return False
 
+
 def extractUnSatisfiedNoes(noes_found, impossible_noes, data):
     unsatisfied = []
     for entry in data:
@@ -117,6 +132,8 @@ def extractUnSatisfiedNoes(noes_found, impossible_noes, data):
         else:
             unsatisfied.append(entry)
     return unsatisfied
+
+
 def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     """
 
@@ -127,14 +144,16 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     :return:
     """
 
-    #methyls = {'I': ['HG2', 'HD1'], 'L': ['HD1', 'HD2', 'HD'], 'V': ['HG1', 'HG2', 'HG'], 'A': ['HB']}
+    # methyls = {'I': ['HG2', 'HD1'], 'L': ['HD1', 'HD2', 'HD'], 'V': ['HG1', 'HG2', 'HG'], 'A': ['HB']}
     noe_data = exp_data['ilva_noes']
     cluster_protons = {}
 
     satisfied_noes = []
     unsatisfied_noes = []
     impossible_noes = []
+    error_array = []
 
+    max_noe_limit = 6.5
     noes_found = 0.0
     total_noes = 0.0
     ss1_list = range(s1_def[4], s1_def[5] + 1)
@@ -159,21 +178,13 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
 
     for noedef in smotif_noe_data:
 
-        count += 1.0
-        if count >= (len(smotif_noe_data) / 2.0):
-            tprob = noes_found / total_noes
-            threshold = exp_data['expected_noe_prob'][stage - 1]
-            threshold = threshold - 0.2
-            if tprob < threshold:
-                return (noes_found / total_noes), total_noes, [satisfied_noes, unsatisfied_noes], cluster_protons
-
-
         if len(noedef) == 9:
             # noedef = [31, 'H', 47, 'HG1', 4.2, 2.4, 0.63, 'E', 'V']
             atom1_coor, atom2_coor, cluster_protons = getAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons,
                                                                    resi)
             if atom1_coor and atom2_coor:
-                noe_bool, dist = checkNoe(atom1_coor, atom2_coor, noedef)
+                noe_bool, dist, lowest_dist, error = checkNoe(atom1_coor, atom2_coor, noedef)
+                error_array.append(error)
                 if noe_bool:
                     satisfied_noes.append(noedef)
                     noes_found += 1
@@ -181,27 +192,51 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                 else:
                     impossible_noes.append(noedef)
                     total_noes += 1
+                    if lowest_dist > max_noe_limit:
+                        return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
             else:
                 impossible_noes.append(noedef)
                 total_noes += 1
         else:
             dist = 999.999
+            lowest_dist = 0.0
+            error = 0.0
             for noe in noedef:
                 atom1_coor, atom2_coor, cluster_protons = getAtomCoors(noe, coorH_matrix, bb_matrix, cluster_protons,
                                                                        resi)
                 if atom1_coor and atom2_coor:
-                    noe_bool, dist = checkNoe(atom1_coor, atom2_coor, noe)
+                    noe_bool, dist, lowest_dist, error = checkNoe(atom1_coor, atom2_coor, noe)
                     if noe_bool:
+                        error_array.append(error)
                         satisfied_noes.append(noedef)
                         noes_found += 1
                         total_noes += 1
                         break
             if dist == 999.99:
                 impossible_noes.append(noedef)
+                error_array.append(error)
                 total_noes += 1
+                if lowest_dist > max_noe_limit:
+                    return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+            if error:
+                impossible_noes.append(noedef)
+                total_noes += 1.0
+                print "appending error here", error
+                error_array.append(error)
+                if lowest_dist > max_noe_limit:
+                    return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
 
+        count += 1.0
+        if count >= (len(smotif_noe_data) / 2.0):
+            tprob = noes_found / total_noes
+            threshold = exp_data['expected_noe_prob'][stage - 1]
+            threshold = threshold - 0.2
+            if tprob < threshold:
+                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+
+    noe_energy = numpy.sum(error_array)
     unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
-    return (noes_found / total_noes), total_noes, [satisfied_noes, impossible_noes, unsatisfied_noes], cluster_protons
+    return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes, error_array], cluster_protons
 
 
 def getSxCoorMatrix(coor_array, native_sse):
@@ -273,15 +308,18 @@ def getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, resi):
     else:
         print "Not a proton spin or missing residue number"
 
-
     return atom1_coor, atom2_coor, cluster_protons
 
-def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, cluster_protons,exp_data, stage):
+
+def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, cluster_protons, exp_data, stage):
     import copy
     sse_coors = copy.deepcopy(transformed_coors)
     satisfied_noes = copy.deepcopy(sorted_noe_data[0])
     impossible_noes = copy.deepcopy(sorted_noe_data[1])
     noe_data = copy.deepcopy(sorted_noe_data[2])
+    error_array = copy.deepcopy(sorted_noe_data[3])
+    max_noe_limit = 5.5
+
     unsatisfied_noes = []
 
     noes_found = len(satisfied_noes)
@@ -307,18 +345,12 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
 
     for noedef in smotif_noe_data:
 
-        count += 1.0
-        if count >= (len(smotif_noe_data) / 2.0):
-            tprob = noes_found / total_noes
-            threshold = exp_data['expected_noe_prob'][stage - 1]
-            threshold = threshold - 0.2
-            if tprob < threshold:
-                return (noes_found / total_noes), total_noes, [satisfied_noes, unsatisfied_noes], cluster_protons
-
         if len(noedef) == 9:
-            atom1_coor, atom2_coor, cluster_protons = getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, resi)
+            atom1_coor, atom2_coor, cluster_protons = getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons,
+                                                                     resi)
             if atom1_coor and atom2_coor:
-                noe_bool, dist = checkNoe(atom1_coor, atom2_coor, noedef)
+                noe_bool, dist, lowest_dist, error = checkNoe(atom1_coor, atom2_coor, noedef)
+                error_array.append(error)
                 if noe_bool:
                     satisfied_noes.append(noedef)
                     noes_found += 1.0
@@ -326,104 +358,50 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                 else:
                     impossible_noes.append(noedef)
                     total_noes += 1.0
+                    if lowest_dist > max_noe_limit:
+                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
             else:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
         else:
             dist = 999.999
+            lowest_dist = 0.0
+            error = 0.0
+
             for noe in noedef:
                 atom1_coor, atom2_coor, cluster_protons = getSxAtomCoors(noe, coorH_matrix, bb_matrix, cluster_protons,
-                                                                       resi)
+                                                                         resi)
                 if atom1_coor and atom2_coor:
-                    noe_bool, dist = checkNoe(atom1_coor, atom2_coor, noe)
+                    noe_bool, dist, lowest_dist, error = checkNoe(atom1_coor, atom2_coor, noe)
                     if noe_bool:
                         satisfied_noes.append(noedef)
                         noes_found += 1.0
                         total_noes += 1.0
                         break
-            if dist == 999.999 :
+            if dist == 999.999:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
+                print "appending error here", error
+                error_array.append(error)
+                if lowest_dist > max_noe_limit:
+                    return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+        if error:
+            impossible_noes.append(noedef)
+            total_noes += 1.0
+            print "appending error here", error
+            error_array.append(error)
+            if lowest_dist > max_noe_limit:
+                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
 
+        count += 1.0
+        if count >= (len(smotif_noe_data) / 2.0):
+            tprob = noes_found / total_noes
+            threshold = exp_data['expected_noe_prob'][stage - 1]
+            threshold = threshold - 0.2
+            if tprob < threshold:
+                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
 
+    noe_energy = numpy.sum(error_array)
     unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
-    return (noes_found / total_noes), total_noes, [satisfied_noes, impossible_noes, unsatisfied_noes], cluster_protons
-
-"""
-def sXILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, cluster_protons):
-    import copy
-    sse_coors = copy.deepcopy(transformed_coors)
-    satisfied_noes = sorted_noe_data[0][:]
-    noe_data = sorted_noe_data[1]
-
-    noes_found = len(satisfied_noes)
-    total_noes = len(satisfied_noes)
-    # print "noes_found, total_noes", noes_found, total_noes
-
-    methyls = {'I': ['HG2', 'HD1'], 'L': ['HD1', 'HD2', 'HD'], 'V': ['HG1', 'HG2', 'HG'], 'A': ['HB']}
-    coorH_matrix = {}
-    # cluster_protons = {}
-
-    for i in range(0, len(sse_coors)):
-        tcoor = getSxCoorMatrix(sse_coors[i], native_sse_order[i])
-        coorH_matrix.update(tcoor)
-    resi = coorH_matrix.keys()
-
-    bb_matrix = {}
-    for i in range(0, len(sse_coors)):
-        tcoor = getSxbbCoorMatrix(sse_coors[i], native_sse_order[i])
-        bb_matrix.update(tcoor)
-
-    for noedef in sorted_noe_data[1]:
-
-        cluster_proton_entries = cluster_protons.keys()
-        # noedef = [31, 'H', 47, 'HG1', 4.2, 2.4, 0.63, 'E', 'V']
-        atom1_coor, atom2_coor = [], []
-
-        if (noedef[0] in resi) and (noedef[2] in resi):
-            if noedef[1] == 'H':
-                atom1_coor = coorH_matrix[noedef[0]]
-            elif noedef[1] in methyls[noedef[7]]:
-                if (noedef[0], noedef[1]) in cluster_proton_entries:
-                    atom1_coor = cluster_protons[(noedef[0], noedef[1])]
-                else:
-                    bb1_coors = bb_matrix[noedef[0]]
-                    atom1_coor = getSxILVARotamers(noedef[7], bb1_coors, noedef[1])
-                    if atom1_coor:
-                        cluster_protons[(noedef[0], noedef[1])] = atom1_coor
-            else:
-                print "Not a proton spin or missing residue number"
-
-            if noedef[3] == 'H':
-                atom2_coor = coorH_matrix[noedef[2]]
-            elif noedef[3] in methyls[noedef[8]]:
-                if (noedef[2], noedef[3]) in cluster_proton_entries:
-                    atom2_coor = cluster_protons[(noedef[2], noedef[3])]
-                else:
-                    bb2_coors = bb_matrix[noedef[2]]
-                    atom2_coor = getSxILVARotamers(noedef[8], bb2_coors, noedef[3])
-                    if atom2_coor:
-                        cluster_protons[(noedef[2], noedef[3])] = atom2_coor
-            else:
-                print "Not a proton spin or missing residue number"
-
-            if atom1_coor and atom2_coor:
-                noe_bool, dist = checkNoe(atom1_coor, atom2_coor, noedef)
-                # print noe_bool, dist, noedef
-                if noe_bool:
-                    satisfied_noes.append(noedef)
-                    noes_found += 1.0
-                    total_noes += 1.0
-                else:
-                    total_noes += 1.0
-            else:
-                total_noes += 1.0
-        else:
-            pass
-
-    #print "noes_found, total_noes", noes_found, total_noes
-
-    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, noe_data)
-
-    return (noes_found / total_noes), total_noes, [satisfied_noes, unsatisfied_noes], cluster_protons
-"""
+    return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes,
+                                                               error_array], cluster_protons
