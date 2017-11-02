@@ -221,7 +221,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
             if error:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
-                print "appending error here", error
+                #print "appending error here", error
                 error_array.append(error)
                 if lowest_dist > max_noe_limit:
                     return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
@@ -381,7 +381,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             if dist == 999.999:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
-                print "appending error here", error
+                #print "appending error here", error
                 error_array.append(error)
                 if lowest_dist > max_noe_limit:
                     return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
