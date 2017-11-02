@@ -318,7 +318,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
     impossible_noes = copy.deepcopy(sorted_noe_data[1])
     noe_data = copy.deepcopy(sorted_noe_data[2])
     error_array = copy.deepcopy(sorted_noe_data[3])
-    max_noe_limit = 5.5
+    max_noe_limit = 6.5
 
     unsatisfied_noes = []
 
@@ -385,13 +385,13 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                 error_array.append(error)
                 if lowest_dist > max_noe_limit:
                     return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
-        if error:
-            impossible_noes.append(noedef)
-            total_noes += 1.0
-            print "appending error here", error
-            error_array.append(error)
-            if lowest_dist > max_noe_limit:
-                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+            if error:
+                impossible_noes.append(noedef)
+                total_noes += 1.0
+                #print "appending error here", error
+                error_array.append(error)
+                if lowest_dist > max_noe_limit:
+                    return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
 
         count += 1.0
         if count >= (len(smotif_noe_data) / 2.0):
