@@ -153,7 +153,8 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     impossible_noes = []
     error_array = []
 
-    max_noe_limit = 10.0
+    max_noe_limit = 6.5
+    max_violations = 3
     noes_found = 0.0
     total_noes = 0.0
     ss1_list = range(s1_def[4], s1_def[5] + 1)
@@ -175,7 +176,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
             smotif_noe_data.append(entry)
 
     count = 0.0
-
+    tol_noe_count = 0
     for noedef in smotif_noe_data:
 
         if len(noedef) == 9:
@@ -193,7 +194,9 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                     impossible_noes.append(noedef)
                     total_noes += 1
                     if lowest_dist > max_noe_limit:
-                        return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                        tol_noe_count += 1
+                        if tol_noe_count > max_violations:
+                            return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
             else:
                 impossible_noes.append(noedef)
                 total_noes += 1
@@ -217,14 +220,20 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                 error_array.append(error)
                 total_noes += 1
                 if lowest_dist > max_noe_limit:
-                    return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                    tol_noe_count += 1
+                    if tol_noe_count > max_violations:
+                        return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+
             if error:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
                 #print "appending error here", error
                 error_array.append(error)
                 if lowest_dist > max_noe_limit:
-                    return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                    tol_noe_count += 1
+                    if tol_noe_count > max_violations:
+                        return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+
 
         count += 1.0
         if count >= (len(smotif_noe_data) / 2.0):
@@ -318,8 +327,8 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
     impossible_noes = copy.deepcopy(sorted_noe_data[1])
     noe_data = copy.deepcopy(sorted_noe_data[2])
     error_array = copy.deepcopy(sorted_noe_data[3])
-    max_noe_limit = 10.00
-
+    max_noe_limit = 6.5
+    max_violations = 3
     unsatisfied_noes = []
 
     noes_found = len(satisfied_noes)
@@ -342,7 +351,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             smotif_noe_data.append(entry)
 
     count = 0.0
-
+    tol_noe_count = 0
     for noedef in smotif_noe_data:
 
         if len(noedef) == 9:
@@ -359,7 +368,10 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                     impossible_noes.append(noedef)
                     total_noes += 1.0
                     if lowest_dist > max_noe_limit:
-                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                        tol_noe_count += 1
+                        if tol_noe_count > max_violations:
+                            return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+
             else:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
@@ -384,14 +396,20 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                 #print "appending error here", error
                 error_array.append(error)
                 if lowest_dist > max_noe_limit:
-                    return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                    tol_noe_count += 1
+                    if tol_noe_count > max_violations:
+                        return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+
             if error:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
                 #print "appending error here", error
                 error_array.append(error)
                 if lowest_dist > max_noe_limit:
-                    return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                    tol_noe_count += 1
+                    if tol_noe_count > max_violations:
+                        return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+
 
         count += 1.0
         if count >= (len(smotif_noe_data) / 2.0):
