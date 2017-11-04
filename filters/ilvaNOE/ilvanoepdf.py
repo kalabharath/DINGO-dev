@@ -327,7 +327,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
     impossible_noes = copy.deepcopy(sorted_noe_data[1])
     noe_data = copy.deepcopy(sorted_noe_data[2])
     error_array = copy.deepcopy(sorted_noe_data[3])
-    max_noe_limit = 6.5
+    max_noe_limit = 12.5
     max_violations = 3
     unsatisfied_noes = []
 
