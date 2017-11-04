@@ -244,6 +244,9 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
 
     noe_energy = numpy.sum(error_array)
+    noe_energy = noe_energy/float(total_noes)
+    noe_energy = noe_energy/math.pow(total_noes, 1/3.0)
+
     unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
     return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes, error_array], cluster_protons
 
@@ -420,6 +423,8 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
 
     noe_energy = numpy.sum(error_array)
+    noe_energy = noe_energy/float(total_noes)
+    noe_energy = noe_energy/math.pow(total_noes, 1/3.0)
     unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
     return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes,
                                                                error_array], cluster_protons

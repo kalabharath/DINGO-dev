@@ -266,7 +266,95 @@ def makeTopPickle(previous_smotif_index, num_hits, stage):
     print "actual number in top hits ", len(dump_pickle)
     return range(count_top_hits)
 
+
 def makeTopPickle2(previous_smotif_index, num_hits, stage):
+    """
+    Concatenate data from all of the threads, organize, remove redundancies, rank
+     and extract top hits as defined
+    :param previous_smotif_index:
+    :param num_hits:
+    :param stage:
+    :return:
+    """
+    hits = []
+    # regex = str(previous_smotif_index) + "_*_*.pickle"
+    regex = str(previous_smotif_index) + "_*_*.gzip"
+    file_list = glob.glob(regex)
+    for f in file_list:
+        t_hits = io.readGzipPickle(f)
+        for t_hit in t_hits:
+            hits.append(t_hit)
+    """
+    identifiers: smotif, smotif_def, seq_filter, contacts_filter, PCS_filter, qcp_rmsd, Evofilter
+                 RDC_filter, NOE_filter
+    """
+
+    new_dict = collections.defaultdict(list)
+
+    for hit in hits:
+        # thread_data contains data from each search and filter thread.
+
+        if hit[4][0] == 'NOE_filter':
+            noe_energy = hit[4][3]
+            noe_energy = round(noe_energy, 2)
+            new_dict[noe_energy].append(hit)
+
+
+    keys = new_dict.keys()
+    keys.sort()
+    # Rank based on NOE energy
+
+    reduced_dump_log = []
+    seqs = []
+    count_hits = 0
+    for i in range(len(keys)):
+        entries = new_dict[keys[i]]
+        if len(entries) == 1:
+            smotif_seq = entries[0][3][1]
+            if smotif_seq not in seqs:
+                seqs.append(smotif_seq)
+                reduced_dump_log.append(entries[0])
+                print "final sele", entries[0][0][1][0][0], keys[i]
+                count_hits += 1
+        else:
+            t2_log = collections.defaultdict(list)
+            for hit in entries:
+                #if hit[5][0] == 'RDC_filter':
+                rdc_tensors = hit[5][1]
+                rdc_score = 0
+                for tensor in rdc_tensors:
+                    rdc_score = rdc_score + tensor[0]
+                t2_log[rdc_score].append(hit)
+            rdc_score_bins = t2_log.keys()
+            rdc_score_bins.sort()
+            for k in range(len(rdc_score_bins)):
+                hits = t2_log[rdc_score_bins[k]]
+                for hit in hits:
+                    smotif_seq = hit[3][1]
+                    if smotif_seq not in seqs:
+                        seqs.append(smotif_seq)
+                        reduced_dump_log.append(hit)
+                        count_hits += 1
+                        print "final sele", hit[0][1][0][0], keys[i], rdc_score_bins[k]
+                    if count_hits >= num_hits:
+                        break
+            if count_hits >= num_hits:
+                break
+            else:
+                pass
+    if count_hits >= num_hits:
+        pass
+    else:
+        print "could only extract ", len(reduced_dump_log), count_hits
+
+
+    # io.dumpPickle(str(previous_smotif_index) + "_tophits.pickle", dump_pickle)
+    io.dumpGzipPickle(str(previous_smotif_index) + "_tophits.gzip", reduced_dump_log)
+    print "actual number in top hits ", len(reduced_dump_log)
+    return range(len(reduced_dump_log))
+
+
+def makeTopPickle2Old(previous_smotif_index, num_hits, stage):
     """
     Concatenate data from all of the threads, organize, remove redundancies, rank
      and extract top hits as defined

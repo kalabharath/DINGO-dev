@@ -24,6 +24,75 @@ def rank_assembly(dump_log, exp_data, stage):
         # thread_data contains data from each search and filter thread.
         # initialize total score array
         #if hit[4][0] == 'NOE_filter':
+        noe_energy = hit[4][3]
+        noe_energy = round(noe_energy, 2)
+        new_dict[noe_energy].append(hit)
+
+    keys = new_dict.keys()
+    keys.sort()
+    # Rank based on NOE energy
+
+    reduced_dump_log = []
+    seqs = []
+    count_hits = 0
+
+    for i in range(len(keys)):
+        entries = new_dict[keys[i]]
+        if len(
+                entries) == 1:
+            smotif_seq = entries[0][3][1]
+            if smotif_seq not in seqs:
+                seqs.append(smotif_seq)
+                reduced_dump_log.append(entries[0])
+                count_hits += 1
+        else:
+            t2_log = collections.defaultdict(list)
+            for hit in entries:
+                #if hit[5][0] == 'RDC_filter':
+                rdc_tensors = hit[5][1]
+                rdc_score = 0
+                for tensor in rdc_tensors:
+                    rdc_score = rdc_score + tensor[0]
+                t2_log[rdc_score].append(hit)
+            rdc_score_bins = t2_log.keys()
+            rdc_score_bins.sort()
+            for k in range(len(rdc_score_bins)):
+                hits = t2_log[rdc_score_bins[k]]
+                for hit in hits:
+                    smotif_seq = hit[3][1]
+                    if smotif_seq not in seqs:
+                        seqs.append(smotif_seq)
+                        reduced_dump_log.append(hit)
+                        count_hits += 1
+                    if count_hits >= num_hits:
+                        break
+            if count_hits >= num_hits:
+                break
+            else:
+                pass
+    print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(reduced_dump_log), len(dump_log)
+    return reduced_dump_log
+
+def rank_assembly_old(dump_log, exp_data, stage):
+    rank_top_hits = exp_data['rank_top_hits']
+    num_hits = rank_top_hits[stage - 1]
+
+    new_dict = collections.defaultdict(list)
+
+    """
+    0 smotif
+    1 smotif_def
+    2 cathcodes
+    3 seq_filter
+    4 NOE_filter
+    5 RDC_filter
+    6 Ref_RMSD
+    """
+
+    for hit in dump_log:
+        # thread_data contains data from each search and filter thread.
+        # initialize total score array
+        #if hit[4][0] == 'NOE_filter':
         no_of_noes = hit[4][2]
         new_dict[no_of_noes].append(hit)
 
@@ -35,6 +104,7 @@ def rank_assembly(dump_log, exp_data, stage):
     reduced_dump_log = []
     seqs = []
     count_hits = 0
+
     for i in range(len(keys)):
         entries = new_dict[keys[i]]
         if len(
