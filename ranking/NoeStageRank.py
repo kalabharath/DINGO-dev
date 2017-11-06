@@ -4,9 +4,9 @@ import math
 import utility.stage2_util as s2util
 
 
-def rank_assembly(dump_log, exp_data, stage):
-    rank_top_hits = exp_data['rank_top_hits']
-    num_hits = rank_top_hits[stage - 1]
+def rank_assembly(dump_log, num_hits):
+    #rank_top_hits = exp_data['rank_top_hits']
+    #num_hits = rank_top_hits[stage - 1]
 
     new_dict = collections.defaultdict(list)
 
@@ -70,7 +70,7 @@ def rank_assembly(dump_log, exp_data, stage):
                 break
             else:
                 pass
-    print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(reduced_dump_log), len(dump_log)
+
     return reduced_dump_log
 
 def rank_assembly_old(dump_log, exp_data, stage):

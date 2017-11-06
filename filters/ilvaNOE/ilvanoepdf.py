@@ -58,6 +58,7 @@ def checkNoe(atom1_coor, atom2_coor, noedef):
         for j in range(0, len(atom2_coor[0])):
             x2, y2, z2 = atom2_coor[0][j], atom2_coor[1][j], atom2_coor[2][j]
             dist = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
+            dist = round(dist, 2)
             if (dist <= (noedef[4] + noedef[6])) and (dist >= (noedef[4] - noedef[5])):
                 noe_bool = True
                 return noe_bool, dist, 0.0, 0.0
@@ -134,6 +135,7 @@ def extractUnSatisfiedNoes(noes_found, impossible_noes, data):
     return unsatisfied
 
 
+
 def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     """
 
@@ -153,8 +155,8 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     impossible_noes = []
     error_array = []
 
-    max_noe_limit = 7.5
-    max_violations = 100
+    max_noe_limit = 10.0
+    max_violations = 2
     noes_found = 0.0
     total_noes = 0.0
     ss1_list = range(s1_def[4], s1_def[5] + 1)
@@ -188,11 +190,13 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                 error_array.append(error)
                 if noe_bool:
                     satisfied_noes.append(noedef)
-                    noes_found += 1
-                    total_noes += 1
+                    noes_found += 1.0
+                    total_noes += 1.0
                 else:
                     impossible_noes.append(noedef)
-                    total_noes += 1
+                    total_noes += 1.0
+                    if lowest_dist:
+                        noes_found += 1.0
                     if lowest_dist > max_noe_limit:
                         tol_noe_count += 1
                         if tol_noe_count > max_violations:
@@ -219,6 +223,8 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                 impossible_noes.append(noedef)
                 error_array.append(error)
                 total_noes += 1
+                if lowest_dist:
+                    noes_found += 1.0
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
@@ -229,6 +235,8 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                 total_noes += 1.0
                 #print "appending error here", error
                 error_array.append(error)
+                if lowest_dist:
+                    noes_found += 1.0
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
@@ -249,7 +257,6 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
 
     unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
     return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes, error_array], cluster_protons
-
 
 def getSxCoorMatrix(coor_array, native_sse):
     resi = {}
@@ -370,6 +377,8 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                 else:
                     impossible_noes.append(noedef)
                     total_noes += 1.0
+                    if lowest_dist:
+                        noes_found += 1.0
                     if lowest_dist > max_noe_limit:
                         tol_noe_count += 1
                         if tol_noe_count > max_violations:
@@ -396,8 +405,9 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             if dist == 999.999:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
-                #print "appending error here", error
                 error_array.append(error)
+                if lowest_dist:
+                    noes_found += 1.0
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
@@ -406,8 +416,9 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             if error:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
-                #print "appending error here", error
                 error_array.append(error)
+                if lowest_dist:
+                    noes_found += 1.0
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:

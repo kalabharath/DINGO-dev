@@ -169,11 +169,16 @@ def S1SmotifSearch(task):
         # testing for rdc_plus_pcs
         if 'rank_top_hits' in exp_data_types:
             #dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
-            dump_log = rank.rank_assembly(dump_log, exp_data, stage=1)
+            rank_top_hits = exp_data['rank_top_hits']
+            num_hits = rank_top_hits[stage - 1]
+            dump_log = rank.rank_assembly(dump_log, num_hits)
+            print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(dump_log)
         print "num of hits", len(dump_log)
         # io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
         io.dumpGzipPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
-    return True
+        return dump_log
+    else:
+        return False
 
 
 def sXSmotifSearch(task):
@@ -380,9 +385,14 @@ def sXSmotifSearch(task):
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
             #dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
-            dump_log = rank.rank_assembly(dump_log, exp_data, stage)
-
+            rank_top_hits = exp_data['rank_top_hits']
+            num_hits = rank_top_hits[stage - 1]
+            dump_log = rank.rank_assembly(dump_log, num_hits)
+            print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(dump_log)
         print "num of hits", len(dump_log),
         # io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
         io.dumpGzipPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
-    return True
+        return dump_log
+    else:
+        return False
+
