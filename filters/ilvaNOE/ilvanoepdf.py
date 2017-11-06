@@ -230,7 +230,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                     if tol_noe_count > max_violations:
                         return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
 
-            if error:
+            elif error:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
                 #print "appending error here", error
@@ -241,6 +241,8 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
                         return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+            else:
+                print "WTH did i miss"
 
 
         count += 1.0
@@ -413,7 +415,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                     if tol_noe_count > max_violations:
                         return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
 
-            if error:
+            elif error:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
                 error_array.append(error)
@@ -423,6 +425,8 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
                         return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+            else:
+                print "WTH did i miss"
 
 
         count += 1.0
