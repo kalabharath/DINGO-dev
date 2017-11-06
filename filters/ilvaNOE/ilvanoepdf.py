@@ -233,16 +233,27 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
             elif error:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
-                #print "appending error here", error
+                # print "appending error here", error
                 error_array.append(error)
                 if lowest_dist:
                     noes_found += 1.0
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
-                        return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+            elif lowest_dist:
+                impossible_noes.append(noedef)
+                total_noes += 1.0
+                # print "appending error here", error
+                error_array.append(error)
+                if lowest_dist:
+                    noes_found += 1.0
+                if lowest_dist > max_noe_limit:
+                    tol_noe_count += 1
+                    if tol_noe_count > max_violations:
+                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
             else:
-                print "WTH did i miss"
+                print "1:WTH did i miss"
 
 
         count += 1.0
@@ -339,8 +350,8 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
     impossible_noes = copy.deepcopy(sorted_noe_data[1])
     noe_data = copy.deepcopy(sorted_noe_data[2])
     error_array = copy.deepcopy(sorted_noe_data[3])
-    max_noe_limit = 7.5
-    max_violations = 100
+    max_noe_limit = 10.0
+    max_violations = 10
     unsatisfied_noes = []
 
     noes_found = len(satisfied_noes)
@@ -414,7 +425,6 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
                         return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
-
             elif error:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
@@ -424,9 +434,19 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
-                        return 0.0, noes_found,0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+            elif lowest_dist:
+                impossible_noes.append(noedef)
+                total_noes += 1.0
+                error_array.append(error)
+                if lowest_dist:
+                    noes_found += 1.0
+                if lowest_dist > max_noe_limit:
+                    tol_noe_count += 1
+                    if tol_noe_count > max_violations:
+                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
             else:
-                print "WTH did i miss"
+                print "2+:WTH did i miss"
 
 
         count += 1.0
