@@ -156,7 +156,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     error_array = []
 
     max_noe_limit = 10.0
-    max_violations = 2
+    max_violations = 20
     noes_found = 0.0
     total_noes = 0.0
     ss1_list = range(s1_def[4], s1_def[5] + 1)
