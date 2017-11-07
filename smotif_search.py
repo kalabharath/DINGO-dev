@@ -120,9 +120,9 @@ def S1SmotifSearch(task):
 
         """
         if 'ilva_noes' in exp_data_types:
-            noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data, stage)
+            noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons, cluster_sidechains = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data, stage)
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons])
+                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons, cluster_sidechains])
             else:
                 continue
 
@@ -199,14 +199,14 @@ def sXSmotifSearch(task):
         current_ss, direction = uts2.getSS2(index_array[1])
         csmotif_data, smotif_def = mutil.getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'], stage)
         sse_ordered = mutil.orderSSE(psmotif, current_ss, direction, stage)
-        sorted_noe_data, cluster_protons = mutil.fetchNOEdata(psmotif)
+        sorted_noe_data, cluster_protons, cluster_sidechains = mutil.fetchNOEdata(psmotif)
     else:
 
         preSSE = uts2.getPreviousSmotif(index_array[0])
         current_ss, direction = uts2.getSS2(index_array[1])
         csmotif_data, smotif_def = mutil.getfromDB(preSSE, current_ss, direction, exp_data['database_cutoff'], stage)
         sse_ordered = mutil.orderSSE(preSSE, current_ss, direction, stage)
-        sorted_noe_data, cluster_protons = mutil.fetchNOEdata(preSSE)
+        sorted_noe_data, cluster_protons, cluster_sidechains = mutil.fetchNOEdata(preSSE)
 
     print current_ss, direction
     if not csmotif_data:
@@ -330,13 +330,13 @@ def sXSmotifSearch(task):
 
 
             if 'ilva_noes' in exp_data_types:
-                noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons = noepdf.sX2ILVApdf(transformed_coos,
+                noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains = noepdf.sX2ILVApdf(transformed_coos,
                                                                                               sse_ordered, current_ss,
                                                                                               sorted_noe_data,
-                                                                                              cluster_protons, exp_data, stage)
-                #print "hit", tpdbid, noe_probability, no_of_noes
+                                                                                              cluster_protons, cluster_sidechains)
+
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                    tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons])
+                    tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains])
                 else:
                     continue
 

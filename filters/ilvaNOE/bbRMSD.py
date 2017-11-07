@@ -1,6 +1,6 @@
 from filters.rmsd.qcp import *
 from utility.io_util import readPickle
-
+import copy
 def processRBBC(cluster1):
     x, y, z = [None] * 5, [None] * 5, [None] * 5
     for i in range(0, 5):
@@ -20,7 +20,6 @@ def formatClusterCoo(cluster):
             y[count] = cluster[i][j][2]
             z[count] = cluster[i][j][3]
             count += 1
-
     return [x, y, z, spin]
 
 def extractSpinCoo(cluster, spin, res_type):
@@ -83,7 +82,7 @@ def extend_array(extended, temp):
 
 def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
 
-
+    bbc = copy.deepcopy(bbc)
     fraga, a_cen = centerCoo(bbc)
     fraglen = 5
 
@@ -114,19 +113,33 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             for i in range(0,9):
                 rotmat[i] = qcprot.GetDvector(i, rot)
 
-            # translate the cluster to the smotif_coors:
+
             cluster_coo = formatClusterCoo(data)
-            spin_coors = extractSpinCoo(cluster_coo, spin, res_type)
-            cm_spin_coors = translateCM(spin_coors, b_cen)
-            rot_spin_coors = applyRot(cm_spin_coors, rotmat)
-            trans_spin_coors = applyTranslation(rot_spin_coors, a_cen)
-            all_spin_coors = extend_array(all_spin_coors,  trans_spin_coors)
+            cm_cluster_coors = translateCM(cluster_coo, b_cen)
+            rot_cluster_coors = applyRot(cm_cluster_coors, rotmat)
+            trans_cluster_coors = applyTranslation(rot_cluster_coors, a_cen)
+            spin_coors = extractSpinCoo(trans_cluster_coors, spin, res_type)
+            #all_spin_coors = extend_array(all_spin_coors, trans_spin_coors)
 
-            #qcprot.FreeDMatrix(xyz1)
-            #qcprot.FreeDMatrix(xyz2)
-            #qcprot.FreeDArray(rot)
-            #return trans_spin_coors
+            qcprot.FreeDMatrix(xyz1)
+            qcprot.FreeDMatrix(xyz2)
+            qcprot.FreeDArray(rot)
 
+            """
+                translate the cluster to the smotif_coors:
+                cluster_coo = formatClusterCoo(data)
+                spin_coors = extractSpinCoo(cluster_coo, spin, res_type)
+                cm_spin_coors = translateCM(spin_coors, b_cen)
+                rot_spin_coors = applyRot(cm_spin_coors, rotmat)
+                trans_spin_coors = applyTranslation(rot_spin_coors, a_cen)
+                all_spin_coors = extend_array(all_spin_coors,  trans_spin_coors)
+
+                qcprot.FreeDMatrix(xyz1)
+                qcprot.FreeDMatrix(xyz2)
+                qcprot.FreeDArray(rot)
+                return trans_spin_coors
+            """
+            return spin_coors, trans_cluster_coors
         qcprot.FreeDMatrix(xyz1)
         qcprot.FreeDMatrix(xyz2)
         qcprot.FreeDArray(rot)
