@@ -43,9 +43,9 @@ def getILVARotamers(res_type, bbc, spin):
     rotamers = glob.glob(file_name)
     rmsd_cutoff = 0.1
     bbc = processBBC(bbc)
-    spin_coors = bbRMSD.bbrmsd(bbc, rotamers, rmsd_cutoff, spin, res_type)
+    spin_coors, cluster_coors = bbRMSD.bbrmsd(bbc, rotamers, rmsd_cutoff, spin, res_type)
 
-    return spin_coors
+    return spin_coors, cluster_coors
 
 
 def checkNoe(atom1_coor, atom2_coor, noedef):
@@ -331,7 +331,7 @@ def getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, cluster_sid
     return atom1_coor, atom2_coor, cluster_protons, cluster_sidechains
 
 
-def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, cluster_protons, cluster_sidechains):
+def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, cluster_protons, cluster_sidechains, exp_data, stage):
 
     sse_coors = copy.deepcopy(transformed_coors)
 

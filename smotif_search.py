@@ -333,7 +333,7 @@ def sXSmotifSearch(task):
                 noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains = noepdf.sX2ILVApdf(transformed_coos,
                                                                                               sse_ordered, current_ss,
                                                                                               sorted_noe_data,
-                                                                                              cluster_protons, cluster_sidechains)
+                                                                                              cluster_protons, cluster_sidechains, exp_data, stage)
 
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                     tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains])

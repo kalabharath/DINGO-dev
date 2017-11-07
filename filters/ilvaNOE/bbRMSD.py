@@ -145,4 +145,4 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
         qcprot.FreeDArray(rot)
 
 
-    return all_spin_coors
+    return all_spin_coors, all_spin_coors
