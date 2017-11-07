@@ -391,7 +391,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             noe_bool = False
             for noe in noedef:
                 atom1_coor, atom2_coor, cluster_protons, cluster_sidechains = getSxAtomCoors(noe, coorH_matrix, bb_matrix, cluster_protons,
-                                                                         resi)
+                                                                         cluster_sidechains,resi)
                 if atom1_coor and atom2_coor:
                     noe_bool, dist, lowest_dist, error = checkNoe(atom1_coor, atom2_coor, noe)
                     if noe_bool:
