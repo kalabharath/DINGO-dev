@@ -106,7 +106,7 @@ def getAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, cluster_sidec
             atom2_coor, sidechains2 = getILVARotamers(noedef[8], bb2_coors, noedef[3])
             if atom2_coor:
                 cluster_protons[(noedef[2], noedef[3])] = atom2_coor
-                cluster_sidechains[(noedef[0], noedef[1])] = sidechains2
+                cluster_sidechains[(noedef[2], noedef[3])] = sidechains2
     else:
         print "Not a proton spin or missing residue number"
 
@@ -324,7 +324,7 @@ def getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, cluster_sid
             atom2_coor, sidechains2 = getSxILVARotamers(noedef[8], bb2_coors, noedef[3])
             if atom2_coor:
                 cluster_protons[(noedef[2], noedef[3])] = atom2_coor
-                cluster_sidechains[(noedef[0], noedef[1])] = sidechains2
+                cluster_sidechains[(noedef[2], noedef[3])] = sidechains2
     else:
         print "Not a proton spin or missing residue number"
 
