@@ -380,7 +380,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
-                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons
+                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
             else:
                 impossible_noes.append(noedef)
                 total_noes += 1.0
