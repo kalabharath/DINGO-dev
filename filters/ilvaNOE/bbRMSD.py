@@ -87,7 +87,7 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
     fraga, a_cen = centerCoo(bbc)
     fraglen = 5
 
-    #all_spin_coors = []
+    all_spin_coors = []
     #count = 0
     for cluster in rotamer_cluster:
 
@@ -120,19 +120,16 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             cm_spin_coors = translateCM(spin_coors, b_cen)
             rot_spin_coors = applyRot(cm_spin_coors, rotmat)
             trans_spin_coors = applyTranslation(rot_spin_coors, a_cen)
-            #all_spin_coors = extend_array(all_spin_coors,  trans_spin_coors)
+            all_spin_coors = extend_array(all_spin_coors,  trans_spin_coors)
 
-            qcprot.FreeDMatrix(xyz1)
-            qcprot.FreeDMatrix(xyz2)
-            qcprot.FreeDArray(rot)
-            return trans_spin_coors
+            #qcprot.FreeDMatrix(xyz1)
+            #qcprot.FreeDMatrix(xyz2)
+            #qcprot.FreeDArray(rot)
+            #return trans_spin_coors
 
         qcprot.FreeDMatrix(xyz1)
         qcprot.FreeDMatrix(xyz2)
         qcprot.FreeDArray(rot)
 
 
-    return False
-
-
-
+    return all_spin_coors

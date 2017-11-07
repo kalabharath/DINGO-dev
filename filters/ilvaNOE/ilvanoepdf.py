@@ -384,13 +384,13 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             if noe_bool:
                 error_array.append(error)
                 satisfied_noes.append(noedef)
-                noes_found += 1
-                total_noes += 1
+                noes_found += 1.0
+                total_noes += 1.0
             elif error or lowest_dist:
                 error_array.append(error)
                 satisfied_noes.append(noedef)
-                noes_found += 1
-                total_noes += 1
+                noes_found += 1.0
+                total_noes += 1.0
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
