@@ -86,6 +86,7 @@ def S1SmotifSearch(task):
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
         tlog.append(['cathcodes', [smotif_data[i][0]]])
+        tlog.append(['qcp_rmsd'])
 
         # ************************************************
         # Sequence filter
@@ -279,7 +280,7 @@ def sXSmotifSearch(task):
 
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
-
+            tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
             if stage == 2:
                 cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
@@ -303,31 +304,11 @@ def sXSmotifSearch(task):
 
             tlog.append(['seq_filter', concat_seq, seq_identity])
 
-            """
-            if 'reference_ca' in exp_data_types:
-                ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
-                if ref_rmsd < 6.0:
-                    print "hit", tpdbid, ref_rmsd
-                else:
-                    continue
-            """
-
-
             # ************************************************
             # NOE score filter
             # uses experimental noe data to filter Smotifs
             # scoring based on log-likelihood?
             # ************************************************
-
-            if 'noe_data' in exp_data_types:
-                noe_probability, local_noe_probability, no_of_noes = Noe.SxNOEprob(transformed_coos, sse_ordered,
-                                                                                   current_ss, exp_data)
-                if local_noe_probability >= exp_data['noe_fmeasure'][stage - 1]:
-                    tlog.append(['NOE_filter', noe_probability, no_of_noes])
-                else:
-                    # Do not execute any further
-                    continue
-
 
             if 'ilva_noes' in exp_data_types:
                 noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains = noepdf.sX2ILVApdf(transformed_coos,
@@ -375,7 +356,7 @@ def sXSmotifSearch(task):
                 tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
                 print "hit", tpdbid, noe_probability, no_of_noes, ref_rmsd
 
-            tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
+
 
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk

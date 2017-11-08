@@ -278,7 +278,6 @@ def getSxbbCoorMatrix(coor_array, native_sse):
             y[j] = coor_array[1][i + j]
             z[j] = coor_array[2][i + j]
         resi[native_sse_range[count_array]] = [x, y, z]
-        print count_array
         count_array += 1
     return resi
 
@@ -297,6 +296,7 @@ def getSxILVARotamers(res_type, bbc, spin):
 
 def getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, cluster_sidechains, resi):
     methyls = {'I': ['HG2', 'HD1'], 'L': ['HD1', 'HD2', 'HD'], 'V': ['HG1', 'HG2', 'HG'], 'A': ['HB']}
+
     cluster_proton_entries = cluster_protons.keys()
     atom1_coor, atom2_coor = [], []
 
@@ -340,8 +340,9 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
     impossible_noes = copy.deepcopy(sorted_noe_data[1])
     noe_data = copy.deepcopy(sorted_noe_data[2])
     error_array = copy.deepcopy(sorted_noe_data[3])
+
     max_noe_limit = 10.0
-    max_violations = 10
+    max_violations = 100
     unsatisfied_noes = []
 
     noes_found = len(satisfied_noes)
@@ -409,21 +410,21 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
                 if lowest_dist > max_noe_limit:
                     tol_noe_count += 1
                     if tol_noe_count > max_violations:
-                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+                        return 0.0, noes_found, 0.00, [satisfied_noes, unsatisfied_noes, error_array], cluster_protons, cluster_sidechains
             elif dist == 999.999:
                 impossible_noes.append(noedef)
                 total_noes += 1
             else:
                 print "2+:WTH did i miss"
 
-
+        
         count += 1.0
         if count >= (len(smotif_noe_data) / 2.0):
             tprob = noes_found / total_noes
             threshold = exp_data['expected_noe_prob'][stage - 1]
             threshold = threshold - 0.1
             if tprob < threshold:
-                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes, error_array], cluster_protons, cluster_sidechains
 
     noe_energy = numpy.sum(error_array)
     noe_energy = noe_energy/float(total_noes)

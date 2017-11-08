@@ -1,6 +1,6 @@
 from filters.rmsd.qcp import *
 from utility.io_util import readPickle
-import copy
+
 def processRBBC(cluster1):
     x, y, z = [None] * 5, [None] * 5, [None] * 5
     for i in range(0, 5):
@@ -10,7 +10,7 @@ def processRBBC(cluster1):
     return [x, y, z]
 
 def formatClusterCoo(cluster):
-    tlen = len(cluster) *len(cluster[0])
+    tlen = len(cluster) * len(cluster[0])
     x, y, z, spin = [None] * tlen, [None] * tlen, [None] * tlen, [None] * tlen
     count = 0
     for i in range(0, len(cluster)):
@@ -77,13 +77,12 @@ def extend_array(extended, temp):
         return temp
     for i in range(0,len(temp)):
         extended[i] = extended[i]+ temp[i]
-
     return extended
 
 def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
 
-    bbc = copy.deepcopy(bbc)
-    fraga, a_cen = centerCoo(bbc)
+
+    fraga, a_cen = centerCoo(copy.deepcopy(bbc))
     fraglen = 5
 
     all_spin_coors = []
@@ -91,7 +90,7 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
     for cluster in rotamer_cluster:
 
         data = readPickle(cluster)
-        rbbc = processRBBC(data[0])
+        rbbc = processRBBC(copy.deepcopy(data[0]))
         fragb, b_cen = centerCoo(rbbc)
 
         xyz1 = qcprot.MakeDMatrix(3, fraglen)
@@ -112,7 +111,6 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             rotmat =[None] * 9
             for i in range(0,9):
                 rotmat[i] = qcprot.GetDvector(i, rot)
-
 
             cluster_coo = formatClusterCoo(data)
             cm_cluster_coors = translateCM(cluster_coo, b_cen)

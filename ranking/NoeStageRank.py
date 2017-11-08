@@ -14,9 +14,10 @@ def rank_assembly(dump_log, num_hits):
     0 smotif
     1 smotif_def
     2 cathcodes
-    3 seq_filter
-    4 NOE_filter
-    5 RDC_filter
+    3 qcp_rmsd
+    4 seq_filter
+    5 NOE_filter
+    6 RDC_filter
     6 Ref_RMSD
     """
 
@@ -24,7 +25,7 @@ def rank_assembly(dump_log, num_hits):
         # thread_data contains data from each search and filter thread.
         # initialize total score array
         #if hit[4][0] == 'NOE_filter':
-        noe_energy = hit[4][3]
+        noe_energy = hit[5][3]
         noe_energy = round(noe_energy, 2)
         new_dict[noe_energy].append(hit)
 
@@ -38,9 +39,8 @@ def rank_assembly(dump_log, num_hits):
 
     for i in range(len(keys)):
         entries = new_dict[keys[i]]
-        if len(
-                entries) == 1:
-            smotif_seq = entries[0][3][1]
+        if len(entries) == 1:
+            smotif_seq = entries[0][4][1]
             if smotif_seq not in seqs:
                 seqs.append(smotif_seq)
                 reduced_dump_log.append(entries[0])
@@ -49,7 +49,7 @@ def rank_assembly(dump_log, num_hits):
             t2_log = collections.defaultdict(list)
             for hit in entries:
                 #if hit[5][0] == 'RDC_filter':
-                rdc_tensors = hit[5][1]
+                rdc_tensors = hit[6][1]
                 rdc_score = 0
                 for tensor in rdc_tensors:
                     rdc_score = rdc_score + tensor[0]
@@ -59,7 +59,7 @@ def rank_assembly(dump_log, num_hits):
             for k in range(len(rdc_score_bins)):
                 hits = t2_log[rdc_score_bins[k]]
                 for hit in hits:
-                    smotif_seq = hit[3][1]
+                    smotif_seq = hit[4][1]
                     if smotif_seq not in seqs:
                         seqs.append(smotif_seq)
                         reduced_dump_log.append(hit)
