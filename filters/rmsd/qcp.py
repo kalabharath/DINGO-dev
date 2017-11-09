@@ -435,15 +435,56 @@ def getKdist(sse_array, atom_type):
     # atom_array = ['N', 'H', 'CA', 'C', 'O']
     smotif_type = sse_array[0][0][0] + sse_array[1][0][0]
     mean, sd = 0.0, 0.0
-    dist_knowledge = {'ss': [['N'], [1.95, 0.09], [3.4, 0.09], [3.6, 0.19], ['O']],
-                      'hh': [['N'], [2.6, 0.09], [3.77, 0.08], [2.77, 0.04], ['O']],
-                      'hs': [['N'], [2.2, 0.10], [3.76, 0.04], [2.66, 0.03], ['O']],
-                      'sh': [['N'], [3.1, 0.13], [3.47, 0.36], [3.04, 0.06], ['O']]}
+    dist_knowledge = {'ss': [['N'], [1.9, 0.16], [3.4, 0.07], [3.78, 0.1], ['O']],
+                      'hh': [['N'], [2.68, 0.06], [3.8, 0.05], [3.0, 0.03], ['O']],
+                      'hs': [['N'], [2.19, 0.06], [3.78, 0.00], [3.1, 0.06], ['O']],
+                      'sh': [['N'], [3.16, 0.17], [3.73, 0.1], [2.88, 0.02], ['O']]}
     mean, sd = dist_knowledge[smotif_type][atom_type]
     return mean - (2*sd)
 
 
-def kClashes(coo_arrays, sse_ordered):
+def kClashes(coo_arrays, sse_ordered, current_ss):
+    """
+    Known minimum distances between various atoms between the SSEs of the smotif
+    the first entry is mean and second entry is SD, computed on a sample of 100 lowest distances observed over single
+    digit smotifs that have the largest number of entries.
+    
+    """
+
+    # [['strand', 15, 10, 3, 59, 73], ['strand', 15, 3, 13, 77, 91], ['strand', 14, 11, 4, 103, 116]]
+    # atom_array = ['N', 'H', 'CA', 'C', 'O']
+
+    current_index = sse_ordered.index(current_ss)
+    indices = range(0, len(sse_ordered))
+    indices.remove(current_index)
+
+    # Compute clashes for amide hydrogen pairs
+    atom_type = 1
+    sse1 = getXcoo(coo_arrays[current_index], atom_type)
+    for p in indices:
+        kdist = getKdist([sse_ordered[current_index], sse_ordered[p]], atom_type)
+        sse2 = getXcoo(coo_arrays[p], atom_type)
+        for j in range(0, len(sse1[0])):
+            for k in range(0, len(sse2[0])):
+                dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
+                dist = round(dist, 2)
+                if dist < kdist:
+                    return False
+
+    atom_type = 3
+    sse1 = getXcoo(coo_arrays[current_index], atom_type)
+    for p in indices:
+        kdist = getKdist([sse_ordered[current_index], sse_ordered[p]], atom_type)
+        sse2 = getXcoo(coo_arrays[p], atom_type)
+        for j in range(0, len(sse1[0])):
+            for k in range(0, len(sse2[0])):
+                dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
+                dist = round(dist, 2)
+                if dist < kdist:
+                    return False
+    return True
+
+def kClashesOLD(coo_arrays, sse_ordered):
     """
     Known minimum distances between various atoms between the SSEs of the smotif
     the first entry is mean and second entry is SD, computed on a sample of 100 lowest distances observed over single

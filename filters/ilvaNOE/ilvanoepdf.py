@@ -59,7 +59,12 @@ def checkNoe(atom1_coor, atom2_coor, noedef):
             x2, y2, z2 = atom2_coor[0][j], atom2_coor[1][j], atom2_coor[2][j]
             dist = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
             dist = round(dist, 2)
-            if (dist <= (noedef[4] + noedef[6])) and (dist >= (noedef[4] - noedef[5])):
+
+            if dist <= 1.8:
+                dist_array.append(999.999)
+                error_array.append(999.999)
+
+            elif (dist <= (noedef[4] + noedef[6])) and (dist >= (noedef[4] - noedef[5])):
                 noe_bool = True
                 return noe_bool, dist, 0.0, 0.0
             else:

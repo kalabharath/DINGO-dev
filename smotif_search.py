@@ -267,7 +267,7 @@ def sXSmotifSearch(task):
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
             if loop_constraint:
                 # Check whether the SSEs with in the assembled smotifs are clashing to one another
-                no_clashes = qcp.kClashes(transformed_coos, sse_ordered)
+                no_clashes = qcp.kClashes(transformed_coos, sse_ordered, current_ss)
             else:
                 no_clashes = False
         else:
@@ -277,7 +277,6 @@ def sXSmotifSearch(task):
 
             # Prepare temporary arrays to log the data.
             tlog, total_percent, pcs_tensor_fits, rdc_tensor_fits = [], [], [], []
-
             tlog.append(['smotif', csmotif_data[i]])
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
@@ -355,9 +354,6 @@ def sXSmotifSearch(task):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
                 tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
                 print "hit", tpdbid, noe_probability, no_of_noes, ref_rmsd
-
-
-
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
                 dump_log.append(tlog)

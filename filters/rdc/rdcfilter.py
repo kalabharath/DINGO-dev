@@ -283,8 +283,9 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     :param stage:
     :return:
     """
-
-    rdc_vectors = getVectorData2(transformed_coos, sse_ordered, exp_data['rdc_data'])
+    import copy
+    transformed_coosc = copy.deepcopy(transformed_coos)
+    rdc_vectors = getVectorData2(transformed_coosc, sse_ordered, exp_data['rdc_data'])
     pred_axial = exp_data['pred_axial']
     exp_error = exp_data['exp_error']
     abs_exp_error = exp_data['abs_exp_error']
