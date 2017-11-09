@@ -26,7 +26,7 @@ def rank_assembly(dump_log, num_hits):
         # initialize total score array
         #if hit[4][0] == 'NOE_filter':
         noe_energy = hit[5][3]
-        noe_energy = round(noe_energy, 2)
+        noe_energy = round(noe_energy, 3)
         new_dict[noe_energy].append(hit)
 
     keys = new_dict.keys()
