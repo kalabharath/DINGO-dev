@@ -164,7 +164,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     error_array = []
 
     max_noe_limit = 10.0
-    max_violations = 10
+    max_violations = 5
     noes_found = 0.0
     total_noes = 0.0
     ss1_list = range(s1_def[4], s1_def[5] + 1)
@@ -347,7 +347,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
     error_array = copy.deepcopy(sorted_noe_data[3])
 
     max_noe_limit = 10.0
-    max_violations = 10
+    max_violations = 5
     unsatisfied_noes = []
 
     noes_found = len(satisfied_noes)

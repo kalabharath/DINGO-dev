@@ -448,7 +448,7 @@ def kClashes(coo_arrays, sse_ordered, current_ss):
     Known minimum distances between various atoms between the SSEs of the smotif
     the first entry is mean and second entry is SD, computed on a sample of 100 lowest distances observed over single
     digit smotifs that have the largest number of entries.
-    
+
     """
 
     # [['strand', 15, 10, 3, 59, 73], ['strand', 15, 3, 13, 77, 91], ['strand', 14, 11, 4, 103, 116]]
