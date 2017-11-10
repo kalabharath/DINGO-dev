@@ -86,10 +86,10 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
     fraglen = 5
 
     all_spin_coors = []
-    #count = 0
-    for cluster in rotamer_cluster:
+    all_cluster_coors = []
+    count = 0
+    for data in rotamer_cluster:
 
-        data = readPickle(cluster)
         rbbc = processRBBC(copy.deepcopy(data[0]))
         fragb, b_cen = centerCoo(rbbc)
 
@@ -117,7 +117,8 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             rot_cluster_coors = applyRot(cm_cluster_coors, rotmat)
             trans_cluster_coors = applyTranslation(rot_cluster_coors, a_cen)
             spin_coors = extractSpinCoo(trans_cluster_coors, spin, res_type)
-            #all_spin_coors = extend_array(all_spin_coors, trans_spin_coors)
+            all_spin_coors = extend_array(all_spin_coors, spin_coors)
+            all_cluster_coors = extend_array(all_cluster_coors, trans_cluster_coors)
 
             qcprot.FreeDMatrix(xyz1)
             qcprot.FreeDMatrix(xyz2)
@@ -137,10 +138,13 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
                 qcprot.FreeDArray(rot)
                 return trans_spin_coors
             """
-            return spin_coors, trans_cluster_coors
-        qcprot.FreeDMatrix(xyz1)
-        qcprot.FreeDMatrix(xyz2)
-        qcprot.FreeDArray(rot)
+            count += 1
+            if count == 2:
+                return all_spin_coors, all_cluster_coors
 
+        #qcprot.FreeDMatrix(xyz1)
+        #qcprot.FreeDMatrix(xyz2)
+        #qcprot.FreeDArray(rot)
 
-    return all_spin_coors, all_spin_coors
+    return all_spin_coors, all_cluster_coors
+

@@ -1,6 +1,7 @@
 import math
 import numpy
 import copy
+import utility.io_util as io
 import bbRMSD
 
 
@@ -39,8 +40,8 @@ def getBackboneCoors(ss_list, smotif):
 def getILVARotamers(res_type, bbc, spin):
     import glob, os
     cwd = (os.path.dirname(os.path.realpath(__file__)))
-    file_name = cwd + '/sidechainRotamers/' + res_type + "_sc/*.pickle"
-    rotamers = glob.glob(file_name)
+    file_name = cwd + '/sidechainRotamers/' + res_type + "_sc.pickle"
+    rotamers = io.readPickle(file_name)
     rmsd_cutoff = 0.1
     bbc = processBBC(bbc)
     spin_coors, cluster_coors = bbRMSD.bbrmsd(bbc, rotamers, rmsd_cutoff, spin, res_type)
@@ -290,14 +291,11 @@ def getSxbbCoorMatrix(coor_array, native_sse):
 def getSxILVARotamers(res_type, bbc, spin):
     import glob, os
     cwd = (os.path.dirname(os.path.realpath(__file__)))
-    file_name = cwd + '/sidechainRotamers/' + res_type + "_sc/*.pickle"
-    rotamers = glob.glob(file_name)
+    file_name = cwd + '/sidechainRotamers/' + res_type + "_sc.pickle"
+    rotamers = io.readPickle(file_name)
     rmsd_cutoff = 0.1
-
     spin_coors, cluster_coors = bbRMSD.bbrmsd(bbc, rotamers, rmsd_cutoff, spin, res_type)
-
     return spin_coors, cluster_coors
-
 
 def getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, cluster_sidechains, resi):
     methyls = {'I': ['HG2', 'HD1'], 'L': ['HD1', 'HD2', 'HD'], 'V': ['HG1', 'HG2', 'HG'], 'A': ['HB']}
