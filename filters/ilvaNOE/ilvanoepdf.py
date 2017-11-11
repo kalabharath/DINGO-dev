@@ -164,8 +164,11 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     impossible_noes = []
     error_array = []
 
-    max_noe_limit = 10.0
-    max_violations = 5
+    #max_noe_limit = 10.0
+    #max_violations = 5
+    max_noe_limit = exp_data['max_noe_dist']
+    max_violations = exp_data['max_violations']
+
     noes_found = 0.0
     total_noes = 0.0
     ss1_list = range(s1_def[4], s1_def[5] + 1)
@@ -344,8 +347,11 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
     noe_data = copy.deepcopy(sorted_noe_data[2])
     error_array = copy.deepcopy(sorted_noe_data[3])
 
-    max_noe_limit = 10.0
-    max_violations = 5
+    #max_noe_limit = 6.0
+    #max_violations = 1
+
+    max_noe_limit = exp_data['max_noe_dist']
+    max_violations = exp_data['max_violations']
     unsatisfied_noes = []
 
     noes_found = len(satisfied_noes)
@@ -420,7 +426,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             else:
                 print "2+:WTH did i miss"
 
-        
+
         count += 1.0
         if count >= (len(smotif_noe_data) / 2.0):
             tprob = noes_found / total_noes
