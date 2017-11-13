@@ -64,6 +64,8 @@ def rank_assembly(dump_log, num_hits):
                         seqs.append(smotif_seq)
                         reduced_dump_log.append(hit)
                         count_hits += 1
+                        if count_hits >= num_hits:
+                            break
                     if count_hits >= num_hits:
                         break
             if count_hits >= num_hits:
