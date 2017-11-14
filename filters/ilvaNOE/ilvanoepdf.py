@@ -142,7 +142,10 @@ def extractUnSatisfiedNoes(noes_found, impossible_noes, data):
             unsatisfied.append(entry)
     return unsatisfied
 
-
+def getNOEenergy(error_array, total_noes):
+    noe_energy = numpy.sum(error_array)
+    noe_energy = noe_energy / float(total_noes)
+    return noe_energy / math.pow(total_noes, 1 / 3.0)
 
 def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     """
@@ -249,8 +252,13 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
             tprob = noes_found / total_noes
             threshold = exp_data['expected_noe_prob'][stage - 1]
             #threshold = threshold - 0.1
+            noeenergy = getNOEenergy(error_array, total_noes)
             if tprob < threshold:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+            elif noeenergy > 10.0:
+                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+            else:
+                pass
 
     noe_energy = numpy.sum(error_array)
     noe_energy = noe_energy/float(total_noes)
