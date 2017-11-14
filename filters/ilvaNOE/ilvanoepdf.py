@@ -245,7 +245,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
 
 
         count += 1.0
-        if count >= (len(smotif_noe_data) / 2.0):
+        if count >= (len(smotif_noe_data) / 3.0):
             tprob = noes_found / total_noes
             threshold = exp_data['expected_noe_prob'][stage - 1]
             #threshold = threshold - 0.1
