@@ -384,6 +384,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
 
     count = 0.0
     tol_noe_count = 0
+    test_halfway = False
     for noedef in smotif_noe_data:
 
         if len(noedef) == 9:
@@ -436,7 +437,14 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
 
 
         count += 1.0
+
+        if test_halfway:
+            continue
+        else:
+            pass
+
         if count >= (len(smotif_noe_data) / 3.0):
+            test_halfway = True
             tprob = noes_found / total_noes
             threshold = exp_data['expected_noe_prob'][stage - 1]
             #threshold = threshold - 0.1
