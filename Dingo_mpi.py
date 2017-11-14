@@ -134,7 +134,7 @@ if rank == 0:
         sse_index = 0
     io.dumpGzipPickle(str(sse_index) + "_tophits.gzip", ranked_data)
     # Rename temprary files
-    #util.rename_pickle(sse_index)
+    util.rename_pickle(sse_index)
     print "All Done, Master exiting"
     exit()
 
