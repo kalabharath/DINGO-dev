@@ -437,12 +437,12 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
 
 
         count += 1.0
-
+        """
         if test_halfway:
             continue
         else:
             pass
-
+        """
         if count >= (len(smotif_noe_data) / 3.0):
             test_halfway = True
             tprob = noes_found / total_noes
