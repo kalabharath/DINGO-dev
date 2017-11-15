@@ -294,10 +294,10 @@ def makeTopPickle2(previous_smotif_index, num_hits, stage):
     for hit in hits:
         # thread_data contains data from each search and filter thread.
 
-        if hit[4][0] == 'NOE_filter':
-            noe_energy = hit[5][3]
-            noe_energy = round(noe_energy, 2)
-            new_dict[noe_energy].append(hit)
+
+        noe_energy = hit[5][3]
+        noe_energy = round(noe_energy, 4)
+        new_dict[noe_energy].append(hit)
 
 
     keys = new_dict.keys()
@@ -309,6 +309,10 @@ def makeTopPickle2(previous_smotif_index, num_hits, stage):
     count_hits = 0
     for i in range(len(keys)):
         entries = new_dict[keys[i]]
+
+        if count_hits >= num_hits:
+            break
+
         if len(entries) == 1:
             smotif_seq = entries[0][4][1]
             if smotif_seq not in seqs:
@@ -316,6 +320,8 @@ def makeTopPickle2(previous_smotif_index, num_hits, stage):
                 reduced_dump_log.append(entries[0])
                 print "final sele", entries[0][0][1][0][0], keys[i]
                 count_hits += 1
+                if count_hits >= num_hits:
+                    break
         else:
             t2_log = collections.defaultdict(list)
             for hit in entries:
@@ -338,6 +344,8 @@ def makeTopPickle2(previous_smotif_index, num_hits, stage):
                         print "final sele", hit[0][1][0][0], keys[i], rdc_score_bins[k]
                     if count_hits >= num_hits:
                         break
+                if count_hits >= num_hits:
+                    break
             if count_hits >= num_hits:
                 break
             else:
