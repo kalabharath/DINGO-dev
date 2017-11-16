@@ -451,7 +451,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             noeenergy = getNOEenergy(error_array, total_noes)
             if tprob < threshold:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            elif noeenergy > 10.0:
+            elif noeenergy > 1.0:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
             else:
                 pass
