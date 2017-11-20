@@ -40,12 +40,16 @@ def killall(processes):
     :param processes:
     :return: True or False
     """
-    for i in range(0, processes - 1):
+    count = 0
+    while True:
         data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
         source = status.Get_source()
         tag = status.Get_tag()
         if tag == tags.READY:
             comm.send(None, dest=source, tag=tags.EXIT)
+            count += 1
+        if count == processes -1:
+            break
     return True
 
 
@@ -93,6 +97,14 @@ if rank == 0:
     ##################################  Generate and distribute job index array ########################################
 
     stime = time.time()
+
+    try:
+        if len(tasks):
+            pass
+    except:
+        print "killing all processes!"
+        killall(size)
+        exit()
 
     # print tasks, len(tasks) # this will be the new tasks
     task_index = 0  # control the number of processes with this index number

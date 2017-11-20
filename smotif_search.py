@@ -159,7 +159,6 @@ def S1SmotifSearch(task):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
-            print "hit", tpdbid, noe_probability, no_of_noes, ref_rmsd
 
         # Dump the data to the disk
         if pcs_tensor_fits or noe_probability:
@@ -353,7 +352,8 @@ def sXSmotifSearch(task):
             if 'reference_ca' in exp_data_types:
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
                 tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
-                print "hit", tpdbid, noe_probability, no_of_noes, noe_energy, ref_rmsd
+
+
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
                 dump_log.append(tlog)

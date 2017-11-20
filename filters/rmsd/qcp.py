@@ -31,7 +31,7 @@ def dumpPDBCoo(coo_array):
 
 def dumpPDBCoo2(coo_array):
     """
- 
+
     :param coo_array:
     :return:
     """
