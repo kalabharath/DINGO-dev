@@ -39,7 +39,7 @@ def S1SmotifSearch(task):
 
     if not smotif_data:
         # If the smotif library doesn't exist, terminate further execution.
-        return True
+        return False
 
     dump_log = []
 
@@ -96,32 +96,15 @@ def S1SmotifSearch(task):
         smotif_seq, seq_identity = Sfilter.getS1SeqIdentity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity])
 
-        """
-        if 'reference_ca' in exp_data_types:
-            ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
-            tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
-            if ref_rmsd < 8.0:
-                print "hit", tpdbid, ref_rmsd
-            else:
-                continue
-
-        """
         # ************************************************
         # Unambiguous NOE score filter
         # uses experimental ambiguous noe data to filter Smotifs
         # scoring based on f-measure?
         # ************************************************
-        """
-        if 'noe_data' in exp_data_types:
-            noe_probability, local_noe_probability, no_of_noes = Noe.S1NOEprob(s1_def, s2_def, smotif_data[i], exp_data)
-            if local_noe_probability >= exp_data['noe_fmeasure'][stage - 1]:
-                tlog.append(['NOE_filter', noe_probability, no_of_noes])
-            else:
-                continue
 
-        """
         if 'ilva_noes' in exp_data_types:
             noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons, cluster_sidechains = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data, stage)
+
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                 tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons, cluster_sidechains])
             else:
@@ -159,7 +142,7 @@ def S1SmotifSearch(task):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD(exp_data['reference_ca'], s1_def, s2_def, smotif_data[i], rmsd_cutoff=100.0)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
-
+            print "hit", ref_rmsd, noe_energy
         # Dump the data to the disk
         if pcs_tensor_fits or noe_probability:
             dump_log.append(tlog)

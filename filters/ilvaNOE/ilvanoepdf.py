@@ -248,14 +248,14 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
 
 
         count += 1.0
-        if count >= (len(smotif_noe_data) / 3.0):
+        if count >= (len(smotif_noe_data) / 2.0):
             tprob = noes_found / total_noes
             threshold = exp_data['expected_noe_prob'][stage - 1]
             #threshold = threshold - 0.1
             noeenergy = getNOEenergy(error_array, total_noes)
             if tprob < threshold:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            elif noeenergy > 10.0:
+            elif noeenergy > 1.0:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
             else:
                 pass
@@ -451,11 +451,10 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             noeenergy = getNOEenergy(error_array, total_noes)
             if tprob < threshold:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            elif noeenergy > 2.0:
+            elif noeenergy > 1.0:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
             else:
                 pass
-
 
     noe_energy = numpy.sum(error_array)
     noe_energy = noe_energy/float(total_noes)
