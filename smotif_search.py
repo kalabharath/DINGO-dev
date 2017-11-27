@@ -7,7 +7,6 @@ Aufthor: kalabharath, Email: kalabharath@gmail.com
 """
 import filters.constraints.looplengthConstraint as llc
 import filters.ilvaNOE.ilvanoepdf as noepdf
-import filters.noe.BayesianNoeFilter  as Noe
 import filters.pcs.pcsfilter as Pfilter
 import filters.rdc.rdcfilter as Rfilter
 import filters.rmsd.RefRmsd as ref
