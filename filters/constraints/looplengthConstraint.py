@@ -75,16 +75,16 @@ def loopConstraint(coo_arrays, sseorder, direction, smotif_def):
     stat_std = 0
     if smotif_def[0] == 'hh':
         stat_dist = nhh_dict[loop_length]
-        stat_std = 2* (hh_std[loop_length])
+        stat_std = 3* (hh_std[loop_length])
     if smotif_def[0] == 'hs':
         stat_dist = nhs_dict[loop_length]
-        stat_std = 2* (hs_std[loop_length])
+        stat_std = 3* (hs_std[loop_length])
     if smotif_def[0] == 'sh':
         stat_dist = nsh_dict[loop_length]
-        stat_std = 2* (sh_std[loop_length])
+        stat_std = 3* (sh_std[loop_length])
     if smotif_def[0] == 'ss':
         stat_dist = nss_dict[loop_length]
-        stat_std = 2* (ss_std[loop_length])
+        stat_std = 3* (ss_std[loop_length])
 
     if stat_dist - stat_std <= Ndist <= stat_dist + stat_std:
         return True
