@@ -86,10 +86,10 @@ def loopConstraint(coo_arrays, sseorder, direction, smotif_def):
         stat_dist = nss_dict[loop_length]
         stat_std = 3* (ss_std[loop_length])
 
-    if stat_dist - stat_std <= Ndist <= stat_dist + stat_std:
-        return True
-    else:
+    if  Ndist > stat_dist + stat_std:
         return False
+    else:
+        return True
 
 
 """
