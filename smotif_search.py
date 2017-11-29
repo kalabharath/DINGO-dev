@@ -263,10 +263,10 @@ def sXSmotifSearch(task):
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
             if stage == 2:
-                cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
+                cathcodes, parent_smotifs = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
             else:
-                cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
-            tlog.append(['cathcodes', cathcodes])
+                cathcodes, parent_smotifs = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
+            tlog.append(['cathcodes', cathcodes, parent_smotifs])
 
             # ************************************************
             # Sequence filter

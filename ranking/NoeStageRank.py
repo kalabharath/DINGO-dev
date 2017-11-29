@@ -3,6 +3,9 @@ import math
 
 import utility.stage2_util as s2util
 
+def limitParents(rank_dump_log):
+
+    return True
 
 def rank_assembly(dump_log, num_hits):
     #rank_top_hits = exp_data['rank_top_hits']
@@ -35,6 +38,7 @@ def rank_assembly(dump_log, num_hits):
 
     reduced_dump_log = []
     seqs = []
+    parents = []
     count_hits = 0
 
     for i in range(len(keys)):
@@ -45,8 +49,10 @@ def rank_assembly(dump_log, num_hits):
 
         if len(entries) == 1:
             smotif_seq = entries[0][4][1]
-            if smotif_seq not in seqs:
+            smotif_parents = entries[0][2][2]
+            if (smotif_seq not in seqs) and (smotif_parents not in parents):
                 seqs.append(smotif_seq)
+                parents.append(smotif_parents)
                 reduced_dump_log.append(entries[0])
                 count_hits += 1
                 print "final sele", entries[0][0][1][0][0], keys[i]
@@ -67,8 +73,10 @@ def rank_assembly(dump_log, num_hits):
                 hits = t2_log[rdc_score_bins[k]]
                 for hit in hits:
                     smotif_seq = hit[4][1]
-                    if smotif_seq not in seqs:
+                    smotif_parents = hit[2][2]
+                    if (smotif_seq not in seqs) and (smotif_parents not in parents):
                         seqs.append(smotif_seq)
+                        parents.append(smotif_parents)
                         reduced_dump_log.append(hit)
                         print "final sele", hit[0][1][0][0], keys[i], rdc_score_bins[k]
                         count_hits += 1
