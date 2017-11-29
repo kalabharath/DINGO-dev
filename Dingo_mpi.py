@@ -154,7 +154,7 @@ if rank == 0:
 # On the worker processes
 else:
 
-    while True:  # initiaite infinite loop
+    while True:  # initiate infinite loop
         comm.send(None, dest=0, tag=tags.READY)
         # Signal the master process that you are READY
 
