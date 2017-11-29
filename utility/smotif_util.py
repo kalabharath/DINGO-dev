@@ -87,6 +87,13 @@ def orderSeq(previous_smotif, current_seq, direction):
     return concat_seq
 
 
+def array2string(array):
+    string = ''
+    for entry in array:
+        for t in entry:
+            string = string+str(t)
+    return string
+
 def orderCATH(previous_smotif, current_smotif, direction):
     """
 
@@ -102,6 +109,7 @@ def orderCATH(previous_smotif, current_smotif, direction):
         if entry[0] == 'cathcodes':
             previous_cath = (entry[1])[:]
     parent_smotifs = previous_cath [:]
+    parent_smotifs = array2string(parent_smotifs)
     if direction == 'left':
         previous_cath.insert(0, current_smotif)
     else:

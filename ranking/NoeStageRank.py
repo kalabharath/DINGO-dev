@@ -3,13 +3,19 @@ import math
 
 import utility.stage2_util as s2util
 
-def limitParents(rank_dump_log):
-
+def limitParents(current_parent, smotif_parents):
+    count = 0
+    if len(smotif_parents) == 0:
+        return True
+    for sp in smotif_parents:
+        if sp == current_parent:
+            count += 1
+            if count > 4:
+                return False
     return True
 
 def rank_assembly(dump_log, num_hits):
-    #rank_top_hits = exp_data['rank_top_hits']
-    #num_hits = rank_top_hits[stage - 1]
+
 
     new_dict = collections.defaultdict(list)
 
@@ -29,7 +35,7 @@ def rank_assembly(dump_log, num_hits):
         # initialize total score array
         #if hit[4][0] == 'NOE_filter':
         noe_energy = hit[5][3]
-        noe_energy = round(noe_energy, 4)
+        noe_energy = round(noe_energy, 3)
         new_dict[noe_energy].append(hit)
 
     keys = new_dict.keys()
@@ -50,7 +56,7 @@ def rank_assembly(dump_log, num_hits):
         if len(entries) == 1:
             smotif_seq = entries[0][4][1]
             smotif_parents = entries[0][2][2]
-            if (smotif_seq not in seqs) and (smotif_parents not in parents):
+            if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                 seqs.append(smotif_seq)
                 parents.append(smotif_parents)
                 reduced_dump_log.append(entries[0])
@@ -74,7 +80,8 @@ def rank_assembly(dump_log, num_hits):
                 for hit in hits:
                     smotif_seq = hit[4][1]
                     smotif_parents = hit[2][2]
-                    if (smotif_seq not in seqs) and (smotif_parents not in parents):
+                    #if (smotif_seq not in seqs) and (smotif_parents not in parents):
+                    if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                         seqs.append(smotif_seq)
                         parents.append(smotif_parents)
                         reduced_dump_log.append(hit)
