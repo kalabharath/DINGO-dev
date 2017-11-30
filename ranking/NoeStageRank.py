@@ -59,6 +59,7 @@ def rank_assembly(dump_log, num_hits):
             if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                 seqs.append(smotif_seq)
                 parents.append(smotif_parents)
+                print parents
                 reduced_dump_log.append(entries[0])
                 count_hits += 1
                 print "final sele", entries[0][0][1][0][0], keys[i]
@@ -84,6 +85,7 @@ def rank_assembly(dump_log, num_hits):
                     if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                         seqs.append(smotif_seq)
                         parents.append(smotif_parents)
+                        print parents
                         reduced_dump_log.append(hit)
                         print "final sele", hit[0][1][0][0], keys[i], rdc_score_bins[k]
                         count_hits += 1
