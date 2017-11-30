@@ -55,7 +55,7 @@ def rank_assembly(dump_log, num_hits):
 
         if len(entries) == 1:
             smotif_seq = entries[0][4][1]
-            smotif_parents = entries[0][2][2]
+            smotif_parents = entries[0][3][2]
             if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                 seqs.append(smotif_seq)
                 parents.append(smotif_parents)
@@ -80,7 +80,7 @@ def rank_assembly(dump_log, num_hits):
                 hits = t2_log[rdc_score_bins[k]]
                 for hit in hits:
                     smotif_seq = hit[4][1]
-                    smotif_parents = hit[2][2]
+                    smotif_parents = hit[3][2]
                     #if (smotif_seq not in seqs) and (smotif_parents not in parents):
                     if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                         seqs.append(smotif_seq)
