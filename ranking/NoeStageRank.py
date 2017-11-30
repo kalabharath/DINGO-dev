@@ -10,7 +10,7 @@ def limitParents(current_parent, smotif_parents):
     for sp in smotif_parents:
         if sp == current_parent:
             count += 1
-            if count > 4:
+            if count > 5:
                 return False
     return True
 
