@@ -111,6 +111,15 @@ if 'max_violations' in datatypes:
 else:
     pass
 
+if 'noe_energy_cutoff' in datatypes:
+    noe_energy_cutoff = data['noe_energy_cutoff']
+    noe_energy_cutoff = noe_energy_cutoff.split()
+    noe_energy_cutoff = [float(i) for i in noe_energy_cutoff]
+    data_dict['noe_energy_cutoff'] = noe_energy_cutoff
+    print noe_energy_cutoff
+else:
+    pass
+
 
 if 'exp_error' in datatypes:
     exp_error = data['exp_error']

@@ -3,7 +3,7 @@ import numpy
 import copy
 import utility.io_util as io
 import bbRMSD
-
+import os
 
 def getHCoorMatrix(ss_list, smotif):
     # change this to match the format from bbrmsd
@@ -38,7 +38,7 @@ def getBackboneCoors(ss_list, smotif):
 
 
 def getILVARotamers(res_type, bbc, spin):
-    import glob, os
+
     cwd = (os.path.dirname(os.path.realpath(__file__)))
     file_name = cwd + '/sidechainRotamers/' + res_type + "_sc.pickle"
     rotamers = io.readPickle(file_name)
@@ -171,6 +171,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
     #max_violations = 5
     max_noe_limit = exp_data['max_noe_dist']
     max_violations = exp_data['max_violations']
+    noe_energy_cutoff = exp_data['noe_energy_cutoff']
 
     noes_found = 0.0
     total_noes = 0.0
@@ -255,7 +256,7 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
             noeenergy = getNOEenergy(error_array, total_noes)
             if tprob < threshold:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            elif noeenergy > 0.5:
+            elif noeenergy > noe_energy_cutoff:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
             else:
                 pass
@@ -348,8 +349,6 @@ def getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, cluster_sid
 def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, cluster_protons, cluster_sidechains, exp_data, stage):
 
     sse_coors = copy.deepcopy(transformed_coors)
-
-
     satisfied_noes = copy.deepcopy(sorted_noe_data[0])
     impossible_noes = copy.deepcopy(sorted_noe_data[1])
     noe_data = copy.deepcopy(sorted_noe_data[2])
@@ -360,6 +359,7 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
 
     max_noe_limit = exp_data['max_noe_dist']
     max_violations = exp_data['max_violations']
+    noe_energy_cutoff = exp_data['noe_energy_cutoff']
     unsatisfied_noes = []
 
     noes_found = len(satisfied_noes)
@@ -437,21 +437,14 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
 
 
         count += 1.0
-        """
-        if test_halfway:
-            continue
-        else:
-            pass
-        """
+
         if count >= (len(smotif_noe_data) / 2.0):
-            test_halfway = True
             tprob = noes_found / total_noes
             threshold = exp_data['expected_noe_prob'][stage - 1]
-            #threshold = threshold - 0.1
             noeenergy = getNOEenergy(error_array, total_noes)
             if tprob < threshold:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            elif noeenergy > 0.1:
+            elif noeenergy > noe_energy_cutoff:
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
             else:
                 pass
