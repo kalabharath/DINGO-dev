@@ -84,10 +84,10 @@ def S1SmotifSearch(task):
 
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
-        parents_smotifs = sm.array2string([smotif_data[i][0]])
-        tlog.append(['cathcodes', [smotif_data[i][0]], parents_smotifs])
+        parent_smotifs = sm.array2string([smotif_data[i][0]])
+        print parent_smotifs
         tlog.append(['qcp_rmsd'])
-
+        tlog.append(['cathcodes', [smotif_data[i][0]], parent_smotifs])
         # ************************************************
         # Sequence filter
         # Aligns the smotif seq to target seq and calculates
@@ -158,7 +158,7 @@ def S1SmotifSearch(task):
             print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(dump_log)
         print "num of hits", len(dump_log)
         # io.dumpPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
-        #io.dumpGzipPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
+        io.dumpGzipPickle('0_' + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
         return dump_log
     else:
         return False
