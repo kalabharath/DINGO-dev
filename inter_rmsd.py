@@ -42,7 +42,7 @@ for p in range(0, len(top_result)):
             print entry
         if entry[0] == 'NOE_filter':
             print entry[0:4]
-    coor_arrays = top_struct[2][1]
+    #coor_arrays = top_struct[2][1]
     #print top_struct[2][0]
     #print "no of sse elements", len(coor_arrays)
     ss_list = top_struct[0][-1]
