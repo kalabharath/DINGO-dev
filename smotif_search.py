@@ -85,7 +85,6 @@ def S1SmotifSearch(task):
         tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
         parent_smotifs = sm.array2string([smotif_data[i][0]])
-        print parent_smotifs
         tlog.append(['qcp_rmsd'])
         tlog.append(['cathcodes', [smotif_data[i][0]], parent_smotifs])
         # ************************************************

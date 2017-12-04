@@ -373,58 +373,6 @@ def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
     return rmsd, temp_holder
 
 
-def clahsesOLD(coo_arrays, cdist):
-    """
-    Find the clashes between all the SSEs
-    :param coo_arrays:
-    :return:
-    """
-
-    for i in range(0, len(coo_arrays) - 1):
-        sse1 = getCAcoo(coo_arrays[i])
-        for p in range(i + 1, len(coo_arrays)):
-            sse2 = getCAcoo(coo_arrays[p])
-            for j in range(0, len(sse1[0])):
-                for k in range(0, len(sse2[0])):
-                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                    if dist < cdist:
-                        return False
-    """
-    for i in range(0, len(coo_arrays) - 1):
-        sse1 = getCcoo(coo_arrays[i])
-        for p in range(i + 1, len(coo_arrays)):
-            sse2 = getCcoo(coo_arrays[p])
-            for j in range(0, len(sse1[0])):
-                for k in range(0, len(sse2[0])):
-                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                    if dist < cdist:
-                        return False
-    """
-    return True
-
-
-def clahsesRandom(coo_arrays, cdist):
-    """
-    Find the clashes between all the SSEs, I realised that it is not a good way to do it. The next one Knowledge based
-    clashes (kClashes) is the best way to do it , so far.
-    :param coo_arrays:
-    :return:
-    """
-    atom_array = ['N', 'H', 'CA', 'C', 'O']
-    rand_30 = [2, 0, 1, 0, 3, 4, 4, 3, 3, 3, 0, 4, 1, 1, 2, 2, 1, 0, 4, 0, 2, 2, 1, 2, 1, 4, 3, 2, 4, 3]
-
-    for i in range(0, len(coo_arrays) - 1):
-        sse1 = getXcoo(coo_arrays[i], rand_30[i])
-        for p in range(i + 1, len(coo_arrays)):
-            sse2 = getXcoo(coo_arrays[p], rand_30[i + 1])
-            for j in range(0, len(sse1[0])):
-                for k in range(0, len(sse2[0])):
-                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                    if dist < cdist:
-                        return False
-    return True
-
-
 def getKdist(sse_array, atom_type):
     """
 
@@ -484,45 +432,4 @@ def kClashes(coo_arrays, sse_ordered, current_ss):
                     return False
     return True
 
-def kClashesOLD(coo_arrays, sse_ordered):
-    """
-    Known minimum distances between various atoms between the SSEs of the smotif
-    the first entry is mean and second entry is SD, computed on a sample of 100 lowest distances observed over single
-    digit smotifs that have the largest number of entries.
-    :param coo_arrays:
-    :param cdist:
-    :param sse_ordered:
-    :return:
-    """
 
-    # [['strand', 15, 10, 3, 59, 73], ['strand', 15, 3, 13, 77, 91], ['strand', 14, 11, 4, 103, 116]]
-    # atom_array = ['N', 'H', 'CA', 'C', 'O']
-
-    for i in range(0, len(coo_arrays) - 1):
-        # Compute clashes for amide hydrogen pairs
-        atom_type = 1
-        sse1 = getXcoo(coo_arrays[i], atom_type)
-        for p in range(i + 1, len(coo_arrays)):
-            kdist = getKdist([sse_ordered[i], sse_ordered[p]], atom_type)
-            sse2 = getXcoo(coo_arrays[p], atom_type)
-            for j in range(0, len(sse1[0])):
-                for k in range(0, len(sse2[0])):
-                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                    dist = round(dist, 2)
-                    if dist < kdist:
-                        return False
-
-    for i in range(0, len(coo_arrays) - 1):
-        # Compute clashes for carbonyl carbon pairs
-        atom_type = 3
-        sse1 = getXcoo(coo_arrays[i], atom_type)
-        for p in range(i + 1, len(coo_arrays)):
-            kdist = getKdist([sse_ordered[i], sse_ordered[p]], atom_type)
-            sse2 = getXcoo(coo_arrays[p], atom_type)
-            for j in range(0, len(sse1[0])):
-                for k in range(0, len(sse2[0])):
-                    dist = get_dist([sse1[0][j], sse1[1][j], sse1[2][j]], [sse2[0][k], sse2[1][k], sse2[2][k]])
-                    dist = round(dist, 2)
-                    if dist < kdist:
-                        return False
-    return True
