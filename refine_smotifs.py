@@ -47,42 +47,50 @@ def SmotifRefinement(work):
     refine_pairs = getRefinementIndices(sse_ordered)
     old_noe_energy = task[5][3]
     old_rdc_energy = task[6]
+
     dump_log = []
+    dump_log.append(task)
 
     for pair in refine_pairs:
 
         tlog = []
-        db_entries = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
 
+        db_entries = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
         for smotif in db_entries:
             rmsd_cutoff = exp_data['rmsd_cutoff'][stage - 1]
             transformed_coors, rmsd = qcp.refineRMSD(smotif_coors, pair, smotif, rmsd_cutoff)
             if rmsd <= rmsd_cutoff:
-                tlog.append(['smotif_def', sse_ordered])
-                tlog.append(['qcp_rmsd', transformed_coors, sse_ordered, rmsd])
-                dump_log.append(tlog)
 
-                # check for clashes
                 if qcp.kClahsesRefined(transformed_coors, sse_ordered, pair):
-                    # Recalculate NOE energy
-                    if 'ilva_noes' in exp_data_types:
-                        noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,\
-                        new_cluster_sidechains = noepdf.refineILVA(transformed_coors, sse_ordered, exp_data, stage)
-
-                        if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                            print "rmsd:", rmsd
-                            print "NOE energy", old_noe_energy, noe_energy, noe_probability
-                            tlog.append(
-                                ['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,
-                                 new_cluster_sidechains])
-                        else:
-                            continue
-
-                    if 'rdc_data' in exp_data_types:
-                        rdc_tensor_fits, log_likelihood = Rfilter.RDCAxRhFit2(transformed_coors, sse_ordered,exp_data, stage)
                     pass
                 else:
                     continue
-    if dump_log:
-        io.dumpGzipPickle("tx_" + str(task_index) + ".gzip", dump_log)
+
+                tlog.append(['smotif', smotif[0]])
+                tlog.append(['smotif_def', sse_ordered])
+                tlog.append(['qcp_rmsd', transformed_coors, sse_ordered, rmsd])
+                tlog.append(['cathcodes','figure this out'])
+                tlog.append(['seq_filter', "figure this out"])
+                # check for clashes
+
+                    # Recalculate NOE energy
+                if 'ilva_noes' in exp_data_types:
+                    noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,\
+                    new_cluster_sidechains = noepdf.refineILVA(transformed_coors, sse_ordered, exp_data, stage)
+
+                    if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
+                        print "rmsd:", rmsd
+                        print "NOE energy", old_noe_energy, noe_energy, noe_probability
+                        if noe_energy <= old_noe_energy
+                            tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains])
+                        else:
+                            continue
+
+                if 'rdc_data' in exp_data_types:
+                    rdc_tensor_fits, log_likelihood = Rfilter.RDCAxRhFit2(transformed_coors, sse_ordered,exp_data, stage)
+                    if rdc_tensor_fits:
+                        dump_log.append(tlog)
+
+
+    io.dumpGzipPickle("tx_" + str(task_index) + ".gzip", dump_log)
     return False
