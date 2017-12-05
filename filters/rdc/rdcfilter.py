@@ -170,6 +170,13 @@ def getloglikelihood(error_array, cutoff):
     likelihood = below_error/float(len(error_array))
     return -1 * (math.log(likelihood))
 
+
+def getRDCenergy(rdc_tensors):
+    rdc_score = 0
+    for tensor in rdc_tensors:
+        rdc_score = rdc_score + tensor[0]
+    return rdc_score
+
 def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     """
 
@@ -223,7 +230,8 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
             temp_tensor.append([chisq, tensor])
             tlog_likelihood.append(getloglikelihood(info["fvec"], exp_error[0]))
     if len(temp_tensor) == len(rdc_vectors):
-        return temp_tensor, np.product(tlog_likelihood)
+        rdc_energy = getRDCenergy(temp_tensor)
+        return temp_tensor, np.product(tlog_likelihood), rdc_energy
     else:
         return [], 0.0
 
@@ -272,6 +280,7 @@ def getVectorData2(transformed_coos, sse_ordered, rdc_data):
         rdc_vector.append(t_rdc_vector)
 
     return rdc_vector
+
 
 
 def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
@@ -330,6 +339,7 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
             temp_tensor.append([chisq, tensor])
 
     if len(temp_tensor) == len(rdc_vectors):
-        return temp_tensor, np.product(tlog_likelihood)
+        rdc_energy = getRDCenergy(temp_tensor)
+        return temp_tensor, np.product(tlog_likelihood), rdc_energy
     else:
         return [], 0.0

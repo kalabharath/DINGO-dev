@@ -108,7 +108,7 @@ if rank == 0:
         if tag == tags.READY:
             # worker process is ready, send some task to do.
             if task_index < len(tasks):
-                comm.send([tasks[task_index], args.stage], dest=source, tag=tags.START)
+                comm.send([tasks[task_index], args.stage, task_index], dest=source, tag=tags.START)
                 task_index += 1  # increment its
             else:
                 # everything is done, send exit signal
@@ -126,13 +126,11 @@ if rank == 0:
             closed_workers += 1
     #consolidate top_hits and dump files here
     print "Total number of hits  found are : ",len(total_data)
-    ranked_data = rank_assembly(total_data, args.numhits)
-    print len(ranked_data)
-    if args.stage == 1:
-        sse_index = 0
-    io.dumpGzipPickle(str(sse_index) + "_tophits.gzip", ranked_data)
+    #ranked_data = rank_assembly(total_data, args.numhits)
+    #print len(ranked_data)
+    #io.dumpGzipPickle(str(sse_index) + "_tophits.gzip", ranked_data)
     # Rename temprary files
-    util.rename_pickle(sse_index)
+    #util.rename_pickle(sse_index)
     print "All Done, Master exiting"
     exit()
 

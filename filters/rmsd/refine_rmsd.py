@@ -13,8 +13,10 @@ def combine_arrays(array1, array2):
 
 def refineRMSD(smotif_coors, pair, csmotif, rmsd_cutoff):
 
-    frag_a1 = copy.deepcopy(smotif_coors[pair[0]])
-    frag_a2 = copy.deepcopy(smotif_coors[pair[1]])
+    tsmotif_coors = copy.deepcopy(smotif_coors)
+
+    frag_a1 = tsmotif_coors[pair[0]]
+    frag_a2 = tsmotif_coors[pair[1]]
     frag_a = combine_arrays(frag_a1, frag_a2)
 
     frag_b1 = getcoo(csmotif[1])
@@ -54,34 +56,34 @@ def refineRMSD(smotif_coors, pair, csmotif, rmsd_cutoff):
         qcprot.FreeDMatrix(xyz2)
         qcprot.FreeDArray(rot)
         return [], rmsd
+    else:
+
+        rotmat = [None] * 9
+        for i in range(0, 9):
+            rotmat[i] = qcprot.GetDvector(i, rot)
+
+        cm_frag_b1 = translateCM(frag_b1, b_cen)
+        cm_frag_b2 = translateCM(frag_b2, b_cen)
+
+        rot_frag_b1 = applyRot(cm_frag_b1, rotmat)
+        rot_frag_b2 = applyRot(cm_frag_b2, rotmat)
+
+        trans_frag_b1 = applyTranslation(rot_frag_b1, a_cen)
+        trans_frag_b2 = applyTranslation(rot_frag_b2, a_cen)
+
+        tsmotif_coors.pop(pair[0])
+        tsmotif_coors.insert(pair[0], trans_frag_b1)
+
+        tsmotif_coors.pop(pair[1])
+        tsmotif_coors.insert(pair[1], trans_frag_b2)
 
 
-    rotmat = [None] * 9
-    for i in range(0, 9):
-        rotmat[i] = qcprot.GetDvector(i, rot)
-
-    cm_frag_b1 = translateCM(frag_b1, b_cen)
-    cm_frag_b2 = translateCM(frag_b2, b_cen)
-
-    rot_frag_b1 = applyRot(cm_frag_b1, rotmat)
-    rot_frag_b2 = applyRot(cm_frag_b2, rotmat)
-
-    trans_frag_b1 = applyTranslation(rot_frag_b1, a_cen)
-    trans_frag_b2 = applyTranslation(rot_frag_b2, a_cen)
-
-    smotif_coors.pop(pair[0])
-    smotif_coors.insert(pair[0], trans_frag_b1)
-
-    smotif_coors.pop(pair[1])
-    smotif_coors.insert(pair[1], trans_frag_b2)
+        qcprot.FreeDMatrix(xyz1)
+        qcprot.FreeDMatrix(xyz2)
+        qcprot.FreeDArray(rot)
 
 
-    qcprot.FreeDMatrix(xyz1)
-    qcprot.FreeDMatrix(xyz2)
-    qcprot.FreeDArray(rot)
-
-
-    return smotif_coors, rmsd
+        return tsmotif_coors, rmsd
 
 
 def kClahsesRefined(coo_arrays, sse_ordered, sse_pairs):
@@ -94,12 +96,8 @@ def kClahsesRefined(coo_arrays, sse_ordered, sse_pairs):
             return True
         else:
             return False
-
     else:
         return False
-
-
-
 
 def kClashesOLD(coo_arrays, sse_ordered):
     """

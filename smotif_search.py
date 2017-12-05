@@ -116,9 +116,9 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'rdc_data' in exp_data_types:
-            rdc_tensor_fits, log_likelihood = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
+            rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             if rdc_tensor_fits:
-                tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood])
+                tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
             else:
                 continue
 
@@ -297,7 +297,8 @@ def sXSmotifSearch(task):
                                                                                               cluster_protons, cluster_sidechains, exp_data, stage)
 
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                    tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains])
+                    tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,
+                                 new_cluster_sidechains])
                 else:
                     continue
 
@@ -308,9 +309,9 @@ def sXSmotifSearch(task):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                rdc_tensor_fits, log_likelihood = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage)
+                rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage)
                 if rdc_tensor_fits:
-                    tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood])
+                    tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
                 else:
                     # Do not execute any further
                     continue

@@ -15,13 +15,14 @@ def limitParents(current_parent, smotif_parents):
     return True
 
 def rank_assembly(dump_log, num_hits):
+    """
 
+    :param dump_log:
+    :param num_hits:
+    :return:
+    """
 
     new_dict = collections.defaultdict(list)
-
-    """
-
-    """
 
     for hit in dump_log:
         # thread_data contains data from each search and filter thread.
