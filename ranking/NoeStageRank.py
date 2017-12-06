@@ -47,7 +47,7 @@ def rank_assembly(dump_log, num_hits):
 
     reduced_dump_log = []
     seqs = []
-    parents = []
+    #parents = []
     count_hits = 0
 
     for i in range(len(keys)):
@@ -58,10 +58,11 @@ def rank_assembly(dump_log, num_hits):
 
         if len(entries) == 1:
             smotif_seq = entries[0][4][1]
-            smotif_parents = entries[0][3][2]
-            if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
+            #smotif_parents = entries[0][3][2]
+            if (smotif_seq not in seqs):
+            #if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                 seqs.append(smotif_seq)
-                parents.append(smotif_parents)
+                #parents.append(smotif_parents)
                 #print parents
                 reduced_dump_log.append(entries[0])
                 count_hits += 1
@@ -83,11 +84,11 @@ def rank_assembly(dump_log, num_hits):
                 hits = t2_log[rdc_score_bins[k]]
                 for hit in hits:
                     smotif_seq = hit[4][1]
-                    smotif_parents = hit[3][2]
-                    #if (smotif_seq not in seqs) and (smotif_parents not in parents):
-                    if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
+                    #smotif_parents = hit[3][2]
+                    if (smotif_seq not in seqs):
+                    #if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                         seqs.append(smotif_seq)
-                        parents.append(smotif_parents)
+                        #parents.append(smotif_parents)
                         #print parents
                         reduced_dump_log.append(hit)
                         print "final sele", hit[0][1][0][0], keys[i], rdc_score_bins[k]

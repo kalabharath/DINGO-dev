@@ -144,7 +144,7 @@ def performRefinement(task, stage, pair):
             print "Ref_rmsd", old_rmsd, ref_rmsd
 
         tdump_log.append(tlog)
-        if len(tdump_log) >= 5:
+        if len(tdump_log) >= 50:
             break
 
         # copy the new coordinates for the next sse pair
@@ -161,41 +161,27 @@ def SmotifRefinement(work):
     task_index = work[2]
 
 
-    #smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
-
     refine_pairs = task[8][1]
-    print refine_pairs
-
-    #refine_pairs = getRefinementIndices(sse_ordered)
     old_noe_energy = task[5][3]
     old_noe_energy = round(old_noe_energy, 3)
-
-
     dump_log = []
 
 
     if old_noe_energy <= 0.005:
         print "NOE energy is Zero there is no need to do any refinement, exiting task:", task_index
-
         dump_log.append(task)
         return dump_log
     else:
         dump_log.append(task)
         print "Energy is nonzero proceeding with refinement: ", old_noe_energy
 
-    print "All pairs: ", refine_pairs
-
-    refine_pairs =  [(0, 2), (0, 3)]
-
     for pair in refine_pairs:
         t_log = []
         for entry in dump_log:
-            print "testing start", len(dump_log), pair
             t_entry = performRefinement(entry, stage, pair)
             if t_entry:
                 for t in t_entry:
                     t_log.append(t)
         for t in t_log:
             dump_log.append(t)
-
     return dump_log

@@ -478,7 +478,7 @@ def getPreviousSmotif(index):
 
     #top_hits = io.readGzipPickle(str(next_index - 1) + "_tophits.gzip")  # Read in previous index hits
     
-    # print len(top_hits)
+
     return top_hits[index]
 
 
