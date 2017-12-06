@@ -11,7 +11,7 @@ seq = int(sys.argv[1])
 top_result = []
 
 t_file = str(seq) + "_refined_tophits.gzip"
-if os.path.isfile(t_file)
+if os.path.isfile(t_file):
     top_result = io.readGzipPickle(t_file)
 
 else:

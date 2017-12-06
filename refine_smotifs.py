@@ -108,9 +108,6 @@ def performRefinement(task, stage, pair):
             continue
 
         seq, seq_id = getSeq(transformed_coors, sse_ordered, exp_data['aa_seq'])
-        print seq,seq_id
-        die
-
         tlog.append(['smotif', smotif])
         tlog.append(['smotif_def', sse_ordered])
         tlog.append(['qcp_rmsd', transformed_coors, sse_ordered, rmsd])
