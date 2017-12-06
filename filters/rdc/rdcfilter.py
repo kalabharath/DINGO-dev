@@ -191,12 +191,12 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
     exp_error = exp_data['exp_error']
     B0inTs = exp_data['B0inT']
     TinKs = exp_data['TinK']
-
+    rdc_energy = 999.999
     tensor = []
     temp_tensor = []
     tlog_likelihood = []
     if (len(rdc_vectors) - 5) == 0:
-        return [], 0.0, 0.0
+        return [], 0.0, rdc_energy
 
     for i in range(0, len(rdc_vectors)):
         # B0 = 21.1
@@ -233,7 +233,7 @@ def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
         rdc_energy = getRDCenergy(temp_tensor)
         return temp_tensor, np.product(tlog_likelihood), rdc_energy
     else:
-        return [], 0.0, 0.0
+        return [], 0.0, rdc_energy
 
 
 def getNHvectors(coo_arrays, sse_list):
@@ -304,6 +304,7 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
     info = []
     tensor = []
     tlog_likelihood = []
+    rdc_energy = 999.99
 
     for i in range(0, len(rdc_vectors)):
         # B0 = 21.1
@@ -342,4 +343,4 @@ def RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage):
         rdc_energy = getRDCenergy(temp_tensor)
         return temp_tensor, np.product(tlog_likelihood), rdc_energy
     else:
-        return [], 0.0, 0.0
+        return [], 0.0, rdc_energy

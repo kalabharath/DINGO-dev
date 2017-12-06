@@ -411,9 +411,25 @@ def start_top_hits(num_hits, stage):
     # get and make a list of top 10(n) of the previous run
 
     # top_hit_file = str((next_index) - 1) + "_tophits.pickle"
-    top_hit_file = str((next_index) - 1) + "_tophits.gzip"
 
     top_hits = []
+    top_hit_file = str((next_index) - 1) + "_refined_tophits.gzip"
+    if os.path.isfile(top_hit_file):
+        top_hits = io.readGzipPickle(top_hit_file)
+        print "loading from prevously assembled tophits.pickle file"
+        print "# hits :", len(top_hits)
+    else:
+        top_hit_file = str((next_index) - 1) + "_tophits.gzip"
+        if os.path.isfile(top_hit_file):
+            top_hits = io.readGzipPickle(top_hit_file)
+            print "loading from prevously assembled tophits.pickle file"
+            print "# hits :", len(top_hits)
+        else:
+            print "No previous tophits file found, Generating a new one"
+            return "exception"
+
+    """
+    
     if os.path.isfile(top_hit_file):
         top_hits = io.readGzipPickle(top_hit_file)
         print "loading from prevously assembled tophits.pickle file"
@@ -421,6 +437,7 @@ def start_top_hits(num_hits, stage):
     else:
         print "No previous tophits file found, Generating a new one"
         return "exception"
+    """
 
     # delete two stages down pickled files
     # check_pickle = str(next_index - 2) + str("_*_*.pickle")
@@ -451,7 +468,15 @@ def getPreviousSmotif(index):
 
     next_index, next_smotif = getNextSmotif(map_route)
     # top_hits = io.readPickle(str(next_index - 1) + "_tophits.pickle")  # Read in previous index hits
-    top_hits = io.readGzipPickle(str(next_index - 1) + "_tophits.gzip")  # Read in previous index hits
+
+    t_file = str(next_index - 1) + "_refined_tophits.gzip"
+    if os.path.isfile(t_file):
+        top_hits = io.readGzipPickle(t_file)  # Read in previous index hits
+    else:
+        t_file = str(next_index - 1) + "_tophits.gzip"
+        top_hits = io.readGzipPickle(t_file)  # Read in previous index hits
+
+    #top_hits = io.readGzipPickle(str(next_index - 1) + "_tophits.gzip")  # Read in previous index hits
     
     # print len(top_hits)
     return top_hits[index]

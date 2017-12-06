@@ -126,11 +126,9 @@ if rank == 0:
             closed_workers += 1
     #consolidate top_hits and dump files here
     print "Total number of hits  found are : ",len(total_data)
-    #ranked_data = rank_assembly(total_data, args.numhits)
-    #print len(ranked_data)
-    #io.dumpGzipPickle(str(sse_index) + "_tophits.gzip", ranked_data)
-    # Rename temprary files
-    #util.rename_pickle(sse_index)
+    ranked_data = rank_assembly(total_data, args.numhits)
+    print len(ranked_data)
+    io.dumpGzipPickle(str(args.infile) + "_refined_tophits.gzip", ranked_data)
     print "All Done, Master exiting"
     exit()
 

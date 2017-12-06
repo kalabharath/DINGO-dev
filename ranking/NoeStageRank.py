@@ -21,16 +21,25 @@ def rank_assembly(dump_log, num_hits):
     :param num_hits:
     :return:
     """
+    """
+    for hit in dump_log:
+        for entry in hit:
+            print entry[0]
+        print "********"
+    """
 
     new_dict = collections.defaultdict(list)
 
     for hit in dump_log:
         # thread_data contains data from each search and filter thread.
         # initialize total score array
-        #if hit[4][0] == 'NOE_filter':
-        noe_energy = hit[5][3]
-        noe_energy = round(noe_energy, 3)
-        new_dict[noe_energy].append(hit)
+        #if hit[5][0] == 'NOE_filter':
+        try:
+            noe_energy = hit[5][3]
+            noe_energy = round(noe_energy, 3)
+            new_dict[noe_energy].append(hit)
+        except:
+            print hit
 
     keys = new_dict.keys()
     keys.sort()
@@ -111,6 +120,8 @@ def rank_assembly_old(dump_log, exp_data, stage):
     5 RDC_filter
     6 Ref_RMSD
     """
+
+
 
     for hit in dump_log:
         # thread_data contains data from each search and filter thread.
