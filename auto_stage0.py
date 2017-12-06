@@ -265,24 +265,39 @@ for i in range(0, len(map_route)):
     smotif = map_route[i]
     print smotif
     if i == 0:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 1" + "  --numhits 250 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 1" + "  --numhits 127 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
         print run_line
         print "python inter_rmsd.py "+str(i)+" > "+str(i)+".log"
         fout.write(run_line)
     elif i == 1:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 2" + "  --numhits 250 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 2" + "  --numhits 127 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
         print run_line
         print "python inter_rmsd.py "+str(i)+" > "+str(i)+".log"
+        fout.write(run_line)
+        run_line = "mpirun -np " + str(
+            ncpus) + " python ../../main/refine_mpi.py --infile " + str(
+            i) + " --stage 2" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
     elif i != 1 and i <= len(map_route) - 3:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 3" + "  --numhits 250 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 3" + "  --numhits 127 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
         print run_line
         print "python inter_rmsd.py "+str(i)+" > "+str(i)+".log"
         fout.write(run_line)
+        run_line = "mpirun -np " + str(
+            ncpus) + " python ../../main/refine_mpi.py --infile " + str(
+            i) + " --stage 3" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            i) + " > " + str(i) + ".refined_log\n"
+        fout.write(run_line)
     else:
-        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 4" + "  --numhits 250 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
+        run_line = "mpirun -np " + str(ncpus) + " python ../../main/Dingo_mpi.py --stage 4" + "  --numhits 127 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
         print run_line
         print "python inter_rmsd.py "+str(i)+" > "+str(i)+".log"
+        fout.write(run_line)
+        run_line = "mpirun -np " + str(
+            ncpus) + " python ../../main/refine_mpi.py --infile " + str(
+            i) + " --stage 4" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
 fout.close()
 exit()

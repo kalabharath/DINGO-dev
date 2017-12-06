@@ -15,8 +15,10 @@ seq = int(sys.argv[1])
 num_hits = 5000
 stage = 4
 
-top_result = io.readGzipPickle(str(seq)+"_tophits.gzip")
-
+try:
+    top_result = io.readGzipPickle(str(seq) + "_refined_tophits.gzip")
+except:
+    top_result = io.readGzipPickle(str(seq) + "_tophits.gzip")
 
 for p in range(0, len(top_result)):
 #for p in range(0,5):

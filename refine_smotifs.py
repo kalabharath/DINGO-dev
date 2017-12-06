@@ -48,11 +48,12 @@ def performRefinement(task, stage, pair):
     5: NOE_filter
     6: RDC_filter
     7: Ref_RMSD   
+    8: Refine_Smotifs
 
     """
 
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
-    refine_pairs = getRefinementIndices(sse_ordered)
+    refine_pairs, computed_pairs = task[8][1], task[8][2]
     old_noe_energy = task[5][3]
     old_rdc_energy = task[6][3]
     old_cath_codes, parent_smotifs = task[3][1], task[3][2]
@@ -109,13 +110,14 @@ def performRefinement(task, stage, pair):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
             tlog.append(['Ref_RMSD', ref_rmsd, 30.0])
+            tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
             print "RDC energy", old_rdc_energy, rdc_energy
             print "Ref_rmsd", old_rmsd, ref_rmsd
 
         dump_log.append(tlog)
-        if len(dump_log) >= 2:
+        if len(dump_log) >= 5:
             break
 
         # copy the new coordinates for the next sse pair
@@ -132,17 +134,15 @@ def SmotifRefinement(work):
     task_index = work[2]
 
 
-    smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
+    #smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
 
+    refine_pairs = task[8][1]
+    print refine_pairs
 
-
-
-    refine_pairs = getRefinementIndices(sse_ordered)
+    #refine_pairs = getRefinementIndices(sse_ordered)
     old_noe_energy = task[5][3]
-    old_rdc_energy = task[6][3]
-    old_cath_codes, parent_smotifs = task[3][1], task[3][2]
-
     old_noe_energy = round(old_noe_energy, 3)
+
 
     dump_log = []
 
