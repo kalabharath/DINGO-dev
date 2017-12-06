@@ -30,6 +30,32 @@ def getfromDB(pair, sse_ordered, database_cutoff):
     smotif = getSmotif(s1, s2)
     return readSmotifDatabase(smotif, database_cutoff)
 
+def getSeq(coor_array, sse_ordered, aa_seq):
+
+    one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q',
+                  'ASP': 'D', 'ASN': 'N', 'HIS': 'H', 'TRP': 'W', 'PHE': 'F', 'TYR': 'Y',
+                  'ARG': 'R', 'LYS': 'K', 'SER': 'S', 'THR': 'T', 'MET': 'M', 'ALA': 'A',
+                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'D', 'GLX': 'G', 'UNK': 'A'}
+    concat_seq = ''
+    for frag in coor_array:
+        atom_num = 1
+        for i in range(atom_num, len(frag[0]), 5):
+            res = (frag[5][i])
+            concat_seq = concat_seq+one_letter[res]
+
+    native_sse_seq = ''
+    for sse in sse_ordered:
+        sse_seq = aa_seq[sse[4] - 1: sse[5]]
+        native_sse_seq = native_sse_seq + sse_seq
+    k = 0.0
+    if len(concat_seq) != len(native_sse_seq):
+        print "Something is wrong with extracting sequence information"
+    for i in range(0, len(concat_seq)):
+
+        if native_sse_seq[i] == concat_seq[i]:
+            k += 1
+    seq_id = (k / float(len(concat_seq))) * 100
+    return concat_seq, seq_id
 
 def performRefinement(task, stage, pair):
 
@@ -60,11 +86,11 @@ def performRefinement(task, stage, pair):
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
 
-    dump_log = []
+    tdump_log = []
 
     if old_noe_energy <= 0.005:
         print "NOE energy is Zero there is no need to do any refinement, exiting task:"
-        return dump_log
+        return tdump_log
     else:
         print "Energy is nonzero proceeding with refinement: ", old_noe_energy
 
@@ -81,11 +107,15 @@ def performRefinement(task, stage, pair):
         else:
             continue
 
+        seq, seq_id = getSeq(transformed_coors, sse_ordered, exp_data['aa_seq'])
+        print seq,seq_id
+        die
+
         tlog.append(['smotif', smotif])
         tlog.append(['smotif_def', sse_ordered])
         tlog.append(['qcp_rmsd', transformed_coors, sse_ordered, rmsd])
         tlog.append(['cathcodes', old_cath_codes, parent_smotifs])
-        tlog.append(['seq_filter', "figure this out"])
+        tlog.append(['seq_filter',seq, seq_id ])
 
         # Recalculate NOE energy
         if 'ilva_noes' in exp_data_types:
@@ -109,21 +139,21 @@ def performRefinement(task, stage, pair):
 
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
-            tlog.append(['Ref_RMSD', ref_rmsd, 30.0])
+            tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
             tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
             print "RDC energy", old_rdc_energy, rdc_energy
             print "Ref_rmsd", old_rmsd, ref_rmsd
 
-        dump_log.append(tlog)
-        if len(dump_log) >= 5:
+        tdump_log.append(tlog)
+        if len(tdump_log) >= 5:
             break
 
         # copy the new coordinates for the next sse pair
-    if dump_log:
+    if tdump_log:
 
-        return dump_log
+        return tdump_log
     else:
         return False
 

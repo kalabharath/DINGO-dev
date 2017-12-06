@@ -416,7 +416,7 @@ def start_top_hits(num_hits, stage):
     top_hit_file = str((next_index) - 1) + "_refined_tophits.gzip"
     if os.path.isfile(top_hit_file):
         top_hits = io.readGzipPickle(top_hit_file)
-        print "loading from prevously assembled tophits.pickle file"
+        print "loading from prevously assembled refined_tophits.pickle file"
         print "# hits :", len(top_hits)
     else:
         top_hit_file = str((next_index) - 1) + "_tophits.gzip"
