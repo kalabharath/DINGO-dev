@@ -4,7 +4,7 @@ import filters.ilvaNOE.ilvanoepdf as noepdf
 import filters.rdc.rdcfilter as Rfilter
 import filters.rmsd.RefRmsd as ref
 import utility.smotif_util as sm
-
+import ranking.NoeStageRank as rank
 
 def getRefinementIndices(sse_array):
     import itertools
@@ -144,12 +144,10 @@ def performRefinement(task, stage, pair):
             print "Ref_rmsd", old_rmsd, ref_rmsd
 
         tdump_log.append(tlog)
-        if len(tdump_log) >= 50:
-            break
 
-        # copy the new coordinates for the next sse pair
+    if len(tdump_log) >= 10:
+        tdump_log = rank.rank_assembly(tdump_log, num_hits=10)
     if tdump_log:
-
         return tdump_log
     else:
         return False

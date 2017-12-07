@@ -92,7 +92,6 @@ if 'B0inT' in datatypes:
 else:
     pass
 
-
 if 'max_noe_dist' in datatypes:
     max_noe_dist = data['max_noe_dist']
     max_noe_dist = max_noe_dist.split()
@@ -119,7 +118,6 @@ if 'noe_energy_cutoff' in datatypes:
     print noe_energy_cutoff
 else:
     pass
-
 
 if 'exp_error' in datatypes:
     exp_error = data['exp_error']
@@ -162,6 +160,15 @@ if 'rmsd_cutoff' in datatypes:
 else:
     pass
 
+if 'refine_rmsd_cutoff' in datatypes:
+    refine_rmsd_cutoff = data['refine_rmsd_cutoff']
+    refine_rmsd_cutoff = refine_rmsd_cutoff.split()
+    refine_rmsd_cutoff = [float(i) for i in refine_rmsd_cutoff]
+    print "Refine RMSD Cutoff", refine_rmsd_cutoff
+    data_dict['refine_rmsd_cutoff'] = refine_rmsd_cutoff
+else:
+    pass
+
 if 'reference_pdb' in datatypes:
     reference_ca = ref.getRefCoors(data['reference_pdb'])
     data_dict['reference_ca'] = reference_ca
@@ -183,7 +190,7 @@ else:
 if 'noe_bmrb_mr' in datatypes:
     if 'bmrb_sequence_correction' in datatypes:
         seq_correction = int(data['bmrb_sequence_correction'])
-        noe_data, total_noe_count = nu.parseBMRBblockMR(data['noe_bmrb_mr'], data_dict['aa_seq'],seq_correction)
+        noe_data, total_noe_count = nu.parseBMRBblockMR(data['noe_bmrb_mr'], data_dict['aa_seq'], seq_correction)
         data_dict['noe_data'] = [noe_data, total_noe_count]
 else:
     pass
@@ -198,8 +205,6 @@ else:
 if 'ilva_noes' in datatypes:
     ilva_noes = io.readPickle(data['ilva_noes'])
     data_dict['ilva_noes'] = ilva_noes
-
-
 
 if 'pcs_broker' in datatypes:
     print data['pcs_broker']
@@ -265,14 +270,18 @@ for i in range(0, len(map_route)):
     smotif = map_route[i]
     print smotif
     if i == 0:
-        run_line = "mpirun -np " + str(128) + " python ../../main/Dingo_mpi.py --stage 1" + "  --numhits 127 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
+        run_line = "mpirun -np " + str(
+            128) + " python ../../main/Dingo_mpi.py --stage 1" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            i) + " > " + str(i) + ".log\n"
         print run_line
-        print "python inter_rmsd.py "+str(i)+" > "+str(i)+".log"
+        print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
     elif i == 1:
-        run_line = "mpirun -np " + str(128) + " python ../../main/Dingo_mpi.py --stage 2" + "  --numhits 127 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
+        run_line = "mpirun -np " + str(
+            128) + " python ../../main/Dingo_mpi.py --stage 2" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            i) + " > " + str(i) + ".log\n"
         print run_line
-        print "python inter_rmsd.py "+str(i)+" > "+str(i)+".log"
+        print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
             128) + " python ../../main/refine_mpi.py --infile " + str(
@@ -280,9 +289,11 @@ for i in range(0, len(map_route)):
             i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
     elif i != 1 and i <= len(map_route) - 3:
-        run_line = "mpirun -np " + str(128) + " python ../../main/Dingo_mpi.py --stage 3" + "  --numhits 127 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
+        run_line = "mpirun -np " + str(
+            128) + " python ../../main/Dingo_mpi.py --stage 3" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            i) + " > " + str(i) + ".log\n"
         print run_line
-        print "python inter_rmsd.py "+str(i)+" > "+str(i)+".log"
+        print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
             128) + " python ../../main/refine_mpi.py --infile " + str(
@@ -290,9 +301,11 @@ for i in range(0, len(map_route)):
             i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
     else:
-        run_line = "mpirun -np " + str(128) + " python ../../main/Dingo_mpi.py --stage 4" + "  --numhits 127 \n"+"python inter_rmsd.py "+str(i)+" > "+str(i)+".log\n"
+        run_line = "mpirun -np " + str(
+            128) + " python ../../main/Dingo_mpi.py --stage 4" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            i) + " > " + str(i) + ".log\n"
         print run_line
-        print "python inter_rmsd.py "+str(i)+" > "+str(i)+".log"
+        print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
             128) + " python ../../main/refine_mpi.py --infile " + str(
