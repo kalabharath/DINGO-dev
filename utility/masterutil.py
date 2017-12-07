@@ -149,7 +149,7 @@ def generate_refinement_order2(sse_array, computed_pairs):
     indices = list(itertools.combinations(range(len(sse_array)), 2))
     refine_pairs = []
     for pair in indices:
-        if abs(pair[0] - pair[1]) == 1:
+        if abs(pair[0] - pair[1]) == 0:
             pass
         else:
             t_array = array2string([sse_array[pair[0]], sse_array[pair[1]]])

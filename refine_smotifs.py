@@ -99,7 +99,7 @@ def performRefinement(task, stage, pair):
 
     for smotif in db_entries:
         tlog = []
-        rmsd_cutoff = exp_data['rmsd_cutoff'][stage - 1]
+        rmsd_cutoff = (exp_data['rmsd_cutoff'][stage - 1]) +1
         transformed_coors, rmsd = qcp.refineRMSD(smotif_coors, pair, smotif, rmsd_cutoff)
         if rmsd <= rmsd_cutoff:
             if not qcp.kClahsesRefined(transformed_coors, sse_ordered, pair):
