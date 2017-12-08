@@ -86,6 +86,11 @@ def performRefinement(task, stage, pair):
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
 
+    if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
+        pass
+    else:
+        return False
+
     tdump_log = []
 
     if old_noe_energy <= 0.005:
@@ -145,8 +150,8 @@ def performRefinement(task, stage, pair):
 
         tdump_log.append(tlog)
 
-    if len(tdump_log) >= 10:
-        tdump_log = rank.rank_assembly(tdump_log, num_hits=10)
+    if len(tdump_log) >= 5:
+        tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
     if tdump_log:
         return tdump_log
     else:
@@ -174,6 +179,9 @@ def SmotifRefinement(work):
         print "Energy is nonzero proceeding with refinement: ", old_noe_energy
 
     for pair in refine_pairs:
+
+
+
         t_log = []
         for entry in dump_log:
             t_entry = performRefinement(entry, stage, pair)

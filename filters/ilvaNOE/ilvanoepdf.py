@@ -455,6 +455,23 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
 
 
 
+def noe_in_pair(tsse_ordered, exp_data, pair):
+    resi = []
+    sse_ordered = []
+    sse_ordered.append(tsse_ordered[pair[0]])
+    sse_ordered.append(tsse_ordered[pair[1]])
+    for i in range(0, len(sse_ordered)):
+        native_sse_range = range(sse_ordered[i][4], sse_ordered[i][5] + 1)
+        resi = resi + native_sse_range
+    noe_data = exp_data['ilva_noes']
+    smotif_noe_data = []
+    for entry in noe_data:
+        if noeinresi(entry, resi):
+            smotif_noe_data.append(entry)
+    if len(smotif_noe_data) > 0:
+        return True
+    else:
+        return False
 
 def refineILVA(transformed_coors, sse_ordered, exp_data, stage):
 
@@ -466,7 +483,6 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, stage):
     unsatisfied_noes = []
     impossible_noes = []
     error_array = []
-
 
     noe_data = exp_data['ilva_noes']
     max_noe_limit = exp_data['max_noe_dist']
