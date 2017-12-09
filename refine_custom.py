@@ -79,7 +79,8 @@ def performRefinement(task, stage, pair):
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
     #refine_pairs, computed_pairs = task[8][1], task[8][2]
     old_noe_energy = task[5][3]
-    old_rdc_energy = task[6][3]
+    #old_rdc_energy = task[6][3]
+    old_rdc_energy = 99.99
     old_cath_codes, parent_smotifs = task[3][1], task[3][2]
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
