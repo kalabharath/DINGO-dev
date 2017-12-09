@@ -105,6 +105,7 @@ def rank_assemblyOLD(dump_log, num_hits):
         print "could only extract ", len(reduced_dump_log), count_hits
 
     return reduced_dump_log
+
 def rank_assembly(dump_log, num_hits):
     """
 
@@ -112,25 +113,15 @@ def rank_assembly(dump_log, num_hits):
     :param num_hits:
     :return:
     """
-    """
-    for hit in dump_log:
-        for entry in hit:
-            print entry[0]
-        print "********"
-    """
 
     new_dict = collections.defaultdict(list)
 
     for hit in dump_log:
         # thread_data contains data from each search and filter thread.
         # initialize total score array
-        #if hit[5][0] == 'NOE_filter':
-        try:
-            noe_energy = hit[5][3]
-            noe_energy = round(noe_energy, 3)
-            new_dict[noe_energy].append(hit)
-        except:
-            print hit
+        noe_energy = hit[5][3]
+        noe_energy = round(noe_energy, 3)
+        new_dict[noe_energy].append(hit)
 
     keys = new_dict.keys()
     keys.sort()
@@ -163,11 +154,7 @@ def rank_assembly(dump_log, num_hits):
         else:
             t2_log = collections.defaultdict(list)
             for hit in entries:
-                #if hit[5][0] == 'RDC_filter':
-                rdc_tensors = hit[6][1]
-                rdc_score = 0
-                for tensor in rdc_tensors:
-                    rdc_score = rdc_score + tensor[0]
+                rdc_score = hit[6][3]
                 t2_log[rdc_score].append(hit)
             rdc_score_bins = t2_log.keys()
             rdc_score_bins.sort()
