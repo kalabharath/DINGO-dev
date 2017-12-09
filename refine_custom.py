@@ -77,7 +77,7 @@ def performRefinement(task, stage, pair):
     """
 
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
-    refine_pairs, computed_pairs = task[8][1], task[8][2]
+    #refine_pairs, computed_pairs = task[8][1], task[8][2]
     old_noe_energy = task[5][3]
     old_rdc_energy = task[6][3]
     old_cath_codes, parent_smotifs = task[3][1], task[3][2]
@@ -140,7 +140,7 @@ def performRefinement(task, stage, pair):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
-            tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
+            #tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
             print "RDC energy", old_rdc_energy, rdc_energy
