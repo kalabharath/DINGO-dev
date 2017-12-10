@@ -164,19 +164,19 @@ def SmotifRefinement(work):
     task_index = work[2]
 
     refine_pairs = task[8][1]
-    #old_noe_energy = task[5][3]
-    #old_noe_energy = round(old_noe_energy, 3)
+    old_noe_energy = task[5][3]
+    old_noe_energy = round(old_noe_energy, 3)
     dump_log = []
 
-    """
+
     if old_noe_energy <= 0.005:
         print "NOE energy is Zero there is no need to do any refinement, exiting task:", task_index
         dump_log.append(task)
-        return dump_log
+        #return dump_log
     else:
         dump_log.append(task)
-        print "Energy is nonzero proceeding with refinement: ", old_noe_energy
-    """
+
+
 
     for pair in refine_pairs:
         t_log = []
