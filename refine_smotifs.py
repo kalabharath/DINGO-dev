@@ -82,9 +82,11 @@ def performRefinement(task, stage, pair):
     refine_pairs, computed_pairs = task[8][1], task[8][2]
     old_noe_energy = task[5][3]
     old_rdc_energy = task[6][3]
+    old_rdc_energy = round(old_rdc_energy, 3)
     old_cath_codes, parent_smotifs = task[3][1], task[3][2]
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
+
 
     if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
         pass
@@ -93,12 +95,13 @@ def performRefinement(task, stage, pair):
 
     tdump_log = []
 
+    """
     if old_noe_energy <= 0.005:
         print "NOE energy is Zero there is no need to do any refinement, exiting task:"
         return tdump_log
     else:
         print "Energy is nonzero proceeding with refinement: ", old_noe_energy
-
+    """
 
     db_entries = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
 
@@ -123,14 +126,8 @@ def performRefinement(task, stage, pair):
         if 'ilva_noes' in exp_data_types:
             noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, \
             new_cluster_sidechains = noepdf.refineILVA(transformed_coors, sse_ordered, exp_data, stage)
-
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                if noe_energy <= old_noe_energy:
-                    tlog.append(
-                        ['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,
-                         new_cluster_sidechains])
-                else:
-                    continue
+                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains])
             else:
                 continue
 
@@ -143,12 +140,15 @@ def performRefinement(task, stage, pair):
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
             tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
+
+        if (noe_energy <= old_noe_energy) and (rdc_energy <= old_rdc_energy):
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
             print "RDC energy", old_rdc_energy, rdc_energy
             print "Ref_rmsd", old_rmsd, ref_rmsd
-
-        tdump_log.append(tlog)
+            tdump_log.append(tlog)
+        else:
+            continue
 
     if len(tdump_log) >= 5:
         tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
@@ -163,13 +163,12 @@ def SmotifRefinement(work):
     stage = work[1]
     task_index = work[2]
 
-
     refine_pairs = task[8][1]
-    old_noe_energy = task[5][3]
-    old_noe_energy = round(old_noe_energy, 3)
+    #old_noe_energy = task[5][3]
+    #old_noe_energy = round(old_noe_energy, 3)
     dump_log = []
 
-
+    """
     if old_noe_energy <= 0.005:
         print "NOE energy is Zero there is no need to do any refinement, exiting task:", task_index
         dump_log.append(task)
@@ -177,11 +176,9 @@ def SmotifRefinement(work):
     else:
         dump_log.append(task)
         print "Energy is nonzero proceeding with refinement: ", old_noe_energy
+    """
 
     for pair in refine_pairs:
-
-
-
         t_log = []
         for entry in dump_log:
             t_entry = performRefinement(entry, stage, pair)

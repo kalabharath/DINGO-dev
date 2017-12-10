@@ -11,7 +11,7 @@ def getRefinementIndices(sse_array):
     indices = list(itertools.combinations(range(len(sse_array)), 2))
     refine_pairs = []
     for pair in indices:
-        if abs(pair[0] - pair[1]) == 1:
+        if abs(pair[0] - pair[1]) == 0:
             pass
         else:
             t_array = sm.array2string([sse_array[pair[0]], sse_array[pair[1]]])
@@ -79,8 +79,7 @@ def performRefinement(task, stage, pair):
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
     #refine_pairs, computed_pairs = task[8][1], task[8][2]
     old_noe_energy = task[5][3]
-    #old_rdc_energy = task[6][3]
-    old_rdc_energy = 99.99
+    old_rdc_energy = task[6][3]
     old_cath_codes, parent_smotifs = task[3][1], task[3][2]
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
@@ -124,12 +123,9 @@ def performRefinement(task, stage, pair):
             new_cluster_sidechains = noepdf.refineILVA(transformed_coors, sse_ordered, exp_data, stage)
 
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                if noe_energy <= old_noe_energy:
-                    tlog.append(
-                        ['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,
-                         new_cluster_sidechains])
-                else:
-                    continue
+                tlog.append(
+                ['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,
+                new_cluster_sidechains])
             else:
                 continue
 
@@ -141,13 +137,15 @@ def performRefinement(task, stage, pair):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
-            #tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
+
+        if (noe_energy <= old_noe_energy) and (rdc_energy <= old_rdc_energy):
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
             print "RDC energy", old_rdc_energy, rdc_energy
             print "Ref_rmsd", old_rmsd, ref_rmsd
-
-        tdump_log.append(tlog)
+            tdump_log.append(tlog)
+        else:
+            continue
 
     if len(tdump_log) >= 5:
         tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
@@ -161,9 +159,11 @@ def SmotifRefinement(work):
     task = work[0]
     stage = work[1]
     task_index = work[2]
-
+    print task_index
     sse_ordered =  task[2][2]
     refine_pairs = getRefinementIndices(sse_ordered)
+    print refine_pairs
+    refine_pairs = [(4,5),(0, 7), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 8), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (4, 5), (4, 6), (4, 7), (4, 8), (5, 6), (5, 7), (5, 8), (6, 7), (6, 8), (7, 8)]
     #refine_pairs = task[8][1]
 
 
@@ -182,7 +182,7 @@ def SmotifRefinement(work):
 
     for pair in refine_pairs:
 
-
+        print "Working on the Smotf pair:", pair
 
         t_log = []
         for entry in dump_log:

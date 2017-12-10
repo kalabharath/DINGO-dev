@@ -175,6 +175,8 @@ def getRDCenergy(rdc_tensors):
     rdc_score = 0
     for tensor in rdc_tensors:
         rdc_score = rdc_score + tensor[0]
+
+    rdc_score = round(rdc_score, 3)
     return rdc_score
 
 def RDCAxRhFit(s1_def, s2_def, smotif, exp_data):
