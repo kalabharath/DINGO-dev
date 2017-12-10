@@ -388,7 +388,7 @@ def getKdist(sse_array, atom_type):
                       'hs': [['N'], [2.19, 0.06], [3.78, 0.00], [3.1, 0.06], ['O']],
                       'sh': [['N'], [3.16, 0.17], [3.73, 0.1], [2.88, 0.02], ['O']]}
     mean, sd = dist_knowledge[smotif_type][atom_type]
-    return mean - (4*sd)
+    return mean - (3*sd)
 
 
 def kClashes(coo_arrays, sse_ordered, current_ss):
