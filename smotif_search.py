@@ -336,7 +336,6 @@ def sXSmotifSearch(task):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
                 tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
                 tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
-                print tlog [-1]
 
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk
