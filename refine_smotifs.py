@@ -105,6 +105,12 @@ def performRefinement(task, stage, pair):
 
     db_entries = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
 
+    try:
+        for smotif in db_entries:
+            pass
+    except:
+        return False
+
     for smotif in db_entries:
         tlog = []
         rmsd_cutoff = exp_data['refine_rmsd_cutoff'][stage - 1]
