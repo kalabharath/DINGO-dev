@@ -134,7 +134,8 @@ def performRefinement(task, stage, pair):
             if rdc_energy <= old_rdc_energy:
                 pass
             else:
-                continue
+                pass
+                #continue
 
         # Recalculate NOE energy
         if 'ilva_noes' in exp_data_types:
@@ -153,7 +154,7 @@ def performRefinement(task, stage, pair):
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
             tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
 
-        if (noe_energy <= old_noe_energy) and (rdc_energy <= old_rdc_energy):
+        if (noe_energy <= old_noe_energy) or (rdc_energy <= old_rdc_energy):
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
             print "RDC energy", old_rdc_energy, rdc_energy
