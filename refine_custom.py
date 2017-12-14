@@ -85,9 +85,7 @@ def performRefinement(task, stage, pair):
         old_rdc_energy = 999.99
 
     old_cath_codes = task[3][1]
-
     cath_parents = array2string(old_cath_codes)
-
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
 
