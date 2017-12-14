@@ -565,7 +565,7 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, stage):
 
 
         count += 1.0
-        """
+
         if count >= (len(smotif_noe_data) / 2.0):
             tprob = noes_found / total_noes
             threshold = exp_data['expected_noe_prob'][stage - 1]
@@ -576,7 +576,7 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, stage):
                 return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
             else:
                 pass
-        """
+
 
     noe_energy = numpy.sum(error_array)
     noe_energy = noe_energy/float(total_noes)
