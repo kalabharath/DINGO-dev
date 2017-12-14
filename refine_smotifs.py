@@ -128,29 +128,24 @@ def performRefinement(task, stage, pair):
         tlog.append(['cathcodes', old_cath_codes, parent_smotifs])
         tlog.append(['seq_filter',seq, seq_id ])
 
-        if 'rdc_data' in exp_data_types:
-            rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit2(transformed_coors, sse_ordered,
-                                                                              exp_data, stage)
-            if rdc_energy <= old_rdc_energy:
-                pass
-            else:
-                pass
-                #continue
-
         # Recalculate NOE energy
         if 'ilva_noes' in exp_data_types:
             noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, \
             new_cluster_sidechains = noepdf.refineILVA(transformed_coors, sse_ordered, exp_data, stage)
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                pass
+                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,
+                             new_cluster_sidechains])
+
             else:
                 continue
 
+        if 'rdc_data' in exp_data_types:
+            rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit2(transformed_coors, sse_ordered,
+                                                                              exp_data, stage)
+            tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
+
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
-            tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,
-                         new_cluster_sidechains])
-            tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
             tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs])
 
