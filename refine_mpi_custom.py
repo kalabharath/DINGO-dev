@@ -107,8 +107,8 @@ if rank == 0:
         if tag == tags.READY:
             # worker process is ready, send some task to do.
             if task_index < len(tasks):
+                comm.send([tasks[task_index], args.stage, task_index], dest=source, tag=tags.START)
                 task_index += 1  # increment its
-                comm.send([tasks[-1*task_index], args.stage, -1*task_index], dest=source, tag=tags.START)
 
             else:
                 # everything is done, send exit signal
