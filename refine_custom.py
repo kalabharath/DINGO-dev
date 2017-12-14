@@ -138,7 +138,7 @@ def performRefinement(task, stage, pair):
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
 
-        if (noe_energy <= old_noe_energy) and (rdc_energy <= old_rdc_energy):
+        if (noe_energy <= old_noe_energy) or (rdc_energy <= old_rdc_energy):
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
             print "RDC energy", old_rdc_energy, rdc_energy

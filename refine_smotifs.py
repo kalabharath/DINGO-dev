@@ -142,7 +142,10 @@ def performRefinement(task, stage, pair):
         if 'rdc_data' in exp_data_types:
             rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit2(transformed_coors, sse_ordered,
                                                                               exp_data, stage)
-            tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
+            if rdc_energy == 999.99:
+                continue
+            else:
+                tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
 
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
@@ -195,4 +198,7 @@ def SmotifRefinement(work):
                     t_log.append(t)
         for t in t_log:
             dump_log.append(t)
+
+
+
     return dump_log

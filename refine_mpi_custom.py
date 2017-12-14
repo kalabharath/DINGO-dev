@@ -17,11 +17,10 @@ import time
 import traceback
 from   mpi4py import MPI
 
-import ranking.SmotifRanking as srank
+
 from ranking.NoeStageRank import rank_assembly
 import refine_custom as refine
 import utility.masterutil as mutil
-import utility.stage2_util as util
 import utility.io_util as io
 
 # Define MPI message tags
