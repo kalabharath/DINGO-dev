@@ -177,7 +177,7 @@ def SmotifRefinement(work):
     task_index = work[2]
 
     refine_pairs = task[8][1]
-    old_noe_energy = task[5][3]5
+    old_noe_energy = task[5][3]
     old_noe_energy = round(old_noe_energy, 3)
     dump_log = []
 
