@@ -148,7 +148,7 @@ def rank_assembly(dump_log, num_hits):
                 #print parents
                 reduced_dump_log.append(entries[0])
                 count_hits += 1
-                print "final sele", entries[0][0][1][0][0], keys[i]
+                print "final sele", entries[0][0][1], keys[i]
                 if count_hits >= num_hits:
                     break
         else:
@@ -172,7 +172,7 @@ def rank_assembly(dump_log, num_hits):
                         seqs.append(smotif_seq)
                         parents.append(smotif_parents)
                         reduced_dump_log.append(hit)
-                        print "final sele", hit[0][1][0][0], keys[i], rdc_score_bins[k]
+                        print "final sele", hit[0][1], keys[i], rdc_score_bins[k]
                         count_hits += 1
                     if count_hits >= num_hits:
                         break
