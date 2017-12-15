@@ -160,8 +160,9 @@ def performRefinement(task, stage, pair):
         if 'reference_ca' in exp_data_types:
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
-            refine_pair = [pair, tpdbid]
-            tlog.append(['Refine_smotifs', old_refine_array.append(refine_pair)])
+            log_refine_pair = [pair, tpdbid]
+            old_refine_array.append(log_refine_pair)
+            tlog.append(['Refine_smotifs', old_refine_array ])
         print  noe_energy, old_noe_energy, rdc_energy, old_rdc_energy
         if (noe_energy <= old_noe_energy) or (rdc_energy <= old_rdc_energy):
             print "rmsd:", rmsd, pair
