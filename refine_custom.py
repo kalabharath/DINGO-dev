@@ -135,7 +135,7 @@ def performRefinement(task, stage, pair):
 
 
         seq, seq_id = getSeq(transformed_coors, sse_ordered, exp_data['aa_seq'])
-        tlog.append(['smotif', smotif])
+        tlog.append(['smotif', tpdbid])
         tlog.append(['smotif_def', sse_ordered])
         tlog.append(['qcp_rmsd', transformed_coors, sse_ordered, rmsd])
         tlog.append(['cathcodes', old_cath_codes, cath_parents])
