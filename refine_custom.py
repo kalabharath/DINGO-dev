@@ -79,10 +79,15 @@ def performRefinement(task, stage, pair):
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
     #refine_pairs, computed_pairs = task[8][1], task[8][2]
     old_noe_energy = task[5][3]
+
     try:
         old_rdc_energy = task[6][3]
     except:
-        old_rdc_energy = 999.99
+        old_rdc_energy = 0
+        tensors = task[6][1]
+        for tensor in tensors:
+            old_rdc_energy = old_rdc_energy + tensor[0]
+        #old_rdc_energy = 999.99
 
     old_cath_codes = task[3][1]
     cath_parents = array2string(old_cath_codes)
