@@ -11,7 +11,7 @@ def getRefinementIndices(sse_array):
     indices = list(itertools.combinations(range(len(sse_array)), 2))
     refine_pairs = []
     for pair in indices:
-        if abs(pair[0] - pair[1]) == 1:
+        if abs(pair[0] - pair[1]) == 0:
             pass
         else:
             t_array = sm.array2string([sse_array[pair[0]], sse_array[pair[1]]])
