@@ -154,7 +154,11 @@ def rank_assembly(dump_log, num_hits):
         else:
             t2_log = collections.defaultdict(list)
             for hit in entries:
-                rdc_score = hit[6][3]
+                #rdc_score = hit[6][3]
+                rdc_tensors = hit[6][1]
+                rdc_score = 0
+                for tensor in rdc_tensors:
+                    rdc_score = rdc_score + tensor[0]
                 t2_log[rdc_score].append(hit)
             rdc_score_bins = t2_log.keys()
             rdc_score_bins.sort()
