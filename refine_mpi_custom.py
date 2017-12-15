@@ -85,6 +85,9 @@ if rank == 0:
 
     try:
         if len(tasks):
+            if len(tasks) > 48:
+                print "Reducing the number of tasks to 47 to match with the number of processors"
+                tasks = tasks[0:46]
             pass
     except:
         print "killing all processes!"
