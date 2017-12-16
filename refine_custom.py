@@ -94,10 +94,7 @@ def performRefinement(task, stage, pair):
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
 
-    try:
-        old_refine_array = task[8][1]
-    except:
-        old_refine_array = []
+
 
 
     if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
@@ -122,6 +119,7 @@ def performRefinement(task, stage, pair):
         return False
 
     for smotif in db_entries:
+
         tlog = []
         rmsd_cutoff = exp_data['refine_rmsd_cutoff'][stage - 1]
         transformed_coors, rmsd = qcp.refineRMSD(smotif_coors, pair, smotif, rmsd_cutoff)
@@ -166,6 +164,10 @@ def performRefinement(task, stage, pair):
             ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coors)
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
             log_refine_pair = [pair, tpdbid]
+            try:
+                old_refine_array = task[8][1]
+            except:
+                old_refine_array = []
             old_refine_array.append(log_refine_pair)
             tlog.append(['Refine_smotifs', old_refine_array ])
         print  noe_energy, old_noe_energy, rdc_energy, old_rdc_energy
