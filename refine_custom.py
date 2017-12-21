@@ -171,6 +171,7 @@ def performRefinement(task, stage, pair):
             old_refine_array.append(log_refine_pair)
             tlog.append(['Refine_smotifs', old_refine_array ])
         print  noe_energy, old_noe_energy, rdc_energy, old_rdc_energy
+
         if (noe_energy <= old_noe_energy) or (rdc_energy <= old_rdc_energy):
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
@@ -211,4 +212,8 @@ def SmotifRefinement(work):
                     t_log.append(t)
         for t in t_log:
             dump_log.append(t)
+
+        if len(dump_log) > 10:
+            dump_log = rank.rank_assembly(dump_log, num_hits=10)
+
     return dump_log
