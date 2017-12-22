@@ -27,8 +27,10 @@ def getfromDB(pair, sse_ordered, database_cutoff):
     from utility.smotif_util import getSmotif, readSmotifDatabase
     s1 = sse_ordered[pair[0]]
     s2 = sse_ordered[pair[1]]
+    s1_len = s1[1]
+    s2_len = s2[1]
     smotif = getSmotif(s1, s2)
-    return readSmotifDatabase(smotif, database_cutoff)
+    return readSmotifDatabase(smotif, database_cutoff), s1_len, s2_len
 
 def getSeq(coor_array, sse_ordered, aa_seq):
 
@@ -94,9 +96,6 @@ def performRefinement(task, stage, pair):
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
 
-
-
-
     if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
         pass
     else:
@@ -113,24 +112,50 @@ def performRefinement(task, stage, pair):
         print "Energy is nonzero proceeding with refinement: ", old_noe_energy
 
 
-    db_entries = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
+    db_entries, s1_len, s2_len = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
+    print s1_len, s2_len
+
+    if (s1_len < 6) or (s2_len < 6):
+        rmsd_cutoff = 1.0
+    elif (s1_len < 10) or (s2_len < 10 ):
+        rmsd_cutoff = 2.0
+    elif (s1_len >10) or  (s2_len > 10):
+        rmsd_cutoff = 3.0
+    else:
+        rmsd_cutoff = exp_data['refine_rmsd_cutoff'][stage - 1]
 
     if not db_entries:
         return False
 
     for smotif in db_entries:
 
+        tpdbid = smotif[0][0]
+        pdbid = tpdbid[0:4]
+
+        if 'natives' in exp_data_types:
+            natives = exp_data['natives']
+            if pdbid in natives:
+                continue
+            # Stop further execution, but, iterate.
+            else:
+                pass
+
+        if 'homologs' in exp_data_types:  # Smotif assembly only from the specified pdb files
+            homologs = exp_data['homologs']
+            if pdbid not in homologs:
+                # Stop further execution, but, iterate.
+                continue
+            else:
+                pass
+
         tlog = []
-        rmsd_cutoff = exp_data['refine_rmsd_cutoff'][stage - 1]
+
         transformed_coors, rmsd = qcp.refineRMSD(smotif_coors, pair, smotif, rmsd_cutoff)
         if rmsd <= rmsd_cutoff:
             if not qcp.kClahsesRefined(transformed_coors, sse_ordered, pair):
                 continue
         else:
             continue
-
-        tpdbid = smotif[0][0]
-
 
         seq, seq_id = getSeq(transformed_coors, sse_ordered, exp_data['aa_seq'])
         tlog.append(['smotif', tpdbid])
