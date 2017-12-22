@@ -114,18 +114,20 @@ def performRefinement(task, stage, pair):
 
     db_entries, s1_len, s2_len = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
 
-
+    rmsd_cutoff = 0.0
     if (s1_len < 6) or (s2_len < 6):
         rmsd_cutoff = 1.0
-    elif (s1_len < 10) or (s2_len < 10 ):
+    if (s1_len < 10) or (s2_len < 10 ):
         rmsd_cutoff = 2.0
-    elif (s1_len >10) or  (s2_len > 10):
+
+    if (s1_len >10) or (s2_len > 10):
         rmsd_cutoff = 3.0
-    else:
+
+    if not rmsd_cutoff:
         rmsd_cutoff = exp_data['refine_rmsd_cutoff'][stage - 1]
 
     print s1_len, s2_len, rmsd_cutoff
-    
+
     if not db_entries:
         return False
 
