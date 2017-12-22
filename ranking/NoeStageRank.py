@@ -106,7 +106,7 @@ def rank_assemblyOLD(dump_log, num_hits):
 
     return reduced_dump_log
 
-def rank_assembly(dump_log, num_hits):
+def rank_assemblyt(dump_log, num_hits):
     """
 
     :param dump_log:
@@ -171,6 +171,80 @@ def rank_assembly(dump_log, num_hits):
                     if (smotif_seq not in seqs) and (limitParents(smotif_parents, parents)):
                         seqs.append(smotif_seq)
                         parents.append(smotif_parents)
+                        reduced_dump_log.append(hit)
+                        print "final sele", hit[0][1], keys[i], rdc_score_bins[k]
+                        count_hits += 1
+                    if count_hits >= num_hits:
+                        break
+                if count_hits >= num_hits:
+                    break
+            if count_hits >= num_hits:
+                break
+    if count_hits >= num_hits:
+        pass
+    else:
+        print "could only extract ", len(reduced_dump_log), count_hits
+
+    return reduced_dump_log
+
+def rank_assembly(dump_log, num_hits):
+    """
+
+    :param dump_log:
+    :param num_hits:
+    :return:
+    """
+
+    new_dict = collections.defaultdict(list)
+
+    for hit in dump_log:
+        # thread_data contains data from each search and filter thread.
+        # initialize total score array
+        noe_energy = hit[5][3]
+        noe_energy = round(noe_energy, 3)
+        new_dict[noe_energy].append(hit)
+
+    keys = new_dict.keys()
+    keys.sort()
+    # Rank based on NOE energy
+
+    reduced_dump_log = []
+    seqs = []
+    parents = []
+    count_hits = 0
+
+    for i in range(len(keys)):
+        entries = new_dict[keys[i]]
+
+        if count_hits >= num_hits:
+            break
+
+        if len(entries) == 1:
+            smotif_seq = entries[0][4][1]
+            if (smotif_seq not in seqs):
+                seqs.append(smotif_seq)
+                reduced_dump_log.append(entries[0])
+                count_hits += 1
+                print "final sele", entries[0][0][1], keys[i]
+                if count_hits >= num_hits:
+                    break
+        else:
+            t2_log = collections.defaultdict(list)
+            for hit in entries:
+                #rdc_score = hit[6][3]
+                rdc_tensors = hit[6][1]
+                rdc_score = 0
+                for tensor in rdc_tensors:
+                    rdc_score = rdc_score + tensor[0]
+                t2_log[rdc_score].append(hit)
+            rdc_score_bins = t2_log.keys()
+            rdc_score_bins.sort()
+            for k in range(len(rdc_score_bins)):
+                hits = t2_log[rdc_score_bins[k]]
+                for hit in hits:
+                    smotif_seq = hit[4][1]
+                    if (smotif_seq not in seqs):
+                        seqs.append(smotif_seq)
                         reduced_dump_log.append(hit)
                         print "final sele", hit[0][1], keys[i], rdc_score_bins[k]
                         count_hits += 1
