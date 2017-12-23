@@ -116,11 +116,11 @@ def performRefinement(task, stage, pair):
 
     rmsd_cutoff = 0.0
     if (s1_len < 7) or (s2_len < 7):
-        rmsd_cutoff = 1.0
-    if (s1_len < 11) or (s2_len < 11 ):
         rmsd_cutoff = 2.0
-    if (s1_len >10) or (s2_len > 10):
+    if (s1_len < 11) or (s2_len < 11 ):
         rmsd_cutoff = 3.0
+    if (s1_len >10) or (s2_len > 10):
+        rmsd_cutoff = 4.0
 
     if not rmsd_cutoff:
         rmsd_cutoff = exp_data['refine_rmsd_cutoff'][stage - 1]
