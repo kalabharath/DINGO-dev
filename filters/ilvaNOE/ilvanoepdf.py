@@ -566,7 +566,7 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, stage):
 
         count += 1.0
 
-        if count >= (len(smotif_noe_data) / 2.0):
+        if count >= (len(smotif_noe_data) * 0.75):
             tprob = noes_found / total_noes
             threshold = exp_data['expected_noe_prob'][stage - 1]
             noeenergy = getNOEenergy(error_array, total_noes)
