@@ -67,7 +67,7 @@ if rank == 0:
 
     ##################################  Extract top hits ########################################
 
-    in_file = str(args.infile)+"_tophits.gzip"
+    in_file = str(args.infile)
     print "infile ", in_file
 
     try:
