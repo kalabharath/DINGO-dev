@@ -582,6 +582,10 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, stage):
     noe_energy = numpy.sum(error_array)
     noe_energy = noe_energy/float(total_noes)
     noe_energy = noe_energy/math.pow(total_noes, 1/3.0)
-    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
-    return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes,
+
+    if noe_energy > noe_energy_cutoff:
+        return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+    else:
+        unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
+        return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes,
                                                                error_array], cluster_protons, cluster_sidechains
