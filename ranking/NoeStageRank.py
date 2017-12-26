@@ -106,7 +106,7 @@ def rank_assemblyOLD(dump_log, num_hits):
 
     return reduced_dump_log
 
-def rank_assembly(dump_log, num_hits):
+def rank_assemblyt(dump_log, num_hits):
     """
 
     :param dump_log:
@@ -187,7 +187,7 @@ def rank_assembly(dump_log, num_hits):
 
     return reduced_dump_log
 
-def rank_assemblyt(dump_log, num_hits):
+def rank_assembly(dump_log, num_hits):
     """
 
     :param dump_log:

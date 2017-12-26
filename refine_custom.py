@@ -142,6 +142,7 @@ def performRefinement(task, stage, pair):
         if 'natives' in exp_data_types:
             natives = exp_data['natives']
             if pdbid in natives:
+                print "Native pdb found:", pdbid
                 continue
             # Stop further execution, but, iterate.
             else:
