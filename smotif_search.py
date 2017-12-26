@@ -82,7 +82,7 @@ def S1SmotifSearch(task):
         tlog, pcs_tensor_fits, rdc_tensor_fits, = [], [], []
         ref_rmsd, noe_probability = 0.0, 0.0
 
-        tlog.append(['smotif', tpdbid])
+        tlog.append(['smotif', smotif_data[i]])
         tlog.append(['smotif_def', [s1_def, s2_def]])
         parent_smotifs = sm.array2string([smotif_data[i][0]])
         tlog.append(['qcp_rmsd'])

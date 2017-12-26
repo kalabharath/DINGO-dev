@@ -198,7 +198,7 @@ def performRefinement(task, stage, pair):
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
             log_refine_pair = [pair, tpdbid]
             try:
-                old_refine_array = task[8][1]
+                old_refine_array = copy.copy(task[8][1])
             except:
                 old_refine_array = []
             old_refine_array.append(log_refine_pair)
