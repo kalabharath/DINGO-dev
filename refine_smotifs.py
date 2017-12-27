@@ -188,9 +188,9 @@ def performRefinement(task, stage, pair):
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
             log_refine_pair = [pair, tpdbid]
             try:
-                refine_pairs, computed_pairs, log_refine_smotif = (task[8][1])[:], (task[8][2])[:], (task[8][3])[:]
+                log_refine_smotif = (task[8][3])[:]
             except:
-                refine_pairs, computed_pairs, log_refine_smotif = [], [], []
+                log_refine_smotif = []
 
             log_refine_smotif.append(log_refine_pair)
             print log_refine_smotif
