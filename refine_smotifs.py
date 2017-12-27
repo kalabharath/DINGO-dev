@@ -27,8 +27,12 @@ def getfromDB(pair, sse_ordered, database_cutoff):
     from utility.smotif_util import getSmotif, readSmotifDatabase
     s1 = sse_ordered[pair[0]]
     s2 = sse_ordered[pair[1]]
+    s1_len = s1[1]
+    s2_len = s2[1]
     smotif = getSmotif(s1, s2)
-    return readSmotifDatabase(smotif, database_cutoff)
+    return readSmotifDatabase(smotif, database_cutoff), s1_len, s2_len
+
+
 
 def getSeq(coor_array, sse_ordered, aa_seq):
 

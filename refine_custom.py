@@ -6,6 +6,8 @@ import filters.rmsd.RefRmsd as ref
 import utility.smotif_util as sm
 import ranking.NoeStageRank as rank
 from utility.smotif_util import array2string
+
+
 def getRefinementIndices(sse_array):
     import itertools
     indices = list(itertools.combinations(range(len(sse_array)), 2))
