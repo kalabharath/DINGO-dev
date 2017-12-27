@@ -189,12 +189,13 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
             ordered_SSE.append(current_sse)
 
         refine_pairs, computed_pairs = generate_refinement_order(ordered_SSE)
-        return ordered_SSE, refine_pairs, computed_pairs
+        return ordered_SSE, refine_pairs, computed_pairs, []
     else:
         computed_pairs = []
         for entry in previous_smotif:
             if 'Refine_Smotifs' == entry[0]:
                 computed_pairs = entry[2]
+                log_refine_smotif = entry[3]
 
         for entry in previous_smotif:
             # ['qcp_rmsd', transformed_coos, sse_ordered, rmsd]
@@ -207,7 +208,7 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
 
                 refine_pairs, computed_pairs = generate_refinement_order2(previous_sse, computed_pairs)
 
-                return previous_sse, refine_pairs, computed_pairs
+                return previous_sse, refine_pairs, computed_pairs, log_refine_smotif
 
 
 def fetchNOEdata(previous_smotif):

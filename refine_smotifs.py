@@ -188,12 +188,13 @@ def performRefinement(task, stage, pair):
             tlog.append(['Ref_RMSD', ref_rmsd, seq_id])
             log_refine_pair = [pair, tpdbid]
             try:
-                old_refine_array = (task[8][1])[:]
+                refine_pairs, computed_pairs, log_refine_smotif = (task[8][1])[:], (task[8][2])[:], (task[8][3])[:]
             except:
-                old_refine_array = []
-            old_refine_array.append(log_refine_pair)
-            print old_refine_array
-            tlog.append(['Refine_smotifs', old_refine_array])
+                refine_pairs, computed_pairs, log_refine_smotif = [], [], []
+
+            log_refine_smotif.append(log_refine_pair)
+            print log_refine_smotif
+            tlog.append(['Refine_smotifs', refine_pairs, computed_pairs, log_refine_smotif])
 
 
         if (noe_energy <= old_noe_energy) or (rdc_energy <= old_rdc_energy):
