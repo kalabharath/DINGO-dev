@@ -52,6 +52,12 @@ def killall(processes):
             break
     return True
 
+def get_lowest_NOE_energy(tasks):
+    noe_energy = []
+    for entry in tasks:
+        noe_energy.append(entry[5][3])
+
+    return sum(noe_energy)/float(len(noe_energy))
 
 #####################################  Define cmd line argument parser #############################################
 
@@ -100,6 +106,8 @@ if rank == 0:
 
     print ("Master starting with {} workers".format(num_workers))
     total_data = []
+    lowest_noe_energy = get_lowest_NOE_energy(tasks[0])
+    print "Average lowest NOE energy is :", lowest_noe_energy
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop
         data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
@@ -108,7 +116,7 @@ if rank == 0:
         if tag == tags.READY:
             # worker process is ready, send some task to do.
             if task_index < len(tasks):
-                comm.send([tasks[task_index], args.stage, task_index], dest=source, tag=tags.START)
+                comm.send([tasks[task_index], args.stage, task_index, lowest_noe_energy], dest=source, tag=tags.START)
                 task_index += 1  # increment its
             else:
                 # everything is done, send exit signal

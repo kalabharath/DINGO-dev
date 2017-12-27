@@ -61,7 +61,7 @@ def getSeq(coor_array, sse_ordered, aa_seq):
     seq_id = (k / float(len(concat_seq))) * 100
     return concat_seq, seq_id
 
-def performRefinement(task, stage, pair):
+def performRefinement(task, stage, pair, old_noe_energy):
 
     #task = work[0]
     #stage = work[1]
@@ -84,7 +84,6 @@ def performRefinement(task, stage, pair):
 
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
     refine_pairs, computed_pairs = task[8][1], task[8][2]
-    old_noe_energy = task[5][3]
     old_rdc_energy = task[6][3]
     old_rdc_energy = round(old_rdc_energy, 3)
     old_cath_codes, parent_smotifs = task[3][1], task[3][2]
@@ -218,10 +217,8 @@ def SmotifRefinement(work):
     task = work[0]
     stage = work[1]
     task_index = work[2]
-
+    old_noe_energy = work[3]
     refine_pairs = task[8][1]
-    old_noe_energy = task[5][3]
-    old_noe_energy = round(old_noe_energy, 3)
     dump_log = []
 
 
@@ -237,7 +234,7 @@ def SmotifRefinement(work):
     for pair in refine_pairs:
         t_log = []
         for entry in dump_log:
-            t_entry = performRefinement(entry, stage, pair)
+            t_entry = performRefinement(entry, stage, pair, old_noe_energy)
             if t_entry:
                 for t in t_entry:
                     t_log.append(t)
