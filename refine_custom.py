@@ -204,7 +204,7 @@ def performRefinement(task, stage, pair):
             except:
                 old_refine_array = []
             old_refine_array.append(log_refine_pair)
-            tlog.append(['Refine_smotifs', old_refine_array ])
+            tlog.append(['Refine_smotifs', old_refine_array])
 
         if (noe_energy <= old_noe_energy) or (rdc_energy <= old_rdc_energy):
             print "rmsd:", rmsd, pair
