@@ -175,7 +175,7 @@ def performRefinement(task, stage, pair):
         # Recalculate NOE energy
         if 'ilva_noes' in exp_data_types:
             noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, \
-            new_cluster_sidechains = noepdf.refineILVA(transformed_coors, sse_ordered, exp_data, stage)
+            new_cluster_sidechains = noepdf.refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy, stage)
 
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                 tlog.append(

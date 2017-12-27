@@ -481,7 +481,8 @@ def noe_in_pair(tsse_ordered, exp_data, pair):
         return False
 
 
-def refineILVA(transformed_coors, sse_ordered, exp_data, stage):
+def refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy, stage):
+
     sse_coors = copy.deepcopy(transformed_coors)
     noe_data = exp_data['ilva_noes']
     cluster_protons = {}
@@ -593,7 +594,7 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, stage):
     noe_energy = noe_energy / float(total_noes)
     noe_energy = noe_energy / math.pow(total_noes, 1 / 3.0)
 
-    if noe_energy > noe_energy_cutoff:
+    if noe_energy > old_noe_energy:
         return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
     else:
         unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
