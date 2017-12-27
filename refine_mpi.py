@@ -56,7 +56,7 @@ def get_lowest_NOE_energy(tasks):
     noe_energy = []
     for entry in tasks:
         noe_energy.append(entry[5][3])
-
+    noe_energy = noe_energy[0:int(len(noe_energy)/2.0)]
     return sum(noe_energy)/float(len(noe_energy))
 
 #####################################  Define cmd line argument parser #############################################
