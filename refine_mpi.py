@@ -106,7 +106,7 @@ if rank == 0:
 
     print ("Master starting with {} workers".format(num_workers))
     total_data = []
-    lowest_noe_energy = get_lowest_NOE_energy(tasks[0])
+    lowest_noe_energy = get_lowest_NOE_energy(tasks)
     print "Average lowest NOE energy is :", lowest_noe_energy
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop
