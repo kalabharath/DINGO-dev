@@ -103,7 +103,7 @@ def performRefinement(task, stage, pair):
         print "Energy is nonzero proceeding with refinement: ", old_noe_energy
     """
 
-    db_entries = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
+    db_entries, s1_len, s2_len = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
 
     rmsd_cutoff = 0.0
     if (s1_len < 7) or (s2_len < 7):
@@ -119,10 +119,8 @@ def performRefinement(task, stage, pair):
     if not rmsd_cutoff:
         rmsd_cutoff = exp_data['refine_rmsd_cutoff'][stage - 1]
 
-    try:
-        for smotif in db_entries:
-            pass
-    except:
+
+    if not db_entries:
         return False
 
     for smotif in db_entries:

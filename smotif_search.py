@@ -102,10 +102,12 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'ilva_noes' in exp_data_types:
-            noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons, cluster_sidechains = noepdf.s1ILVApdf(s1_def, s2_def, smotif_data[i], exp_data, stage)
+            noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons, cluster_sidechains = noepdf.s1ILVApdf(
+                s1_def, s2_def, smotif_data[i], exp_data, stage)
 
             if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
-                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons, cluster_sidechains])
+                tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons,
+                             cluster_sidechains])
             else:
                 continue
 
@@ -150,7 +152,7 @@ def S1SmotifSearch(task):
     if dump_log:
         # testing for rdc_plus_pcs
         if 'rank_top_hits' in exp_data_types:
-            #dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
+            # dump_log = rank.rank_dump_log(dump_log, exp_data, stage=1)
             rank_top_hits = exp_data['rank_top_hits']
             num_hits = rank_top_hits[stage - 1]
             dump_log = rank.rank_assembly(dump_log, num_hits)
@@ -291,10 +293,11 @@ def sXSmotifSearch(task):
             # ************************************************
 
             if 'ilva_noes' in exp_data_types:
-                noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains = noepdf.sX2ILVApdf(transformed_coos,
-                                                                                              sse_ordered, current_ss,
-                                                                                              sorted_noe_data,
-                                                                                              cluster_protons, cluster_sidechains, exp_data, stage)
+                noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains = noepdf.sX2ILVApdf(
+                    transformed_coos,
+                    sse_ordered, current_ss,
+                    sorted_noe_data,
+                    cluster_protons, cluster_sidechains, exp_data, stage)
 
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                     tlog.append(['NOE_filter', noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons,
@@ -309,7 +312,8 @@ def sXSmotifSearch(task):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered, exp_data, stage)
+                rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered,
+                                                                                  exp_data, stage)
                 if rdc_tensor_fits:
                     tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
                 else:
@@ -344,14 +348,14 @@ def sXSmotifSearch(task):
     # Dumping hits as a pickle array.
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
-            #dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
+            # dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
             rank_top_hits = exp_data['rank_top_hits']
             num_hits = rank_top_hits[stage - 1]
             dump_log = rank.rank_assembly(dump_log, num_hits)
             print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(dump_log)
         print "num of hits", len(dump_log),
         # io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
-        #io.dumpGzipPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
+        # io.dumpGzipPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
         return dump_log
     else:
         return False
