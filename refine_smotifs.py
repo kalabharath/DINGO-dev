@@ -64,9 +64,6 @@ def getSeq(coor_array, sse_ordered, aa_seq):
 
 def performRefinement(task, stage, pair, old_noe_energy):
 
-    #task = work[0]
-    #stage = work[1]
-    #task_index = work[2]
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
@@ -99,14 +96,6 @@ def performRefinement(task, stage, pair, old_noe_energy):
 
     tdump_log = []
 
-    """
-    if old_noe_energy <= 0.005:
-        print "NOE energy is Zero there is no need to do any refinement, exiting task:"
-        return tdump_log
-    else:
-        print "Energy is nonzero proceeding with refinement: ", old_noe_energy
-    """
-
     db_entries, s1_len, s2_len = getfromDB(pair, sse_ordered, exp_data['database_cutoff'])
 
     rmsd_cutoff = 0.0
@@ -126,7 +115,9 @@ def performRefinement(task, stage, pair, old_noe_energy):
 
     if not db_entries:
         return False
-    stime = time.time()
+
+    tstime = time.time()
+
     for smotif in db_entries:
 
         tpdbid = smotif[0][0]
@@ -206,8 +197,10 @@ def performRefinement(task, stage, pair, old_noe_energy):
         else:
             continue
 
-        ctime = time.time()
-        if (ctime-stime) > 1800:
+        tctime = time.time()
+
+        if ((tctime-tstime)/60.0) > 5.0:
+            print "Wall time exceeded, stopping further execution"
             if len(tdump_log) >= 5:
                 tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
             if tdump_log:
@@ -230,14 +223,8 @@ def SmotifRefinement(work):
     old_noe_energy = work[3]
     refine_pairs = task[8][1]
     dump_log = []
+    dump_log.append(task)
 
-
-    if old_noe_energy <= 0.005:
-        print "NOE energy is Zero there is no need to do any refinement, exiting task:", task_index
-        dump_log.append(task)
-        #return dump_log
-    else:
-        dump_log.append(task)
 
     stime = time.time()
 
@@ -256,8 +243,10 @@ def SmotifRefinement(work):
 
 
         ctime = time.time()
-        if ctime-stime > 3600:
+        if (ctime-stime/60.0) > 10.0:
+            print "Walltime exceeded! finishing up!"
+            io.dumpPickle("tx_refine_" + str(task_index) + ".pickle", dump_log)
             return dump_log
 
-    io.dumpPickle("tx_refine_"+str(task_index)+".pickle", dump_log)
+    io.dumpPickle("tx_refine_" + str(task_index) + ".pickle", dump_log)
     return dump_log
