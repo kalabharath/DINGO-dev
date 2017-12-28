@@ -192,6 +192,7 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
         return ordered_SSE, refine_pairs, computed_pairs, []
     else:
         computed_pairs = []
+        log_refine_smotif = []
         for entry in previous_smotif:
             if 'Refine_Smotifs' == entry[0]:
                 computed_pairs = entry[2]
