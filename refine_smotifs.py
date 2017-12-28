@@ -199,7 +199,7 @@ def performRefinement(task, stage, pair, old_noe_energy):
 
         tctime = time.time()
 
-        if ((tctime-tstime)/60.0) > 5.0:
+        if ((tctime-tstime)/60.0) > 30.0:
             print "Wall time exceeded, stopping further execution"
             if len(tdump_log) >= 5:
                 tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
@@ -243,7 +243,7 @@ def SmotifRefinement(work):
 
 
         ctime = time.time()
-        if (ctime-stime/60.0) > 10.0:
+        if (ctime-stime/60.0) > 60.0:
             print "Walltime exceeded! finishing up!"
             io.dumpPickle("tx_refine_" + str(task_index) + ".pickle", dump_log)
             return dump_log
