@@ -5,6 +5,7 @@ import filters.rdc.rdcfilter as Rfilter
 import filters.rmsd.RefRmsd as ref
 import utility.smotif_util as sm
 import ranking.NoeStageRank as rank
+import time
 
 def getRefinementIndices(sse_array):
     import itertools
@@ -125,7 +126,7 @@ def performRefinement(task, stage, pair, old_noe_energy):
 
     if not db_entries:
         return False
-
+    stime = time.time()
     for smotif in db_entries:
 
         tpdbid = smotif[0][0]
@@ -205,6 +206,11 @@ def performRefinement(task, stage, pair, old_noe_energy):
         else:
             continue
 
+        ctime = time.time()
+        if (ctime-stime) > 3600:
+            tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
+            return tdump_log
+
     if len(tdump_log) >= 5:
         tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
     if tdump_log:
@@ -229,7 +235,7 @@ def SmotifRefinement(work):
     else:
         dump_log.append(task)
 
-
+    stime = time.time()
 
     for pair in refine_pairs:
         t_log = []
@@ -245,5 +251,9 @@ def SmotifRefinement(work):
             dump_log = rank.rank_assembly(dump_log, num_hits=10)
 
 
+        ctime = time.time()
+        if ctime-stime > 3600:
+            return dump_log
 
+    io.dumpPickle("tx_refine_"+str(task_index)+".pickle", dump_log)
     return dump_log
