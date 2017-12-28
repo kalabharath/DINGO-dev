@@ -208,8 +208,12 @@ def performRefinement(task, stage, pair, old_noe_energy):
 
         ctime = time.time()
         if (ctime-stime) > 3600:
-            tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
-            return tdump_log
+            if len(tdump_log) >= 5:
+                tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
+            if tdump_log:
+                return tdump_log
+            else:
+                return False
 
     if len(tdump_log) >= 5:
         tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
