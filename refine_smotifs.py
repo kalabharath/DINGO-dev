@@ -243,7 +243,7 @@ def SmotifRefinement(work):
 
 
         ctime = time.time()
-        if (ctime-stime/60.0) > 60.0:
+        if ((ctime-stime)/60.0) > 60.0:
             print "Walltime exceeded! finishing up!"
             io.dumpPickle("tx_refine_" + str(task_index) + ".pickle", dump_log)
             return dump_log
