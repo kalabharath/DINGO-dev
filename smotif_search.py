@@ -48,7 +48,6 @@ def S1SmotifSearch(task):
     # This is the place to add new filters as you desire. For starters, look at Sequence filter.
     # ************************************************************************************************
 
-
     for i in range(0, len(smotif_data)):
 
         # ************************************************
@@ -78,7 +77,7 @@ def S1SmotifSearch(task):
         # Applying different filters to Smotifs
         # Prepare temp log array to save data at the end
         # ************************************************
-        # initialize variables
+
         tlog, pcs_tensor_fits, rdc_tensor_fits, = [], [], []
         ref_rmsd, noe_probability = 0.0, 0.0
 
@@ -87,11 +86,13 @@ def S1SmotifSearch(task):
         parent_smotifs = sm.array2string([smotif_data[i][0]])
         tlog.append(['qcp_rmsd'])
         tlog.append(['cathcodes', [smotif_data[i][0]], parent_smotifs])
+
         # ************************************************
         # Sequence filter
         # Aligns the smotif seq to target seq and calculates
         # sequence identity and the alignment score
         # ************************************************
+
         smotif_seq, seq_identity = Sfilter.getS1SeqIdentity(s1_def, s2_def, smotif_data[i], exp_data)
         tlog.append(['seq_filter', smotif_seq, seq_identity])
 

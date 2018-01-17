@@ -15,13 +15,10 @@ should be called as a part of the sequence of smotif assembly files
 import argparse
 import time
 import traceback
-from   mpi4py import MPI
-
-import ranking.SmotifRanking as srank
+from mpi4py import MPI
 from ranking.NoeStageRank import rank_assembly
 import refine_smotifs as refine
 import utility.masterutil as mutil
-import utility.stage2_util as util
 import utility.io_util as io
 
 # Define MPI message tags
@@ -51,6 +48,7 @@ def killall(processes):
         if count == processes -1:
             break
     return True
+
 
 def get_lowest_NOE_energy(tasks):
     noe_energy = []
@@ -106,7 +104,13 @@ if rank == 0:
 
     print ("Master starting with {} workers".format(num_workers))
     total_data = []
-    lowest_noe_energy = get_lowest_NOE_energy(tasks)
+    try:
+        lowest_noe_energy = get_lowest_NOE_energy(tasks)
+
+    except ZeroDivisionError:
+        killall(size)
+        exit()
+
     print "Average lowest NOE energy is :", lowest_noe_energy
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop

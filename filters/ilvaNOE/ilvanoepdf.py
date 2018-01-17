@@ -251,26 +251,20 @@ def s1ILVApdf(s1_def, s2_def, smotif, exp_data, stage):
             else:
                 print "1:WTH did i miss"
 
-        count += 1.0
-        if count >= (len(smotif_noe_data) * 0.75):
-            tprob = noes_found / total_noes
-            threshold = exp_data['expected_noe_prob'][stage - 1]
-            noeenergy = getNOEenergy(error_array, total_noes)
-            if tprob < threshold:
-                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            elif noeenergy > noe_energy_cutoff:
-                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            else:
-                pass
-
-    noe_energy = numpy.sum(error_array)
-    noe_energy = noe_energy / float(total_noes)
-    noe_energy = noe_energy / math.pow(total_noes, 1 / 3.0)
-
-    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
-    return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes,
-                                                               error_array], cluster_protons, cluster_sidechains
-
+    noe_energy = getNOEenergy(error_array, total_noes)
+    probability = noes_found / total_noes
+    threshold = exp_data['expected_noe_prob'][stage - 1]
+    if probability < threshold:
+        return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+    elif noe_energy > noe_energy_cutoff:
+        return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+    elif (noe_energy <= noe_energy_cutoff) and (probability >= threshold):
+        unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
+        return probability, total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes,
+                                                     error_array], cluster_protons, cluster_sidechains
+    else:
+        print "Fatal error in logic in s1ILVApdf"
+        return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
 
 def getSxCoorMatrix(coor_array, native_sse):
     resi = {}
@@ -353,6 +347,7 @@ def getSxAtomCoors(noedef, coorH_matrix, bb_matrix, cluster_protons, cluster_sid
 
 def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data, cluster_protons, cluster_sidechains,
                exp_data, stage):
+
     sse_coors = copy.deepcopy(transformed_coors)
     satisfied_noes = copy.deepcopy(sorted_noe_data[0])
     impossible_noes = copy.deepcopy(sorted_noe_data[1])
@@ -384,7 +379,6 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
         if noeinresi(entry, resi):
             smotif_noe_data.append(entry)
 
-    count = 0.0
     tol_noe_count = 0
 
     for noedef in smotif_noe_data:
@@ -441,32 +435,25 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
             else:
                 print "2+:WTH did i miss"
 
-        count += 1.0
-
-        if count >= (len(smotif_noe_data) / 2.0):
-            tprob = noes_found / total_noes
-            threshold = exp_data['expected_noe_prob'][stage - 1]
-            noeenergy = getNOEenergy(error_array, total_noes)
-            if tprob < threshold:
-                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            elif noeenergy > noe_energy_cutoff:
-                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            else:
-                pass
-
-    noe_energy = numpy.sum(error_array)
-    noe_energy = noe_energy / float(total_noes)
-    noe_energy = noe_energy / math.pow(total_noes, 1 / 3.0)
-    unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
-    return (noes_found / total_noes), total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes,
-                                                               error_array], cluster_protons, cluster_sidechains
+    noe_energy = getNOEenergy(error_array, total_noes)
+    probability = noes_found / total_noes
+    threshold = exp_data['expected_noe_prob'][stage - 1]
+    if probability < threshold:
+        return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+    elif noe_energy > noe_energy_cutoff:
+        return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
+    elif (noe_energy <= noe_energy_cutoff) and (probability >= threshold):
+        unsatisfied_noes = extractUnSatisfiedNoes(satisfied_noes, impossible_noes, noe_data)
+        return probability, total_noes, noe_energy, [satisfied_noes, impossible_noes, unsatisfied_noes,
+                                                     error_array], cluster_protons, cluster_sidechains
+    else:
+        print "Fatal error in logic in sXILVApdf"
+        return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
 
 
 def noe_in_pair(tsse_ordered, exp_data, pair):
     resi = []
-    sse_ordered = []
-    sse_ordered.append(tsse_ordered[pair[0]])
-    sse_ordered.append(tsse_ordered[pair[1]])
+    sse_ordered = [(tsse_ordered[pair[0]]), (tsse_ordered[pair[1]])]
     for i in range(0, len(sse_ordered)):
         native_sse_range = range(sse_ordered[i][4], sse_ordered[i][5] + 1)
         resi = resi + native_sse_range
@@ -484,18 +471,14 @@ def noe_in_pair(tsse_ordered, exp_data, pair):
 def refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy, stage):
 
     sse_coors = copy.deepcopy(transformed_coors)
-    noe_data = exp_data['ilva_noes']
     cluster_protons = {}
     cluster_sidechains = {}
     satisfied_noes = []
-    unsatisfied_noes = []
     impossible_noes = []
     error_array = []
-
     noe_data = exp_data['ilva_noes']
     max_noe_limit = exp_data['max_noe_dist']
     max_violations = exp_data['max_violations']
-    noe_energy_cutoff = exp_data['noe_energy_cutoff']
     unsatisfied_noes = []
 
     noes_found = len(satisfied_noes)
@@ -517,8 +500,6 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy, stage):
     for entry in noe_data:
         if noeinresi(entry, resi):
             smotif_noe_data.append(entry)
-
-    count = 0.0
     tol_noe_count = 0
 
     for noedef in smotif_noe_data:
@@ -574,21 +555,6 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy, stage):
                 total_noes += 1
             else:
                 print "2+:WTH did i miss"
-
-        """
-        count += 1.0
-        
-        if count >= (len(smotif_noe_data) * 0.75):
-            tprob = noes_found / total_noes
-            threshold = exp_data['expected_noe_prob'][stage - 1]
-            noeenergy = getNOEenergy(error_array, total_noes)
-            if tprob < threshold:
-                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            elif noeenergy > noe_energy_cutoff:
-                return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
-            else:
-                pass
-        """
 
     noe_energy = numpy.sum(error_array)
     noe_energy = noe_energy / float(total_noes)

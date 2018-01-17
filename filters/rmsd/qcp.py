@@ -392,6 +392,7 @@ def getKdist(sse_array, atom_type):
 
 
 def kClashes(coo_arrays, sse_ordered, current_ss):
+
     """
     Known minimum distances between various atoms between the SSEs of the smotif
     the first entry is mean and second entry is SD, computed on a sample of 100 lowest distances observed over single
@@ -431,5 +432,3 @@ def kClashes(coo_arrays, sse_ordered, current_ss):
                 if dist < kdist:
                     return False
     return True
-
-

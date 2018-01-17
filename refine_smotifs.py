@@ -62,12 +62,13 @@ def getSeq(coor_array, sse_ordered, aa_seq):
     seq_id = (k / float(len(concat_seq))) * 100
     return concat_seq, seq_id
 
+
 def performRefinement(task, stage, pair, old_noe_energy):
 
     exp_data = io.readPickle("exp_data.pickle")
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
-    """              
+    """
     0: smotif
     1: smotif_def
     2: qcp_rmsd
@@ -75,7 +76,7 @@ def performRefinement(task, stage, pair, old_noe_energy):
     4: seq_filter
     5: NOE_filter
     6: RDC_filter
-    7: Ref_RMSD   
+    7: Ref_RMSD
     8: Refine_Smotifs
 
     """
@@ -87,7 +88,6 @@ def performRefinement(task, stage, pair, old_noe_energy):
     old_cath_codes, parent_smotifs = task[3][1], task[3][2]
     old_rmsd = task[7][1]
     old_noe_energy = round(old_noe_energy, 3)
-
 
     if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
         pass
@@ -111,7 +111,6 @@ def performRefinement(task, stage, pair, old_noe_energy):
         rmsd_cutoff = 7.5
     if not rmsd_cutoff:
         rmsd_cutoff = exp_data['refine_rmsd_cutoff'][stage - 1]
-
 
     if not db_entries:
         return False
@@ -138,7 +137,6 @@ def performRefinement(task, stage, pair, old_noe_energy):
                 continue
             else:
                 pass
-
 
         tlog = []
 
@@ -184,16 +182,32 @@ def performRefinement(task, stage, pair, old_noe_energy):
                 log_refine_smotif = []
 
             log_refine_smotif.append(log_refine_pair)
-            print log_refine_smotif
             tlog.append(['Refine_smotifs', refine_pairs, computed_pairs, log_refine_smotif])
 
-
-        if (noe_energy <= old_noe_energy) or (rdc_energy <= old_rdc_energy):
+        if (noe_energy < old_noe_energy) or (rdc_energy < old_rdc_energy):
             print "rmsd:", rmsd, pair
             print "NOE energy", old_noe_energy, noe_energy, noe_probability
             print "RDC energy", old_rdc_energy, rdc_energy
             print "Ref_rmsd", old_rmsd, ref_rmsd
             tdump_log.append(tlog)
+        elif (noe_energy == old_noe_energy):
+            if (rdc_energy < old_rdc_energy):
+                print "rmsd:", rmsd, pair
+                print "NOE energy", old_noe_energy, noe_energy, noe_probability
+                print "RDC energy", old_rdc_energy, rdc_energy
+                print "Ref_rmsd", old_rmsd, ref_rmsd
+                tdump_log.append(tlog)
+            else:
+                continue
+        elif (rdc_energy == old_rdc_energy):
+            if (noe_energy < old_noe_energy):
+                print "rmsd:", rmsd, pair
+                print "NOE energy", old_noe_energy, noe_energy, noe_probability
+                print "RDC energy", old_rdc_energy, rdc_energy
+                print "Ref_rmsd", old_rmsd, ref_rmsd
+                tdump_log.append(tlog)
+            else:
+                continue
         else:
             continue
 
@@ -217,14 +231,17 @@ def performRefinement(task, stage, pair, old_noe_energy):
 
 
 def SmotifRefinement(work):
+
+    """
+    :param work:
+    :return:
+    """
     task = work[0]
     stage = work[1]
     task_index = work[2]
     old_noe_energy = work[3]
     refine_pairs = task[8][1]
-    dump_log = []
-    dump_log.append(task)
-
+    dump_log = [task]
 
     stime = time.time()
 
@@ -240,7 +257,6 @@ def SmotifRefinement(work):
 
         if len(dump_log) > 10:
             dump_log = rank.rank_assembly(dump_log, num_hits=10)
-
 
         ctime = time.time()
         if ((ctime-stime)/60.0) > 60.0:
