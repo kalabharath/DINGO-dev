@@ -30,6 +30,7 @@ def orderSeq(previous_smotif, current_seq, direction):
 
     return concat_seq
 
+
 def getSmotifAASeq(ss1, ss2):
     one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q',
                   'ASP': 'D', 'ASN': 'N', 'HIS': 'H', 'TRP': 'W', 'PHE': 'F', 'TYR': 'Y',
@@ -47,6 +48,7 @@ def getSmotifAASeq(ss1, ss2):
             seq = seq + one_letter[aa]
 
     return seq
+
 
 def getSmotifAASeq_v2(sse):
 
@@ -100,6 +102,7 @@ def SequenceSimilarity(s1_def, s2_def, smotif, exp_data):
     seq_id = (k / len(smotif_seq)) * 100
     return smotif_seq, seq_id, score
 
+
 def S2SequenceSimilarity(ss_def, smotif, direction, exp_data):
     """
     return sequence identity for given unique seqs and
@@ -143,6 +146,7 @@ def S2SequenceSimilarity(ss_def, smotif, direction, exp_data):
     seq_id = (k / len(smotif_seq)) * 100
     return smotif_seq, seq_id, score
 
+
 def getS1SeqIdentity(s1_def, s2_def, smotif, exp_data):
     aa_seq = exp_data['aa_seq']
     # get the target and smotif seq information alone and exclude the loop regions
@@ -154,6 +158,7 @@ def getS1SeqIdentity(s1_def, s2_def, smotif, exp_data):
             k += 1.0
     seq_id = k/float(len(native_seq))
     return smotif_seq, seq_id
+
 
 def getSXSeqIdentity(ss_def, smotif, direction, exp_data, psmotif, sse_ordered):
     aa_seq = exp_data['aa_seq']
@@ -183,6 +188,7 @@ def getSXSeqIdentity(ss_def, smotif, direction, exp_data, psmotif, sse_ordered):
             k += 1
     seq_id = (k / float(len(concat_seq))) * 100
     return seq_id, concat_seq
+
 
 def getGlobalSequenceIdentity(concat_seq, exp_data, sse_ordered):
     aa_seq = exp_data['aa_seq']

@@ -29,7 +29,6 @@ for p in range(0, len(top_result)):
 
     top_struct = copy.copy(top_struct)
 
-
     for entry in top_struct:
         if entry[0] =='cathcodes':
             print entry
