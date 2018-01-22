@@ -16,7 +16,7 @@ import argparse
 import time
 import traceback
 from mpi4py import MPI
-from ranking.NoeStageRank import rank_assembly
+from ranking.NoeStageRank import *
 import refine_smotifs as refine
 import utility.masterutil as mutil
 import utility.io_util as io
@@ -57,20 +57,20 @@ def get_lowest_NOE_energy(tasks):
     noe_energy = noe_energy[0:int(len(noe_energy)/2.0)]
     return sum(noe_energy)/float(len(noe_energy))
 
-#####################################  Define cmd line argument parser #############################################
+# ********************* Define cmd line argument parser *********************
 
 parser = argparse.ArgumentParser(description='DINGO-Refine Master MPI process that manages all jobs.')
 parser.add_argument('--infile', type=int, help='specify the top_hits file')
 parser.add_argument('--stage', type=int, help='specify the stage of  the Smotif assembly')
 parser.add_argument('--numhits', type=int, help='Top number of hits to be selected')
 args = parser.parse_args()
-#####################################  Define cmd line argument parser #############################################
+# *********************   Define cmd line argument parser *********************
 
 # Rank '0' specifies the master process
 
 if rank == 0:
 
-    ##################################  Extract top hits ########################################
+    # *********************   Extract top hits *********************
 
     in_file = str(args.infile)+"_tophits.gzip"
     print "infile ", in_file
@@ -84,7 +84,7 @@ if rank == 0:
         killall(size)
         exit()
 
-    ##################################  Generate and distribute job index array ########################################
+    # ********************* Generate and distribute job index array *********************
 
     stime = time.time()
 
@@ -136,9 +136,12 @@ if rank == 0:
             print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed) / (60), 2), "mins"
         elif tag == tags.EXIT:
             closed_workers += 1
-    #consolidate top_hits and dump files here
+
+    # consolidate top_hits and dump files here
     print "Total number of hits  found are : ",len(total_data)
-    ranked_data = rank_assembly(total_data, args.numhits)
+    # ranked_data = rank_assembly(total_data, args.numhits)
+    exp_data = io.readPickle('./exp_data.pickle')
+    ranked_data = rank_assembly_with_clustering(total_data, exp_data['aa_seq'], args.numhits)
     print len(ranked_data)
     io.dumpGzipPickle(str(args.infile) + "_refined_tophits.gzip", ranked_data)
     print "All Done, Master exiting"

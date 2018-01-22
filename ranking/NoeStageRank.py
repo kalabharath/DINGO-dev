@@ -2,6 +2,8 @@ import collections
 import math
 
 import utility.stage2_util as s2util
+import clusterSmotifs as cluster
+
 
 def limitParents(current_parent, smotif_parents):
     count = 0
@@ -187,7 +189,125 @@ def rank_assembly(dump_log, num_hits):
 
     return reduced_dump_log
 
+
+def rank_assembly_with_clustering(dump_log, aa_seq, num_hits):
+    """
+
+    :param dump_log:
+    :param num_hits:
+    :return:
+    """
+
+    new_dict = collections.defaultdict(list)
+
+    for hit in dump_log:
+        # thread_data contains data from each search and filter thread.
+        # initialize total score array
+        noe_energy = hit[5][3]
+        noe_energy = round(noe_energy, 3)
+        new_dict[noe_energy].append(hit)
+
+    keys = new_dict.keys()
+    keys.sort()
+    # Rank based on NOE energy
+
+    reduced_dump_log = []
+
+    for i in range(len(keys)):
+        entries = new_dict[keys[i]]
+        if len(entries) == 1:
+            reduced_dump_log.append(entries[0])
+            print "final sele", keys[i]
+        else:
+            t2_log = collections.defaultdict(list)
+            for hit in entries:
+                rdc_score = hit[6][3]
+                t2_log[rdc_score].append(hit)
+            rdc_score_bins = t2_log.keys()
+            rdc_score_bins.sort()
+            for k in range(len(rdc_score_bins)):
+                hits = t2_log[rdc_score_bins[k]]
+                for hit in hits:
+                    reduced_dump_log.append(hit)
+                    print "final sele", keys[i], rdc_score_bins[k]
+
+    initial_entries = len(reduced_dump_log)
+
+    if len(reduced_dump_log) > (4* num_hits):
+        reduced_dump_log = reduced_dump_log[:(4*num_hits)]
+
+    reduced_dump_log, counter = cluster.clusterSmotifs(reduced_dump_log, aa_seq, rmsd_cutoff=1.0)
+    print "From entries :", initial_entries, " Removed: ", counter
+    if len(reduced_dump_log) >= num_hits:
+        reduced_dump_log = reduced_dump_log[0:num_hits]
+    else:
+        print "could only extract ", len(reduced_dump_log)
+
+    return reduced_dump_log
+
+
+def rank_assembly_with_clustering_and_seq(dump_log, aa_seq, num_hits):
+
+    """
+
+    :param dump_log:
+    :param num_hits:
+    :return:
+    """
+
+    new_dict = collections.defaultdict(list)
+
+    for hit in dump_log:
+        # thread_data contains data from each search and filter thread.
+        # initialize total score array
+        noe_energy = hit[5][3]
+        noe_energy = round(noe_energy, 3)
+        new_dict[noe_energy].append(hit)
+
+    keys = new_dict.keys()
+    keys.sort()
+    # Rank based on NOE energy
+
+    reduced_dump_log = []
+    seqs = []
+
+    for i in range(len(keys)):
+        entries = new_dict[keys[i]]
+        if len(entries) == 1:
+            smotif_seq = entries[0][4][1]
+
+            if smotif_seq not in seqs:
+                seqs.append(smotif_seq)
+                reduced_dump_log.append(entries[0])
+                print "final sele", keys[i]
+        else:
+            t2_log = collections.defaultdict(list)
+            for hit in entries:
+                rdc_score = hit[6][3]
+                t2_log[rdc_score].append(hit)
+            rdc_score_bins = t2_log.keys()
+            rdc_score_bins.sort()
+            for k in range(len(rdc_score_bins)):
+                hits = t2_log[rdc_score_bins[k]]
+                for hit in hits:
+                    smotif_seq = hit[4][1]
+                    if smotif_seq not in seqs:
+                        seqs.append(smotif_seq)
+                        reduced_dump_log.append(hit)
+                        print "final sele", keys[i], rdc_score_bins[k]
+
+    initial_entries = len(reduced_dump_log)
+    reduced_dump_log, counter = cluster.clusterSmotifs(reduced_dump_log, aa_seq, rmsd_cutoff=1.0)
+    print "From entries :", initial_entries, " Removed: ", counter
+    if len(reduced_dump_log) >= num_hits:
+        reduced_dump_log = reduced_dump_log[0:num_hits]
+    else:
+        print "could only extract ", len(reduced_dump_log)
+
+    return reduced_dump_log
+
 def rank_assembly_noparents(dump_log, num_hits):
+
     """
 
     :param dump_log:
@@ -276,8 +396,6 @@ def rank_assembly_old(dump_log, exp_data, stage):
     5 RDC_filter
     6 Ref_RMSD
     """
-
-
 
     for hit in dump_log:
         # thread_data contains data from each search and filter thread.

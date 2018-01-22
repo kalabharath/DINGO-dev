@@ -18,7 +18,7 @@ import traceback
 from   mpi4py import MPI
 
 import ranking.SmotifRanking as srank
-from ranking.NoeStageRank import rank_assembly
+from ranking.NoeStageRank import *
 import smotif_search as msearch
 import utility.masterutil as mutil
 import utility.stage2_util as util
@@ -140,7 +140,9 @@ if rank == 0:
             closed_workers += 1
     #consolidate top_hits and dump files here
     print "Total number of hits  found are : ",len(total_data)
-    ranked_data = rank_assembly(total_data, args.numhits)
+    # ranked_data = rank_assembly(total_data, args.numhits)
+    exp_data = io.readPickle('./exp_data.pickle')
+    ranked_data = rank_assembly_with_clustering(total_data, exp_data['aa_seq'], args.numhits)
     print len(ranked_data)
     if args.stage == 1:
         sse_index = 0

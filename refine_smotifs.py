@@ -63,10 +63,9 @@ def getSeq(coor_array, sse_ordered, aa_seq):
     return concat_seq, seq_id
 
 
-def performRefinement(task, stage, pair, old_noe_energy):
+def performRefinement(task, stage, pair, old_noe_energy, exp_data):
 
-    exp_data = io.readPickle("exp_data.pickle")
-    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
+
 
     """
     0: smotif
@@ -80,7 +79,7 @@ def performRefinement(task, stage, pair, old_noe_energy):
     8: Refine_Smotifs
 
     """
-
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
     refine_pairs, computed_pairs = task[8][1], task[8][2]
     old_rdc_energy = task[6][3]
@@ -223,7 +222,8 @@ def performRefinement(task, stage, pair, old_noe_energy):
                 return False
 
     if len(tdump_log) >= 5:
-        tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
+        # tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
+        tdump_log = rank.rank_assembly_with_clustering(tdump_log, exp_data['aa_seq'], num_hits=5)
     if tdump_log:
         return tdump_log
     else:
@@ -244,11 +244,13 @@ def SmotifRefinement(work):
     dump_log = [task]
 
     stime = time.time()
+    exp_data = io.readPickle("exp_data.pickle")
 
     for pair in refine_pairs:
+
         t_log = []
         for entry in dump_log:
-            t_entry = performRefinement(entry, stage, pair, old_noe_energy)
+            t_entry = performRefinement(entry, stage, pair, old_noe_energy, exp_data)
             if t_entry:
                 for t in t_entry:
                     t_log.append(t)
@@ -256,7 +258,7 @@ def SmotifRefinement(work):
             dump_log.append(t)
 
         if len(dump_log) > 10:
-            dump_log = rank.rank_assembly(dump_log, num_hits=10)
+            dump_log = rank.rank_assembly_with_clustering(dump_log, exp_data['aa_seq'], num_hits=10)
 
         ctime = time.time()
         if ((ctime-stime)/60.0) > 60.0:
