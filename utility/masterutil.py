@@ -141,11 +141,10 @@ def generate_refinement_order(sse_array):
 
     return refine_pairs, computed_pairs
 
-def generate_refinement_order2(sse_array, computed_pairs):
 
+def generate_refinement_order2(sse_array, computed_pairs):
     import itertools
     from utility.smotif_util import array2string
-
     indices = list(itertools.combinations(range(len(sse_array)), 2))
     refine_pairs = []
     for pair in indices:
@@ -163,9 +162,6 @@ def generate_refinement_order2(sse_array, computed_pairs):
     return refine_pairs, computed_pairs
 
 
-
-
-
 def orderSSE(previous_smotif, current_sse, direction, stage):
     """
     :param previous_smotif:
@@ -174,22 +170,22 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
     :return:
     """
     if stage == 2:
-        previous_seq = []
-        for entry in previous_smotif:
-            if 'smotif_def' == entry[0]:
-                previous_seq = entry
 
-        ordered_SSE = []
-        for sse_array in previous_seq[1]:
-            ordered_SSE.append(sse_array)
+        ordered_sse = (previous_smotif[1][1])[:]
 
         if direction == 'left':
-            ordered_SSE.insert(0, current_sse)
+            ordered_sse.insert(0, current_sse)
         else:
-            ordered_SSE.append(current_sse)
+            ordered_sse.append(current_sse)
 
-        refine_pairs, computed_pairs = generate_refinement_order(ordered_SSE)
-        return ordered_SSE, refine_pairs, computed_pairs, []
+        refine_pairs, computed_pairs = generate_refinement_order(ordered_sse)
+
+        print current_sse
+        print direction
+        print ordered_sse
+        print refine_pairs
+        print computed_pairs
+        return ordered_sse, refine_pairs, computed_pairs, []
     else:
         computed_pairs = []
         log_refine_smotif = []
@@ -206,9 +202,7 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
                     previous_sse.insert(0, current_sse)
                 else:
                     previous_sse.append(current_sse)
-
                 refine_pairs, computed_pairs = generate_refinement_order2(previous_sse, computed_pairs)
-
                 return previous_sse, refine_pairs, computed_pairs, log_refine_smotif
 
 
