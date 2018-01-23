@@ -53,19 +53,19 @@ def killall(processes):
     return True
 
 
-#####################################  Define cmd line argument parser #############################################
+# ************************************  Define cmd line argument parser ************************************
 
 parser = argparse.ArgumentParser(description='DINGO-PCS Master MPI process that manages all jobs.')
 parser.add_argument('--stage', type=int, help='specify the stage of  the Smotif assembly')
 parser.add_argument('--numhits', type=int, help='Top number of hits to be selected from previous assembly')
 args = parser.parse_args()
-#####################################  Define cmd line argument parser #############################################
+# ************************************ Define cmd line argument parser ************************************
 
 # Rank '0' specifies the master process
 
 if rank == 0:
 
-    ##################################  Extract top hits from previous stage ########################################
+    # ************************************ Extract top hits from previous stage ************************************
 
     sse_index = 9999999
 
@@ -94,7 +94,7 @@ if rank == 0:
             killall(size)
             exit()
 
-    ##################################  Generate and distribute job index array ########################################
+    # ************************************ Generate and distribute job index array ************************************
 
     stime = time.time()
 

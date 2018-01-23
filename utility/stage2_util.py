@@ -483,7 +483,9 @@ def getPreviousSmotif(index):
 
 
 def getSS2(index):
+
     map_route = []
+
     if os.path.isfile("contacts_route.pickle"):
         map_route = io.readPickle("contacts_route.pickle")
     elif os.path.isfile("pcs_route.pickle"):
@@ -495,13 +497,12 @@ def getSS2(index):
     
     next_index, next_smotif = getNextSmotif(map_route)
     direction = next_smotif[-1]
-
     if direction == 'left':
         next_ss_list = ss_profiles[next_smotif[0]]
     else:
         next_ss_list = ss_profiles[next_smotif[1]]
 
-    return next_ss_list[index], direction
+    return next_ss_list[index], direction, next_smotif
 
 
 def rename_pickle(index):

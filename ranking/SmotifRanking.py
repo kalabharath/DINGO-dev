@@ -483,7 +483,8 @@ def getRunSeq(num_hits, stage):
     else:
         next_ss_list = ss_profiles[next_smotif[1]]
     # get and make a list of top 10(n) of the previous run
-    #top_hits = makeTopPickle(next_index - 1, num_hits, stage)  # send the previous Smotif index
+    # top_hits = makeTopPickle(next_index - 1, num_hits, stage)  # send the previous Smotif index
+
     top_hits = makeTopPickle2(next_index - 1, num_hits, stage)  # send the previous Smotif index
 
     # delete two stages down pickled files

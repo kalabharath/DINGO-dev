@@ -167,6 +167,7 @@ def S1SmotifSearch(task):
 
 
 def sXSmotifSearch(task):
+
     """
      Main()
     :param task:
@@ -181,14 +182,14 @@ def sXSmotifSearch(task):
 
     if stage == 2:
         psmotif = uts2.getPreviousSmotif(index_array[0])
-        current_ss, direction = uts2.getSS2(index_array[1])
+        current_ss, direction, current_ss_in_que = uts2.getSS2(index_array[1])
         csmotif_data, smotif_def = mutil.getfromDB(psmotif, current_ss, direction, exp_data['database_cutoff'], stage)
         sse_ordered, refine_pairs, computed_pairs, log_refine_smotif = mutil.orderSSE(psmotif, current_ss, direction, stage)
         sorted_noe_data, cluster_protons, cluster_sidechains = mutil.fetchNOEdata(psmotif)
     else:
 
         preSSE = uts2.getPreviousSmotif(index_array[0])
-        current_ss, direction = uts2.getSS2(index_array[1])
+        current_ss, direction, current_ss_in_que = uts2.getSS2(index_array[1])
         csmotif_data, smotif_def = mutil.getfromDB(preSSE, current_ss, direction, exp_data['database_cutoff'], stage)
         sse_ordered, refine_pairs, computed_pairs, log_refine_smotif = mutil.orderSSE(preSSE, current_ss, direction, stage)
         sorted_noe_data, cluster_protons, cluster_sidechains = mutil.fetchNOEdata(preSSE)
@@ -197,7 +198,7 @@ def sXSmotifSearch(task):
     if not csmotif_data:
         # If the smotif library doesn't exist.
         # Terminate further execution.
-        return True
+        return False
 
     # ************************************************************************************************
     # Main
@@ -341,6 +342,7 @@ def sXSmotifSearch(task):
                 ref_rmsd = ref.calcRefRMSD2(exp_data['reference_ca'], sse_ordered, transformed_coos)
                 tlog.append(['Ref_RMSD', ref_rmsd, seq_identity])
                 tlog.append(['Refine_Smotifs', refine_pairs, computed_pairs, log_refine_smotif])
+                tlog.append(['Alt_smotif', current_ss_in_que])
 
             if pcs_tensor_fits or noe_probability:
                 # dump data to the disk

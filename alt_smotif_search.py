@@ -20,6 +20,7 @@ import utility.stage2_util as uts2
 
 
 def altSmotifSearch(task):
+
     """
      Main()
     :param task:
@@ -42,7 +43,7 @@ def altSmotifSearch(task):
     if not csmotif_data:
         # If the smotif library doesn't exist.
         # Terminate further execution.
-        return True
+        return False
 
     # ************************************************************************************************
     # Main
@@ -194,15 +195,14 @@ def altSmotifSearch(task):
     # Dumping hits as a pickle array.
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
-            # dump_log = rank.rank_dump_log(dump_log, exp_data, stage)
+
             rank_top_hits = exp_data['rank_top_hits']
             num_hits = rank_top_hits[stage - 1]
-            # dump_log = rank.rank_assembly(dump_log, num_hits)
             dump_log = rank.rank_assembly_with_clustering(dump_log, exp_data['aa_seq'], num_hits)
+
             print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(dump_log)
         print "num of hits", len(dump_log),
-        # io.dumpPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".pickle", dump_log)
-        # io.dumpGzipPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
+
         return dump_log
     else:
         return False

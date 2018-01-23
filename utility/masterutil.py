@@ -27,6 +27,7 @@ def getPairSSProfiles(s1, s2, ss_profile):
     return s1_l, s2_l
 
 
+
 def getRunSeq():
     """
     generate run seq, a seq list of pairs of
@@ -84,12 +85,14 @@ def getSSdef(index_array):
 
 
 def getfromDB(previous_smotif, current_ss, direction, database_cutoff, stage):
+
     """
     from stage2
     :param database_cutoff:
     :param previous_smotif:
     :param current_ss:
     :param direction:
+    :param stage
     :return:
     """
 
@@ -132,7 +135,7 @@ def generate_refinement_order(sse_array):
     indices = list(itertools.combinations(range(len(sse_array)), 2))
     refine_pairs = []
     for pair in indices:
-        if abs(pair[0] - pair[1]) == 0:
+        if abs(pair[0] - pair[1]) == 1:
             pass
         else:
             t_array = array2string([sse_array[pair[0]], sse_array[pair[1]]])
@@ -163,12 +166,15 @@ def generate_refinement_order2(sse_array, computed_pairs):
 
 
 def orderSSE(previous_smotif, current_sse, direction, stage):
+
     """
     :param previous_smotif:
     :param current_sse:
     :param direction:
+    :param stage:
     :return:
     """
+
     if stage == 2:
 
         ordered_sse = (previous_smotif[1][1])[:]
@@ -177,14 +183,8 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
             ordered_sse.insert(0, current_sse)
         else:
             ordered_sse.append(current_sse)
-
         refine_pairs, computed_pairs = generate_refinement_order(ordered_sse)
 
-        print current_sse
-        print direction
-        print ordered_sse
-        print refine_pairs
-        print computed_pairs
         return ordered_sse, refine_pairs, computed_pairs, []
     else:
         computed_pairs = []
@@ -207,4 +207,5 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
 
 
 def fetchNOEdata(previous_smotif):
+
     return previous_smotif[5][-3], previous_smotif[5][-2], previous_smotif[5][-1]
