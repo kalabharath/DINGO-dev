@@ -25,11 +25,8 @@ def compute_jobs(tasks):
 
     if alt_smotif[-1] == 'right':
         alt_sse = alt_smotif[-2]
-    elif alt_smotif[-1] == 'left':
-        alt_sse = alt_smotif[0]
     else:
-        print "Something is wrong with this logic"
-        exit()
+        alt_sse = alt_smotif[0]
 
     ss_profile = io.readPickle("./ss_profiles.pickle")
     alt_sse_profile = ss_profile[alt_sse]
@@ -39,6 +36,6 @@ def compute_jobs(tasks):
         for j in range(0, len(alt_sse_profile)):
             jobs.append([i, j])
     # print jobs
-    return jobs
+    return jobs, alt_sse_profile
 
 

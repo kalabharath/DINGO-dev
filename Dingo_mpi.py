@@ -114,6 +114,7 @@ if rank == 0:
 
     print ("Master starting with {} workers".format(num_workers))
     total_data = []
+
     while closed_workers < num_workers:
         # Manage/distribute all processes in this while loop
         data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
@@ -138,6 +139,8 @@ if rank == 0:
             print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed) / (60), 2), "mins"
         elif tag == tags.EXIT:
             closed_workers += 1
+
+
     #consolidate top_hits and dump files here
     print "Total number of hits  found are : ",len(total_data)
     # ranked_data = rank_assembly(total_data, args.numhits)

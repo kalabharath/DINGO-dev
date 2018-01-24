@@ -19,13 +19,16 @@ import utility.smotif_util as sm
 import utility.stage2_util as uts2
 
 
-def altSmotifSearch(task):
+def altSmotifSearch(job):
 
     """
      Main()
     :param task:
     :return:
     """
+
+    # send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
+
     index_array = task[0]
     stage = task[1]
 

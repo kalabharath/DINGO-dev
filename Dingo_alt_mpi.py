@@ -99,14 +99,12 @@ if rank == 0:
 
     print ("Master starting with {} workers".format(num_workers))
     total_data = []
-    try:
-        lowest_noe_energy = altutil.get_lowest_noe_energy(tasks)
-        print "Average lowest NOE energy is :", lowest_noe_energy
-    except ZeroDivisionError:
-        killall(size)
-        exit()
 
-    total_jobs = altutil.compute_jobs(tasks)
+    lowest_noe_energy = altutil.get_lowest_noe_energy(tasks)
+    print "Average lowest NOE energy is :", lowest_noe_energy
+
+
+    total_jobs, alt_sse_profile = altutil.compute_jobs(tasks)
 
     while closed_workers < num_workers:
 
@@ -116,8 +114,10 @@ if rank == 0:
         tag = status.Get_tag()
         if tag == tags.READY:
             # worker process is ready, send some task to do.
-            if task_index < len(tasks):
-                comm.send([tasks[task_index], args.stage, task_index, lowest_noe_energy], dest=source, tag=tags.START)
+            if task_index < len(total_jobs):
+                t_job = total_jobs[task_index]
+                send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
+                comm.send(send_job, dest=source, tag=tags.START)
                 task_index += 1  # increment its
             else:
                 # everything is done, send exit signal
