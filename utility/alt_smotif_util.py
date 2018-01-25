@@ -28,7 +28,7 @@ def compute_jobs(tasks):
     else:
         alt_sse = alt_smotif[0]
 
-    ss_profile = io.readPickle("./ss_profiles.pickle")
+    ss_profile = io.getSSprofilesFile()
     alt_sse_profile = ss_profile[alt_sse]
     # print alt_sse, alt_sse_profile
     jobs = []
@@ -38,4 +38,31 @@ def compute_jobs(tasks):
     # print jobs
     return jobs, alt_sse_profile
 
+
+def getfromDB(pair, sse_ordered, database_cutoff):
+    from utility.smotif_util import getSmotif, readSmotifDatabase
+    s1 = sse_ordered[pair[0]]
+    s2 = sse_ordered[pair[1]]
+    s1_len = s1[1]
+    s2_len = s2[1]
+    smotif = getSmotif(s1, s2)
+    return readSmotifDatabase(smotif, database_cutoff)
+
+
+def getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, cutoff):
+
+    if alt_smotif_log[-1] == 'right':
+        sse_ordered[-1] = ss_profile
+    else:
+        sse_ordered[0] = ss_profile
+    print pair, sse_ordered
+    return getfromDB(pair, sse_ordered, cutoff)
+
+
+def delete_last_sse(sse_coors, alt_smotif_log):
+    print alt_smotif_log
+    if alt_smotif_log == 'right':
+        return sse_coors[:-1]
+    else:
+        return sse_coors[1:]
 

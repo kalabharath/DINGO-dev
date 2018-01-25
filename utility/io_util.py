@@ -93,6 +93,22 @@ def readGzipPickle(filename):
         return False
 
 
+def getSSprofilesFile():
+
+    if os.path.isfile("ss_profiles.pickle"):
+        return readPickle("ss_profiles.pickle")
+    else:
+        return False
+
+
+def getExpData():
+
+    if os.path.isfile("exp_data.pickle"):
+        return readPickle("exp_data.pickle")
+    else:
+        return False
+
+
 def readPickle(filename):
     """
         read pickle objects

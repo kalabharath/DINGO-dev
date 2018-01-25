@@ -17,32 +17,36 @@ import utility.io_util as io
 import utility.masterutil as mutil
 import utility.smotif_util as sm
 import utility.stage2_util as uts2
+import utility.alt_smotif_util as alt
 
 
-def altSmotifSearch(job):
-
-    """
-     Main()
-    :param task:
-    :return:
-    """
-
+def perform_alt_search(job, pair):
     # send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
 
-    index_array = task[0]
-    stage = task[1]
+    dump_log = []
+    task = job[0]
+    ss_profile = job[1]
+    old_noe_energy = job[-1]
+    stage = job[2]
+    alt_smotif_log = task[9][1]
+    direction = alt_smotif_log[-1]
 
-    exp_data = io.readPickle("exp_data.pickle")
+    exp_data = io.getExpData()
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
-    psmotif, preSSE, dump_log = [], [], []
 
-    preSSE = uts2.getPreviousSmotif(index_array[0])
-    current_ss, direction = uts2.getSS2(index_array[1])
-    csmotif_data, smotif_def = mutil.getfromDB(preSSE, current_ss, direction, exp_data['database_cutoff'], stage)
-    sse_ordered, refine_pairs, computed_pairs, log_refine_smotif = mutil.orderSSE(preSSE, current_ss, direction, stage)
-    sorted_noe_data, cluster_protons, cluster_sidechains = mutil.fetchNOEdata(preSSE)
+    smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
+    print len(smotif_coors), sse_ordered, rmsd
+    psmotif, preSSE, = [], []
 
-    print current_ss, direction
+    # Check whether there are any noes for this pair
+    if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
+        pass
+    else:
+        return False
+
+    csmotif_data = alt.getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, exp_data['database_cutoff'])
+    print "Successfully parsed db",len(csmotif_data)
+
     if not csmotif_data:
         # If the smotif library doesn't exist.
         # Terminate further execution.
@@ -90,11 +94,13 @@ def altSmotifSearch(job):
 
         rmsd_cutoff = exp_data['rmsd_cutoff'][stage - 1]
 
-        if stage == 2:
-            rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction, rmsd_cutoff)
-        else:
-            rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction, rmsd_cutoff)
-
+        # preSSEs shoud be modified
+        trunk_sse_coors = alt.delete_last_sse(smotif_coors, alt_smotif_log)
+        print "len trunk_sse_coors", len(trunk_sse_coors)
+        print csmotif_data[i][0]
+        rmsd, transformed_coos = qcp.rmsdQCP4(pair, trunk_sse_coors, csmotif_data[i], direction, rmsd_cutoff)
+        print "New RMSD", rmsd
+        continue
         if rmsd <= rmsd_cutoff:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
@@ -198,7 +204,6 @@ def altSmotifSearch(job):
     # Dumping hits as a pickle array.
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
-
             rank_top_hits = exp_data['rank_top_hits']
             num_hits = rank_top_hits[stage - 1]
             dump_log = rank.rank_assembly_with_clustering(dump_log, exp_data['aa_seq'], num_hits)
@@ -209,3 +214,18 @@ def altSmotifSearch(job):
         return dump_log
     else:
         return False
+
+
+def altSmotifSearch(job):
+    # send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
+
+    tdump_log =[]
+    task = job[0]
+    smotif_refinement = task[8]
+    refine_pair = smotif_refinement[1]
+    print "refine_pair", refine_pair
+
+    for pair in refine_pair:
+        tdump_log = perform_alt_search(job, pair)
+
+    tdump_log.append(task)

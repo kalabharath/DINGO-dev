@@ -35,10 +35,8 @@ def getRunSeq():
     """
     # TODO needed to generalize based on input data type
     map_route = []
-    if os.path.isfile("ss_profiles.pickle"):
-        ss_profiles = io.readPickle("ss_profiles.pickle")
-    else:
-        return False
+
+    ss_profiles = io.getSSprofilesFile()
     if os.path.isfile("contacts_route.pickle"):
         map_route = io.readPickle("contacts_route.pickle")
     elif os.path.isfile("pcs_route.pickle"):
