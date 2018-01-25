@@ -60,8 +60,8 @@ def getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, cutoff):
 
 
 def delete_last_sse(sse_coors, alt_smotif_log):
-    print alt_smotif_log
-    if alt_smotif_log == 'right':
+
+    if alt_smotif_log[-1] == 'right':
         return sse_coors[:-1]
     else:
         return sse_coors[1:]

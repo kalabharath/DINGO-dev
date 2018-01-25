@@ -100,7 +100,7 @@ def perform_alt_search(job, pair):
         print csmotif_data[i][0]
         rmsd, transformed_coos = qcp.rmsdQCP4(pair, trunk_sse_coors, csmotif_data[i], direction, rmsd_cutoff)
         print "New RMSD", rmsd
-        continue
+        
         if rmsd <= rmsd_cutoff:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)

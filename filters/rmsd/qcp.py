@@ -377,18 +377,20 @@ def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
 def rmsdQCP4(pair, presse, csmotif, direction, cutoff):
     """
 
-    :param previous_smotif:
+    :param pair:
+    :param presse:
     :param csmotif:
     :param direction:
+    :param cutoff:
     :return:
     """
-    print len(presse)
+
     if direction == 'left':
         frag_b = getcoo(csmotif[2])
         native_fragb_2ndsse = (csmotif[1])[:]
         frag_a = copy.deepcopy(presse[pair[1]])
     else:
-        frag_a = copy.deepcopy(presse[1])
+        frag_a = copy.deepcopy(presse[pair[0]])
         frag_b = getcoo(csmotif[1])
         native_fragb_2ndsse = (csmotif[2])[:]
 
@@ -397,8 +399,6 @@ def rmsdQCP4(pair, presse, csmotif, direction, cutoff):
 
     frag_aca = getCAcoo(frag_a)
     frag_bca = getCAcoo(frag_b)
-
-    print "wtf",len(frag_aca[0]), len(frag_bca[0])
 
     fraglen = len(frag_aca[0])
     xyz1 = qcprot.MakeDMatrix(3, fraglen)
@@ -452,6 +452,7 @@ def rmsdQCP4(pair, presse, csmotif, direction, cutoff):
     qcprot.FreeDArray(rot)
 
     return rmsd, temp_holder
+
 
 def getKdist(sse_array, atom_type):
     """
