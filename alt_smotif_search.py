@@ -96,11 +96,9 @@ def perform_alt_search(job, pair):
 
         # preSSEs shoud be modified
         trunk_sse_coors = alt.delete_last_sse(smotif_coors, alt_smotif_log)
-        print "len trunk_sse_coors", len(trunk_sse_coors)
-        print csmotif_data[i][0]
         rmsd, transformed_coos = qcp.rmsdQCP4(pair, trunk_sse_coors, csmotif_data[i], direction, rmsd_cutoff)
         print "New RMSD", rmsd
-        
+
         if rmsd <= rmsd_cutoff:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
@@ -120,10 +118,7 @@ def perform_alt_search(job, pair):
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
-            if stage == 2:
-                cathcodes, parent_smotifs = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
-            else:
-                cathcodes, parent_smotifs = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
+            cathcodes, parent_smotifs = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
             tlog.append(['cathcodes', cathcodes, parent_smotifs])
 
             # ************************************************
