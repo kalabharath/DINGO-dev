@@ -51,6 +51,7 @@ def dumpPDBCoo2(coo_array):
 
 
 def getCAcoo(frag):
+
     """
     :param frag:
     :return:
@@ -439,7 +440,7 @@ def rmsdQCP4(pair, presse, csmotif, direction, cutoff):
     trans_sse2nd = applyTranslation(rot_sse_2nd, a_cen)
 
     # append the translated coordinates
-    temp_holder = (presse)[:]
+    temp_holder = presse[:]
 
     if direction == 'left':
         temp_holder.insert(0, trans_sse2nd)
@@ -513,3 +514,16 @@ def kClashes(coo_arrays, sse_ordered, current_ss):
                 if dist < kdist:
                     return False
     return True
+
+
+def kClahsesAltSmotif(coo_arrays, sse_ordered, sse_pairs, alt_def):
+
+    if alt_def[-1] == 'right':
+        sse = sse_ordered[sse_pairs[1]]
+    else:
+        sse = sse_ordered[sse_pairs[0]]
+
+    if kClashes(coo_arrays, sse_ordered, sse):
+        return True
+    else:
+        return False

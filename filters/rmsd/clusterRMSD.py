@@ -11,6 +11,8 @@ def combine_arrays(array1, array2):
 
 
 def copy_equivalent(frag, eq):
+
+    #print "Wtf is worng with these arrays", len(frag[0]), len(eq)
     factor = len(eq)
     x, y, z = [None] * factor, [None] * factor, [None] * factor
     index = 0
@@ -21,7 +23,6 @@ def copy_equivalent(frag, eq):
         y[index] = (frag[1][i])
         z[index] = (frag[2][i])
         index += 1
-
     return [x, y, z]
 
 

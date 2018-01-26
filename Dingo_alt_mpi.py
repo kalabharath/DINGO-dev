@@ -103,7 +103,6 @@ if rank == 0:
     lowest_noe_energy = altutil.get_lowest_noe_energy(tasks)
     print "Average lowest NOE energy is :", lowest_noe_energy
 
-
     total_jobs, alt_sse_profile = altutil.compute_jobs(tasks)
 
     while closed_workers < num_workers:
@@ -130,7 +129,7 @@ if rank == 0:
             ctime = time.time()
             elapsed = ctime - stime
             finished_task += 1
-            print "Finishing..", finished_task, "of", len(tasks), "Smotifs, Elapsed", round((elapsed) / (60), 2), "mins"
+            print "Finishing..", finished_task, "of", len(total_jobs), "Smotifs, Elapsed", round((elapsed) / (60), 2), "mins"
         elif tag == tags.EXIT:
             closed_workers += 1
 
@@ -138,7 +137,7 @@ if rank == 0:
     print "Total number of hits  found are : ",len(total_data)
     # ranked_data = rank_assembly(total_data, args.numhits)
     exp_data = io.readPickle('./exp_data.pickle')
-    ranked_data = rank_assembly_with_clustering(total_data, exp_data['aa_seq'], args.numhits)
+    ranked_data = rank_assembly_with_clustering(total_data, args.numhits)
     print len(ranked_data)
     io.dumpGzipPickle(str(args.infile) + "_refined_tophits.gzip", ranked_data)
     print "All Done, Master exiting"

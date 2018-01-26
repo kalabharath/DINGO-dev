@@ -353,7 +353,7 @@ def sXSmotifSearch(task):
         if 'rank_top_hits' in exp_data_types:
             rank_top_hits = exp_data['rank_top_hits']
             num_hits = rank_top_hits[stage - 1]
-            dump_log = rank.rank_assembly_with_clustering(dump_log, exp_data['aa_seq'], num_hits)
+            dump_log = rank.rank_assembly_with_clustering(dump_log, num_hits)
             print "Reducing the amount of data to:", rank_top_hits[stage - 1], len(dump_log)
         print "num of hits", len(dump_log)
         # io.dumpGzipPickle("tx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)

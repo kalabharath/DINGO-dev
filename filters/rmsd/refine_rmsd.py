@@ -77,11 +77,9 @@ def refineRMSD(smotif_coors, pair, csmotif, rmsd_cutoff):
         tsmotif_coors.pop(pair[1])
         tsmotif_coors.insert(pair[1], trans_frag_b2)
 
-
         qcprot.FreeDMatrix(xyz1)
         qcprot.FreeDMatrix(xyz2)
         qcprot.FreeDArray(rot)
-
 
         return tsmotif_coors, rmsd
 
@@ -98,6 +96,9 @@ def kClahsesRefined(coo_arrays, sse_ordered, sse_pairs):
             return False
     else:
         return False
+
+
+
 
 def kClashesOLD(coo_arrays, sse_ordered):
     """

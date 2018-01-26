@@ -108,6 +108,7 @@ def rank_assemblyOLD(dump_log, num_hits):
 
     return reduced_dump_log
 
+
 def rank_assembly(dump_log, num_hits):
     """
 
@@ -190,10 +191,11 @@ def rank_assembly(dump_log, num_hits):
     return reduced_dump_log
 
 
-def rank_assembly_with_clustering(dump_log, aa_seq, num_hits):
+def rank_assembly_with_clustering(dump_log, num_hits):
     """
 
     :param dump_log:
+    :param aa_seq:
     :param num_hits:
     :return:
     """
@@ -234,9 +236,10 @@ def rank_assembly_with_clustering(dump_log, aa_seq, num_hits):
     initial_entries = len(reduced_dump_log)
 
     if len(reduced_dump_log) > (4* num_hits):
+        print ("Reducing the entries to 4 times the top hits", len(reduced_dump_log))
         reduced_dump_log = reduced_dump_log[:(4*num_hits)]
 
-    reduced_dump_log, counter = cluster.clusterSmotifs(reduced_dump_log, aa_seq, rmsd_cutoff=1.0)
+    reduced_dump_log, counter = cluster.clusterSmotifs2(reduced_dump_log, rmsd_cutoff=1.0)
     print "From entries :", initial_entries, " Removed: ", counter
     if len(reduced_dump_log) >= num_hits:
         reduced_dump_log = reduced_dump_log[0:num_hits]

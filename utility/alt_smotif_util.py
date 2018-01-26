@@ -43,10 +43,8 @@ def getfromDB(pair, sse_ordered, database_cutoff):
     from utility.smotif_util import getSmotif, readSmotifDatabase
     s1 = sse_ordered[pair[0]]
     s2 = sse_ordered[pair[1]]
-    s1_len = s1[1]
-    s2_len = s2[1]
     smotif = getSmotif(s1, s2)
-    return readSmotifDatabase(smotif, database_cutoff)
+    return readSmotifDatabase(smotif, database_cutoff), sse_ordered
 
 
 def getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, cutoff):
@@ -55,7 +53,6 @@ def getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, cutoff):
         sse_ordered[-1] = ss_profile
     else:
         sse_ordered[0] = ss_profile
-    print pair, sse_ordered
     return getfromDB(pair, sse_ordered, cutoff)
 
 
@@ -66,3 +63,30 @@ def delete_last_sse(sse_coors, alt_smotif_log):
     else:
         return sse_coors[1:]
 
+
+def getSeq(coor_array, sse_ordered, aa_seq):
+
+    one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q',
+                  'ASP': 'D', 'ASN': 'N', 'HIS': 'H', 'TRP': 'W', 'PHE': 'F', 'TYR': 'Y',
+                  'ARG': 'R', 'LYS': 'K', 'SER': 'S', 'THR': 'T', 'MET': 'M', 'ALA': 'A',
+                  'GLY': 'G', 'PRO': 'P', 'CYS': 'C', 'ASX': 'D', 'GLX': 'G', 'UNK': 'A'}
+    concat_seq = ''
+    for frag in coor_array:
+        atom_num = 1
+        for i in range(atom_num, len(frag[0]), 5):
+            res = (frag[5][i])
+            concat_seq = concat_seq+one_letter[res]
+
+    native_sse_seq = ''
+    for sse in sse_ordered:
+        sse_seq = aa_seq[sse[4] - 1: sse[5]]
+        native_sse_seq = native_sse_seq + sse_seq
+    k = 0.0
+    if len(concat_seq) != len(native_sse_seq):
+        print "Something is wrong with extracting sequence information"
+    for i in range(0, len(concat_seq)):
+
+        if native_sse_seq[i] == concat_seq[i]:
+            k += 1
+    seq_id = (k / float(len(concat_seq))) * 100
+    return concat_seq, seq_id

@@ -18,7 +18,7 @@ def getSmotif(s1, s2):
     ['helix', 6, 9, 4, 146, 151] ['helix', 23, 4, 1, 156, 178]
     """
     s1_type, s2_type = '', ''
-    print s1, s2
+
     if s1[0] == 'helix':
         s1_type = 'h'
     if s1[0] == 'strand':

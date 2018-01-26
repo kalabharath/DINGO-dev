@@ -7,6 +7,7 @@ import utility.smotif_util as sm
 import ranking.NoeStageRank as rank
 import time
 
+
 def getRefinementIndices(sse_array):
     import itertools
     indices = list(itertools.combinations(range(len(sse_array)), 2))
@@ -34,9 +35,7 @@ def getfromDB(pair, sse_ordered, database_cutoff):
     return readSmotifDatabase(smotif, database_cutoff), s1_len, s2_len
 
 
-
 def getSeq(coor_array, sse_ordered, aa_seq):
-
     one_letter = {'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'GLU': 'E', 'GLN': 'Q',
                   'ASP': 'D', 'ASN': 'N', 'HIS': 'H', 'TRP': 'W', 'PHE': 'F', 'TYR': 'Y',
                   'ARG': 'R', 'LYS': 'K', 'SER': 'S', 'THR': 'T', 'MET': 'M', 'ALA': 'A',
@@ -46,7 +45,7 @@ def getSeq(coor_array, sse_ordered, aa_seq):
         atom_num = 1
         for i in range(atom_num, len(frag[0]), 5):
             res = (frag[5][i])
-            concat_seq = concat_seq+one_letter[res]
+            concat_seq = concat_seq + one_letter[res]
 
     native_sse_seq = ''
     for sse in sse_ordered:
@@ -64,9 +63,6 @@ def getSeq(coor_array, sse_ordered, aa_seq):
 
 
 def performRefinement(task, stage, pair, old_noe_energy, exp_data):
-
-
-
     """
     0: smotif
     1: smotif_def
@@ -77,6 +73,7 @@ def performRefinement(task, stage, pair, old_noe_energy, exp_data):
     6: RDC_filter
     7: Ref_RMSD
     8: Refine_Smotifs
+    9: Alt_Smotif
 
     """
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
@@ -151,7 +148,7 @@ def performRefinement(task, stage, pair, old_noe_energy, exp_data):
         tlog.append(['smotif_def', sse_ordered])
         tlog.append(['qcp_rmsd', transformed_coors, sse_ordered, rmsd])
         tlog.append(['cathcodes', old_cath_codes, parent_smotifs])
-        tlog.append(['seq_filter',seq, seq_id ])
+        tlog.append(['seq_filter', seq, seq_id])
 
         # Recalculate NOE energy
         if 'ilva_noes' in exp_data_types:
@@ -212,7 +209,7 @@ def performRefinement(task, stage, pair, old_noe_energy, exp_data):
 
         tctime = time.time()
 
-        if ((tctime-tstime)/60.0) > 30.0:
+        if ((tctime - tstime) / 60.0) > 30.0:
             print "Wall time exceeded, stopping further execution"
             if len(tdump_log) >= 5:
                 tdump_log = rank.rank_assembly(tdump_log, num_hits=5)
@@ -231,7 +228,6 @@ def performRefinement(task, stage, pair, old_noe_energy, exp_data):
 
 
 def SmotifRefinement(work):
-
     """
     :param work:
     :return:
@@ -261,7 +257,7 @@ def SmotifRefinement(work):
             dump_log = rank.rank_assembly_with_clustering(dump_log, exp_data['aa_seq'], num_hits=10)
 
         ctime = time.time()
-        if ((ctime-stime)/60.0) > 60.0:
+        if ((ctime - stime) / 60.0) > 60.0:
             print "Walltime exceeded! finishing up!"
             io.dumpPickle("tx_refine_" + str(task_index) + ".pickle", dump_log)
             return dump_log

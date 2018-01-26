@@ -457,6 +457,7 @@ def start_top_hits(num_hits, stage):
     else:
         return False, False
 
+
 def getPreviousSmotif(index):
     map_route = []
     if os.path.isfile("contacts_route.pickle"):
@@ -477,8 +478,6 @@ def getPreviousSmotif(index):
         top_hits = io.readGzipPickle(t_file)  # Read in previous index hits
 
     #top_hits = io.readGzipPickle(str(next_index - 1) + "_tophits.gzip")  # Read in previous index hits
-    
-
     return top_hits[index]
 
 

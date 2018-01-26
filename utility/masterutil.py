@@ -149,7 +149,7 @@ def generate_refinement_order2(sse_array, computed_pairs):
     indices = list(itertools.combinations(range(len(sse_array)), 2))
     refine_pairs = []
     for pair in indices:
-        if abs(pair[0] - pair[1]) == 0:
+        if abs(pair[0] - pair[1]) == 1:
             pass
         else:
             t_array = array2string([sse_array[pair[0]], sse_array[pair[1]]])
@@ -176,7 +176,6 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
     if stage == 2:
 
         ordered_sse = (previous_smotif[1][1])[:]
-
         if direction == 'left':
             ordered_sse.insert(0, current_sse)
         else:
@@ -185,23 +184,17 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
 
         return ordered_sse, refine_pairs, computed_pairs, []
     else:
-        computed_pairs = []
-        log_refine_smotif = []
-        for entry in previous_smotif:
-            if 'Refine_Smotifs' == entry[0]:
-                computed_pairs = entry[2]
-                log_refine_smotif = entry[3]
+        computed_pairs = previous_smotif[8][2]
+        log_refine_smotif = previous_smotif[8][3]
+        previous_sse = previous_smotif[2][2]
 
-        for entry in previous_smotif:
-            # ['qcp_rmsd', transformed_coos, sse_ordered, rmsd]
-            if 'qcp_rmsd' == entry[0]:
-                previous_sse = entry[2]
-                if direction == 'left':
-                    previous_sse.insert(0, current_sse)
-                else:
-                    previous_sse.append(current_sse)
-                refine_pairs, computed_pairs = generate_refinement_order2(previous_sse, computed_pairs)
-                return previous_sse, refine_pairs, computed_pairs, log_refine_smotif
+        if direction == 'left':
+            previous_sse.insert(0, current_sse)
+        else:
+            previous_sse.append(current_sse)
+            refine_pairs, computed_pairs = generate_refinement_order2(previous_sse, computed_pairs)
+
+        return previous_sse, refine_pairs, computed_pairs, log_refine_smotif
 
 
 def fetchNOEdata(previous_smotif):

@@ -181,7 +181,8 @@ def getSXSeqIdentity(ss_def, smotif, direction, exp_data, psmotif, sse_ordered):
         native_sse_seq = native_sse_seq + sse_seq
     k = 0.0
     if len(concat_seq) != len(native_sse_seq):
-        print "Something is wrong with extracting sequence information"
+        pass
+        #print "Something is wrong with extracting sequence information"
     for i in range(0, len(concat_seq)):
         # print native_sse_seq[i], concat_seq[i]
         if native_sse_seq[i] == concat_seq[i]:
