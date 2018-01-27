@@ -146,6 +146,8 @@ def generate_refinement_order(sse_array):
 def generate_refinement_order2(sse_array, computed_pairs):
     import itertools
     from utility.smotif_util import array2string
+
+    #print "Refinement order:", sse_array, computed_pairs
     indices = list(itertools.combinations(range(len(sse_array)), 2))
     refine_pairs = []
     for pair in indices:
@@ -159,7 +161,6 @@ def generate_refinement_order2(sse_array, computed_pairs):
             else:
                 computed_pairs.append(t_array)
                 refine_pairs.append(pair)
-
     return refine_pairs, computed_pairs
 
 
@@ -192,7 +193,7 @@ def orderSSE(previous_smotif, current_sse, direction, stage):
             previous_sse.insert(0, current_sse)
         else:
             previous_sse.append(current_sse)
-            refine_pairs, computed_pairs = generate_refinement_order2(previous_sse, computed_pairs)
+        refine_pairs, computed_pairs = generate_refinement_order2(previous_sse, computed_pairs)
 
         return previous_sse, refine_pairs, computed_pairs, log_refine_smotif
 

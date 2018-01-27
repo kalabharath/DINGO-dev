@@ -99,7 +99,8 @@ if rank == 0:
 
     print ("Master starting with {} workers".format(num_workers))
     total_data = []
-
+    for entry in tasks:
+        total_data.append(entry)
     lowest_noe_energy = altutil.get_lowest_noe_energy(tasks)
     print "Average lowest NOE energy is :", lowest_noe_energy
 
@@ -136,7 +137,7 @@ if rank == 0:
     # consolidate top_hits and dump files here
     print "Total number of hits  found are : ",len(total_data)
     # ranked_data = rank_assembly(total_data, args.numhits)
-    exp_data = io.readPickle('./exp_data.pickle')
+
     ranked_data = rank_assembly_with_clustering(total_data, args.numhits)
     print len(ranked_data)
     io.dumpGzipPickle(str(args.infile) + "_refined_tophits.gzip", ranked_data)

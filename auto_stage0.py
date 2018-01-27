@@ -138,7 +138,7 @@ else:
 if 'rank_top_hits' in datatypes:
     rank_top_hits = data['rank_top_hits']
     rank_top_hits = rank_top_hits.split()
-    rank_top_hits = [float(i) for i in rank_top_hits]
+    rank_top_hits = [int(i) for i in rank_top_hits]
     data_dict['rank_top_hits'] = rank_top_hits
 else:
     pass
@@ -284,7 +284,7 @@ for i in range(0, len(map_route)):
         print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/refine_mpi.py --infile " + str(
+            128) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
             i) + " --stage 2" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
@@ -296,7 +296,7 @@ for i in range(0, len(map_route)):
         print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/refine_mpi.py --infile " + str(
+            128) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
             i) + " --stage 3" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
@@ -308,7 +308,7 @@ for i in range(0, len(map_route)):
         print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/refine_mpi.py --infile " + str(
+            128) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
             i) + " --stage 4" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)

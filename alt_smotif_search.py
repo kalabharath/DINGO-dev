@@ -45,7 +45,8 @@ def perform_alt_search(job, pair):
     else:
         return False
 
-    csmotif_data, sse_ordered = alt.getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, exp_data['database_cutoff'])
+    csmotif_data, sse_ordered = alt.getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair,
+                                                exp_data['database_cutoff'])
 
     if not csmotif_data:
         # If the smotif library doesn't exist.
@@ -95,7 +96,9 @@ def perform_alt_search(job, pair):
         # preSSEs shoud be modified
 
         trunk_sse_coors = alt.delete_last_sse(smotif_coors, alt_smotif_log)
-        rmsd, transformed_coors = qcp.rmsdQCP4(pair, trunk_sse_coors, csmotif_data[i], direction, rmsd_cutoff)
+
+        rmsd, transformed_coors = qcp.rmsdQCP4(pair, smotif_coors, alt_smotif_log, csmotif_data[i], direction,
+                                               rmsd_cutoff)
 
         if rmsd <= rmsd_cutoff:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
@@ -181,7 +184,7 @@ def perform_alt_search(job, pair):
                 log_refine_smotif.append(log_refine_pair)
                 tlog.append(['Refine_smotifs', refine_pairs, computed_pairs, log_refine_smotif])
 
-            if (noe_energy < old_noe_energy) or (rdc_energy < old_rdc_energy):
+            if (noe_energy < old_noe_energy) and (rdc_energy < old_rdc_energy):
                 print "rmsd:", rmsd, pair
                 print "NOE energy", old_noe_energy, noe_energy, noe_probability
                 print "RDC energy", old_rdc_energy, rdc_energy
@@ -193,15 +196,12 @@ def perform_alt_search(job, pair):
                 print "RDC energy", old_rdc_energy, rdc_energy
                 print "Ref_rmsd", old_rmsd, ref_rmsd
                 dump_log.append(tlog)
-
             elif (rdc_energy == old_rdc_energy) and (noe_energy < old_noe_energy):
-
                 print "rmsd:", rmsd, pair
                 print "NOE energy", old_noe_energy, noe_energy, noe_probability
                 print "RDC energy", old_rdc_energy, rdc_energy
                 print "Ref_rmsd", old_rmsd, ref_rmsd
                 dump_log.append(tlog)
-
             else:
                 continue
 
@@ -224,7 +224,7 @@ def altSmotifSearch(job):
     # send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
 
     all_log = []
-    task = job[0]
+    task = (job[0])[:]
     refine_pair = task[8][1]
     task_index = job[3]
     print "refine_pair", refine_pair
@@ -234,7 +234,6 @@ def altSmotifSearch(job):
         if tdump_log:
             for t in tdump_log:
                 all_log.append(t)
+    # io.dumpPickle("tx_refine_" + str(task_index) + ".pickle", all_log)
 
-    all_log.append(task)
-    io.dumpPickle("tx_refine_" + str(task_index) + ".pickle", all_log)
     return all_log

@@ -169,7 +169,7 @@ def S1SmotifSearch(task):
 def sXSmotifSearch(task):
 
     """
-     Main()
+    Main()
     :param task:
     :return:
     """

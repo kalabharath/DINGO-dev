@@ -375,25 +375,20 @@ def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
     return rmsd, temp_holder
 
 
-def rmsdQCP4(pair, presse, csmotif, direction, cutoff):
-    """
+def rmsdQCP4(pair, presse, alt_smotif_log,  csmotif, direction, cutoff):
 
-    :param pair:
-    :param presse:
-    :param csmotif:
-    :param direction:
-    :param cutoff:
-    :return:
-    """
+    from utility.alt_smotif_util import delete_last_sse
 
     if direction == 'left':
         frag_b = getcoo(csmotif[2])
         native_fragb_2ndsse = (csmotif[1])[:]
         frag_a = copy.deepcopy(presse[pair[1]])
+        presse = delete_last_sse(presse, alt_smotif_log)
     else:
         frag_a = copy.deepcopy(presse[pair[0]])
         frag_b = getcoo(csmotif[1])
         native_fragb_2ndsse = (csmotif[2])[:]
+        presse = alt.delete_last_sse(presse, alt_smotif_log)
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)
