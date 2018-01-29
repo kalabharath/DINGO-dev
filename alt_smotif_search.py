@@ -31,15 +31,14 @@ def perform_alt_search(job, pair):
     old_rdc_energy = task[6][3]
     old_rdc_energy = round(old_rdc_energy, 3)
     old_rmsd = task[7][1]
-
-    exp_data = io.getExpData()
-    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
-
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
 
     psmotif, preSSE, = [], []
+    exp_data = io.getExpData()
+    exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
     # Check whether there are any noes for this pair
+    print "Checking whether NOEs exist in this pair:", pair
     if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
         pass
     else:
@@ -95,15 +94,13 @@ def perform_alt_search(job, pair):
 
         # preSSEs shoud be modified
 
-        trunk_sse_coors = alt.delete_last_sse(smotif_coors, alt_smotif_log)
-
         rmsd, transformed_coors = qcp.rmsdQCP4(pair, smotif_coors, alt_smotif_log, csmotif_data[i], direction,
                                                rmsd_cutoff)
 
         if rmsd <= rmsd_cutoff:
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
-            loop_constraint = llc.loopConstraintAlt(transformed_coors, sse_ordered, direction)
-
+            # loop_constraint = llc.loopConstraintAlt(transformed_coors, sse_ordered, direction)
+            loop_constraint = True
             if loop_constraint:
                 # Check whether the SSEs with in the assembled smotifs are clashing to one another
                 no_clashes = qcp.kClahsesAltSmotif(transformed_coors, sse_ordered, pair, alt_smotif_log)
@@ -120,8 +117,8 @@ def perform_alt_search(job, pair):
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coors, sse_ordered, rmsd])
 
-            cathcodes, parent_smotifs = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
-            tlog.append(['cathcodes', cathcodes, parent_smotifs])
+            cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
+            tlog.append(['cathcodes', cathcodes])
 
             # ************************************************
             # Sequence filter
@@ -141,8 +138,7 @@ def perform_alt_search(job, pair):
 
             if 'ilva_noes' in exp_data_types:
                 noe_probability, no_of_noes, noe_energy, noe_data, new_cluster_protons, new_cluster_sidechains = noepdf.refineILVA(
-                    transformed_coors, sse_ordered, exp_data, old_noe_energy,
-                    stage)
+                    transformed_coors, sse_ordered, exp_data, old_noe_energy)
 
                 if noe_probability >= exp_data['expected_noe_prob'][stage - 1]:
                     noe_energy = round(noe_energy, 3)
@@ -184,7 +180,7 @@ def perform_alt_search(job, pair):
                 log_refine_smotif.append(log_refine_pair)
                 tlog.append(['Refine_smotifs', refine_pairs, computed_pairs, log_refine_smotif])
 
-            if (noe_energy < old_noe_energy) and (rdc_energy < old_rdc_energy):
+            if (noe_energy < old_noe_energy) or (rdc_energy < old_rdc_energy):
                 print "rmsd:", rmsd, pair
                 print "NOE energy", old_noe_energy, noe_energy, noe_probability
                 print "RDC energy", old_rdc_energy, rdc_energy
@@ -204,6 +200,7 @@ def perform_alt_search(job, pair):
                 dump_log.append(tlog)
             else:
                 continue
+
 
     # Dumping hits as a pickle array.
     if len(dump_log) > 0:

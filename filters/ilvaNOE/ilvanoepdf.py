@@ -133,6 +133,24 @@ def noeinresi(noe, resi):
             return False
 
 
+def noeinresi2(noe, resi):
+    if len(noe) == 9:
+        if (noe[0] in resi[0]) and (noe[2] in resi[1]):
+            return True
+        elif (noe[0] in resi[1]) and (noe[2] in resi[0]):
+            return True
+        else:
+            return False
+    else:
+        tnoe = noe[0]
+        if (tnoe[0] in resi[0]) and (tnoe[2] in resi[1]):
+            return True
+        elif (tnoe[0] in resi[1]) and (tnoe[2] in resi[0]):
+            return True
+        else:
+            return False
+
+
 def extractUnSatisfiedNoes(noes_found, impossible_noes, data):
     unsatisfied = []
     for entry in data:
@@ -451,16 +469,35 @@ def sX2ILVApdf(transformed_coors, native_sse_order, current_ss, sorted_noe_data,
         return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
 
 
-def noe_in_pair(tsse_ordered, exp_data, pair):
+def noe_in_pairOLD(tsse_ordered, exp_data, pair):
     resi = []
-    sse_ordered = [(tsse_ordered[pair[0]]), (tsse_ordered[pair[1]])]
-    for i in range(0, len(sse_ordered)):
+    sse_ordered = [tsse_ordered[pair[0]], tsse_ordered[pair[1]]]
+    for i in range(0, 2):
         native_sse_range = range(sse_ordered[i][4], sse_ordered[i][5] + 1)
         resi = resi + native_sse_range
     noe_data = exp_data['ilva_noes']
     smotif_noe_data = []
+    print "noe in pair:", resi
     for entry in noe_data:
         if noeinresi(entry, resi):
+            smotif_noe_data.append(entry)
+            print entry
+    if len(smotif_noe_data) > 0:
+        return True
+    else:
+        return False
+
+
+def noe_in_pair(tsse_ordered, exp_data, pair):
+    resi = []
+    sse_ordered = [tsse_ordered[pair[0]], tsse_ordered[pair[1]]]
+    for i in range(0, 2):
+        native_sse_range = range(sse_ordered[i][4], sse_ordered[i][5] + 1)
+        resi.append(native_sse_range)
+    noe_data = exp_data['ilva_noes']
+    smotif_noe_data = []
+    for entry in noe_data:
+        if noeinresi2(entry, resi):
             smotif_noe_data.append(entry)
     if len(smotif_noe_data) > 0:
         return True
@@ -468,7 +505,7 @@ def noe_in_pair(tsse_ordered, exp_data, pair):
         return False
 
 
-def refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy, stage):
+def refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy):
 
     sse_coors = copy.deepcopy(transformed_coors)
     cluster_protons = {}

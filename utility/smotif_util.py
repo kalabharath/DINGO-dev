@@ -94,6 +94,7 @@ def array2string(array):
             string = string+str(t)
     return string
 
+
 def orderCATH(previous_smotif, current_smotif, direction):
     """
 
@@ -103,16 +104,16 @@ def orderCATH(previous_smotif, current_smotif, direction):
     :return:
     """
     previous_cath = []
-    parent_smotifs = []
+    # parent_smotifs = []
 
     for entry in previous_smotif:
         if entry[0] == 'cathcodes':
             previous_cath = (entry[1])[:]
-    parent_smotifs = previous_cath [:]
-    parent_smotifs = array2string(parent_smotifs)
+    # parent_smotifs = previous_cath [:]
+    # parent_smotifs = array2string(parent_smotifs)
     if direction == 'left':
         previous_cath.insert(0, current_smotif)
     else:
         previous_cath.append(current_smotif)
 
-    return previous_cath , parent_smotifs
+    return previous_cath

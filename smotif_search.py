@@ -248,13 +248,17 @@ def sXSmotifSearch(task):
             rmsd, transformed_coos = qcp.rmsdQCP3(preSSE, csmotif_data[i], direction, rmsd_cutoff)
 
         if rmsd <= rmsd_cutoff:
+
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
             loop_constraint = llc.loopConstraint(transformed_coos, sse_ordered, direction, smotif_def)
+
             if loop_constraint:
+
                 # Check whether the SSEs with in the assembled smotifs are clashing to one another
                 no_clashes = qcp.kClashes(transformed_coos, sse_ordered, current_ss)
             else:
                 no_clashes = False
+
         else:
             continue
 
@@ -267,10 +271,10 @@ def sXSmotifSearch(task):
             tlog.append(['qcp_rmsd', transformed_coos, sse_ordered, rmsd])
 
             if stage == 2:
-                cathcodes, parent_smotifs = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
+                cathcodes = sm.orderCATH(psmotif, csmotif_data[i][0], direction)
             else:
-                cathcodes, parent_smotifs = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
-            tlog.append(['cathcodes', cathcodes, parent_smotifs])
+                cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
+            tlog.append(['cathcodes', cathcodes])
 
             # ************************************************
             # Sequence filter

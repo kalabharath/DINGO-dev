@@ -101,7 +101,14 @@ if rank == 0:
     total_data = []
     for entry in tasks:
         total_data.append(entry)
-    lowest_noe_energy = altutil.get_lowest_noe_energy(tasks)
+
+    try:
+        lowest_noe_energy = get_lowest_NOE_energy(tasks)
+
+    except ZeroDivisionError:
+        killall(size)
+        exit()
+
     print "Average lowest NOE energy is :", lowest_noe_energy
 
     total_jobs, alt_sse_profile = altutil.compute_jobs(tasks)

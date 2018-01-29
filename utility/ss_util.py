@@ -145,10 +145,7 @@ def check_profile(ss_type, tlen_ss, tl_loop, tr_loop, tstart, tend, X, Y):
 
 
 def genSSCombinations(ss_seq):
-    """
-	:param ss_seq:
-	:return exn_ss, ss_combi
-	"""
+
     exn_ss, last_loop = genSSDef(ss_seq)
     ss_combi = {}
     for k in range(0, len(exn_ss)):
@@ -193,11 +190,10 @@ def genSSCombinations(ss_seq):
                         if arr:
                             ss_combi.setdefault(k, []).append(arr)
     return exn_ss, ss_combi
+
+
 def genSSCombinations2(ss_seq):
-    """
-	:param ss_seq:
-	:return exn_ss, ss_combi
-	"""
+
     exn_ss, last_loop = genSSDef(ss_seq)
     ss_combi = {}
     for k in range(0, len(exn_ss)):

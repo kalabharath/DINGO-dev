@@ -203,11 +203,13 @@ def get_dist(r1, r2):
 
 
 def rmsdQCP(psmotif, csmotif, direction, cutoff):
+
     """
     use rmsdQCP
     :param psmotif:
     :param csmotif:
     :param direction:
+    :param cutoff:
     :return:
     """
 
@@ -287,19 +289,24 @@ def rmsdQCP(psmotif, csmotif, direction, cutoff):
 
 
 def rmsdQCP3(previous_smotif, csmotif, direction, cutoff):
+
     """
 
     :param previous_smotif:
     :param csmotif:
     :param direction:
+    :param cutoff:
     :return:
     """
-    presse = []
+    presse = (previous_smotif[2][1])[:]
+
+    """
     for entry in previous_smotif:
         if 'qcp_rmsd' == entry[0]:
             presse = (entry[1])[:]
 
     # print csmotif
+    """
     try:
         if direction == 'left':
             frag_b = getcoo(csmotif[2])
@@ -388,7 +395,7 @@ def rmsdQCP4(pair, presse, alt_smotif_log,  csmotif, direction, cutoff):
         frag_a = copy.deepcopy(presse[pair[0]])
         frag_b = getcoo(csmotif[1])
         native_fragb_2ndsse = (csmotif[2])[:]
-        presse = alt.delete_last_sse(presse, alt_smotif_log)
+        presse = delete_last_sse(presse, alt_smotif_log)
 
     frag_a, a_cen = centerCoo(frag_a)
     frag_b, b_cen = centerCoo(frag_b)

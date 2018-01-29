@@ -5,7 +5,7 @@ Project_Name: main, File_name: stage0_rdc_noe.py
 Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 08/08/2016
 
-prepare data to run with BOSS-R
+prepare data for Dingo-mpi and Dingo-alt-mpi
 """
 
 import sys
@@ -32,7 +32,7 @@ if 'fasta_file' in datatypes:
     handle, aa_seq = io.readFasta(data['fasta_file'])
     ss_seq = ru.matchSeq2SS(aa_seq, data['ss_file'])
     # Generate fuzzy +/-2 SSE combinations
-    ss_def, ss_combi = ss.genSSCombinations(ss_seq)
+    ss_def, ss_combi = ss.genSSCombinations2(ss_seq)
     io.dumpPickle("ss_profiles.pickle", ss_combi)
     data_dict['ss_seq'] = ss_seq
     data_dict['aa_seq'] = aa_seq
@@ -271,44 +271,44 @@ for i in range(0, len(map_route)):
     print smotif
     if i == 0:
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/Dingo_mpi.py --stage 1" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            ncpus) + " python ../../main/Dingo_mpi.py --stage 1" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".log\n"
         print run_line
         print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
     elif i == 1:
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/Dingo_mpi.py --stage 2" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            ncpus) + " python ../../main/Dingo_mpi.py --stage 2" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".log\n"
         print run_line
         print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
+            ncpus) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
             i) + " --stage 2" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
     elif i != 1 and i <= len(map_route) - 3:
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/Dingo_mpi.py --stage 3" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            ncpus) + " python ../../main/Dingo_mpi.py --stage 3" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".log\n"
         print run_line
         print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
+            ncpus) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
             i) + " --stage 3" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
     else:
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/Dingo_mpi.py --stage 4" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
+            ncpus) + " python ../../main/Dingo_mpi.py --stage 4" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".log\n"
         print run_line
         print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
-            128) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
+            ncpus) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
             i) + " --stage 4" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".refined_log\n"
         fout.write(run_line)
