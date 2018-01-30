@@ -72,12 +72,8 @@ def orderSeq(previous_smotif, current_seq, direction):
     :return:
     """
     # This function is depreciated
-    previous_seq = ''
 
-    for entry in previous_smotif:
-        if entry[0] == 'seq_filter':
-            seq_filter = entry
-            previous_seq = seq_filter[1]
+    previous_seq = (previous_smotif[4][1])[:]
 
     if direction == 'left':
         concat_seq = current_seq + previous_seq
@@ -103,14 +99,9 @@ def orderCATH(previous_smotif, current_smotif, direction):
     :param direction:
     :return:
     """
-    previous_cath = []
-    # parent_smotifs = []
 
-    for entry in previous_smotif:
-        if entry[0] == 'cathcodes':
-            previous_cath = (entry[1])[:]
-    # parent_smotifs = previous_cath [:]
-    # parent_smotifs = array2string(parent_smotifs)
+    previous_cath = (previous_smotif[3][1])[:]
+
     if direction == 'left':
         previous_cath.insert(0, current_smotif)
     else:

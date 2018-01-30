@@ -103,7 +103,7 @@ if rank == 0:
         total_data.append(entry)
 
     try:
-        lowest_noe_energy = get_lowest_NOE_energy(tasks)
+        lowest_noe_energy = altutil.get_lowest_noe_energy(tasks)
 
     except ZeroDivisionError:
         killall(size)

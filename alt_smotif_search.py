@@ -30,6 +30,7 @@ def perform_alt_search(job, pair):
     refine_pairs, computed_pairs = task[8][1], task[8][2]
     old_rdc_energy = task[6][3]
     old_rdc_energy = round(old_rdc_energy, 3)
+    old_cath_codes = task[3][1]
     old_rmsd = task[7][1]
     smotif_coors, sse_ordered, rmsd = task[2][1], task[2][2], task[2][3]
 
@@ -38,10 +39,12 @@ def perform_alt_search(job, pair):
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
     # Check whether there are any noes for this pair
-    print "Checking whether NOEs exist in this pair:", pair
+    print "Checking whether NOEs exist in this pair:", pair,
     if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
+        print "True"
         pass
     else:
+        print "False"
         return False
 
     csmotif_data, sse_ordered = alt.getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair,
@@ -116,9 +119,7 @@ def perform_alt_search(job, pair):
             tlog.append(['smotif', tpdbid])
             tlog.append(['smotif_def', sse_ordered])
             tlog.append(['qcp_rmsd', transformed_coors, sse_ordered, rmsd])
-
-            cathcodes = sm.orderCATH(preSSE, csmotif_data[i][0], direction)
-            tlog.append(['cathcodes', cathcodes])
+            tlog.append(['cathcodes', old_cath_codes])
 
             # ************************************************
             # Sequence filter
@@ -201,7 +202,6 @@ def perform_alt_search(job, pair):
             else:
                 continue
 
-
     # Dumping hits as a pickle array.
     if len(dump_log) > 0:
         if 'rank_top_hits' in exp_data_types:
@@ -223,14 +223,14 @@ def altSmotifSearch(job):
     all_log = []
     task = (job[0])[:]
     refine_pair = task[8][1]
-    task_index = job[3]
-    print "refine_pair", refine_pair
+    #task_index = job[3]
 
     for pair in refine_pair:
         tdump_log = perform_alt_search(job, pair)
         if tdump_log:
             for t in tdump_log:
                 all_log.append(t)
+
     # io.dumpPickle("tx_refine_" + str(task_index) + ".pickle", all_log)
 
     return all_log
