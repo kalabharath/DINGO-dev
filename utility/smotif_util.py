@@ -51,7 +51,6 @@ def readSmotifDatabase(smotif, *database_cutoff):
         else:
             root_dir = root_dir + '/' + entry
     smotif_db_path = root_dir + '/databases/database_cutoff_' + database_cutoff[0] + '/'
-    # smotif_db_path = "/home/kalabharath/projects/boss_pnmr/databases/database_cutoff_0.25/"
     file_name = smotif[0] + "_" + str(smotif[1]) + "_" + str(smotif[2]) + ".db.tar.gz"
     fin = smotif_db_path + file_name
     try:
@@ -108,3 +107,22 @@ def orderCATH(previous_smotif, current_smotif, direction):
         previous_cath.append(current_smotif)
 
     return previous_cath
+
+
+def getRMSDcutoff(smotif_def):
+    rmsd_cutoff = 0
+
+    s1_len, s2_len = smotif_def[1], smotif_def[2]
+
+    if (s1_len < 7) or (s2_len < 7):
+        rmsd_cutoff = 1.0
+    if ( 6 < s1_len < 16) or (6 < s2_len < 16):
+        rmsd_cutoff = 2.0
+    if (s1_len > 15) or (s2_len > 15):
+        rmsd_cutoff = 3.0
+    if (s1_len > 20) or (s2_len > 20):
+        rmsd_cutoff = 5.0
+    if (s1_len > 30) or (s2_len > 30):
+        rmsd_cutoff = 7.0
+
+    return rmsd_cutoff

@@ -43,8 +43,8 @@ def getfromDB(pair, sse_ordered, database_cutoff):
     from utility.smotif_util import getSmotif, readSmotifDatabase
     s1 = sse_ordered[pair[0]]
     s2 = sse_ordered[pair[1]]
-    smotif = getSmotif(s1, s2)
-    return readSmotifDatabase(smotif, database_cutoff), sse_ordered
+    smotif_def = getSmotif(s1, s2)
+    return readSmotifDatabase(smotif_def, database_cutoff), sse_ordered, smotif_def
 
 
 def getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, cutoff):
@@ -53,7 +53,7 @@ def getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, cutoff):
         sse_ordered[-1] = ss_profile
     else:
         sse_ordered[0] = ss_profile
-    return getfromDB(pair, sse_ordered, cutoff)
+        return getfromDB(pair, sse_ordered, cutoff)
 
 
 def delete_last_sse(sse_coors, alt_smotif_log):
@@ -90,3 +90,8 @@ def getSeq(coor_array, sse_ordered, aa_seq):
             k += 1
     seq_id = (k / float(len(concat_seq))) * 100
     return concat_seq, seq_id
+
+
+def altRMSDcutoff(smotif_def):
+    from utility.smotif_util import getRMSDcutoff
+    return getRMSDcutoff(smotif_def)

@@ -195,6 +195,14 @@ def sXSmotifSearch(task):
         sorted_noe_data, cluster_protons, cluster_sidechains = mutil.fetchNOEdata(preSSE)
 
     print current_ss, direction
+
+    if 'rmsd_cutoff' in exp_data_types:
+        rmsd_cutoff = exp_data['rmsd_cutoff'][stage - 1]
+    else:
+        print "smotif_def", smotif_def
+        rmsd_cutoff = sm.getRMSDcutoff(smotif_def)
+        print "RMSD cutoff", rmsd_cutoff
+
     if not csmotif_data:
         # If the smotif library doesn't exist.
         # Terminate further execution.
@@ -240,7 +248,7 @@ def sXSmotifSearch(task):
         # quickly filters non-overlapping smotifs
         # ************************************************
 
-        rmsd_cutoff = exp_data['rmsd_cutoff'][stage - 1]
+
 
         if stage == 2:
             rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction, rmsd_cutoff)
@@ -283,13 +291,16 @@ def sXSmotifSearch(task):
             # ************************************************
 
             # concat current to previous seq
+            """
             if stage == 2:
                 seq_identity, concat_seq = Sfilter.getSXSeqIdentity(current_ss, csmotif_data[i], direction, exp_data,
                                                                     psmotif, sse_ordered)
             else:
                 seq_identity, concat_seq = Sfilter.getSXSeqIdentity(current_ss, csmotif_data[i], direction, exp_data,
                                                                     preSSE, sse_ordered)
-
+            """
+            concat_seq = 'SeqAnchor'
+            seq_identity = 30.0
             tlog.append(['seq_filter', concat_seq, seq_identity])
 
             # ************************************************

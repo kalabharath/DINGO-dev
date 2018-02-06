@@ -59,6 +59,7 @@ def get_lowest_NOE_energy(tasks):
 
 # ********************* Define cmd line argument parser *********************
 
+
 parser = argparse.ArgumentParser(description='DINGO-Refine Master MPI process that manages all jobs.')
 parser.add_argument('--infile', type=int, help='specify the top_hits file')
 parser.add_argument('--stage', type=int, help='specify the stage of  the Smotif assembly')

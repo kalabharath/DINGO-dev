@@ -147,7 +147,6 @@ def generate_refinement_order2(sse_array, computed_pairs):
     import itertools
     from utility.smotif_util import array2string
 
-    #print "Refinement order:", sse_array, computed_pairs
     indices = list(itertools.combinations(range(len(sse_array)), 2))
     refine_pairs = []
     for pair in indices:

@@ -9,15 +9,13 @@ prepare data for Dingo-mpi and Dingo-alt-mpi
 """
 
 import sys
-
 sys.path.append("../../main")
 import multiprocessing
-
-import utility.RDCUtil    as ru
-import utility.io_util    as io
-import utility.ss_util    as ss
-import utility.NOEUtil    as nu
-import utility.PCSmap     as PCSmap
+import utility.RDCUtil as ru
+import utility.io_util as io
+import utility.ss_util as ss
+import utility.NOEUtil as nu
+import utility.PCSmap  as PCSmap
 import utility.referenceUtil as ref
 
 # Parse the input data text file
@@ -32,7 +30,7 @@ if 'fasta_file' in datatypes:
     handle, aa_seq = io.readFasta(data['fasta_file'])
     ss_seq = ru.matchSeq2SS(aa_seq, data['ss_file'])
     # Generate fuzzy +/-2 SSE combinations
-    ss_def, ss_combi = ss.genSSCombinations2(ss_seq)
+    ss_def, ss_combi = ss.genSSCombinations(ss_seq)
     io.dumpPickle("ss_profiles.pickle", ss_combi)
     data_dict['ss_seq'] = ss_seq
     data_dict['aa_seq'] = aa_seq
@@ -172,7 +170,6 @@ else:
 if 'reference_pdb' in datatypes:
     reference_ca = ref.getRefCoors(data['reference_pdb'])
     data_dict['reference_ca'] = reference_ca
-    print rmsd_cutoff
 else:
     pass
 
@@ -274,14 +271,12 @@ for i in range(0, len(map_route)):
             ncpus) + " python ../../main/Dingo_mpi.py --stage 1" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".log\n"
         print run_line
-        print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
     elif i == 1:
         run_line = "mpirun -np " + str(
             ncpus) + " python ../../main/Dingo_mpi.py --stage 2" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".log\n"
         print run_line
-        print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
             ncpus) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
@@ -293,7 +288,6 @@ for i in range(0, len(map_route)):
             ncpus) + " python ../../main/Dingo_mpi.py --stage 3" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".log\n"
         print run_line
-        print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
             ncpus) + " python ../../main/Dingo_alt_mpi.py --infile " + str(
@@ -305,7 +299,6 @@ for i in range(0, len(map_route)):
             ncpus) + " python ../../main/Dingo_mpi.py --stage 4" + "  --numhits 127 \n" + "python inter_rmsd.py " + str(
             i) + " > " + str(i) + ".log\n"
         print run_line
-        print "python inter_rmsd.py " + str(i) + " > " + str(i) + ".log"
         fout.write(run_line)
         run_line = "mpirun -np " + str(
             ncpus) + " python ../../main/Dingo_alt_mpi.py --infile " + str(

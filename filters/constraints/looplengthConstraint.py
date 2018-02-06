@@ -87,6 +87,7 @@ def loopConstraint(coo_arrays, sse_order, direction, smotif_def):
         stat_dist = nss_dict[loop_length]
         stat_std = ss_std[loop_length]
 
+    stat_std = 1.5 * stat_std
     if stat_dist - stat_std <= Ndist <= stat_dist + stat_std:
         return True
     else:
@@ -166,9 +167,8 @@ def loopConstraintAlt(coo_arrays, sse_order, direction):
     if smotif_def[0] == 'ss':
         stat_dist = nss_dict[loop_length]
         stat_std = ss_std[loop_length]
-    # print sse_order
-    # print "loop_length_lolli", smotif_def, loop_length, Ndist, stat_dist
 
+    stat_std = 1.5 * stat_std
     if stat_dist - stat_std <= Ndist <= stat_dist + stat_std:
         return True
     else:

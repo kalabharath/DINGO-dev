@@ -239,7 +239,7 @@ def rank_assembly_with_clustering(dump_log, num_hits):
         print ("Reducing the entries to 4 times the top hits", len(reduced_dump_log))
         reduced_dump_log = reduced_dump_log[:(4*num_hits)]
 
-    reduced_dump_log, counter = cluster.clusterSmotifs2(reduced_dump_log, rmsd_cutoff=1.0)
+    reduced_dump_log, counter = cluster.clusterSmotifs2(reduced_dump_log, rmsd_cutoff=0.5)
     print "From entries :", initial_entries, " Removed: ", counter
     if len(reduced_dump_log) >= num_hits:
         reduced_dump_log = reduced_dump_log[0:num_hits]
