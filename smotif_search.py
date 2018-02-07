@@ -199,9 +199,7 @@ def sXSmotifSearch(task):
     if 'rmsd_cutoff' in exp_data_types:
         rmsd_cutoff = exp_data['rmsd_cutoff'][stage - 1]
     else:
-        print "smotif_def", smotif_def
         rmsd_cutoff = sm.getRMSDcutoff(smotif_def)
-        print "RMSD cutoff", rmsd_cutoff
 
     if not csmotif_data:
         # If the smotif library doesn't exist.
@@ -247,8 +245,6 @@ def sXSmotifSearch(task):
         # RMSD filter using QCP method
         # quickly filters non-overlapping smotifs
         # ************************************************
-
-
 
         if stage == 2:
             rmsd, transformed_coos = qcp.rmsdQCP(psmotif[0], csmotif_data[i], direction, rmsd_cutoff)
@@ -301,7 +297,7 @@ def sXSmotifSearch(task):
             """
             concat_seq = 'SeqAnchor'
             seq_identity = 30.0
-            tlog.append(['seq_filter', concat_seq, seq_identity])
+            tlog.append(['seq_filter', concat_seq, seq_identity, exp_data['cluster_rmsd_cutoff']])
 
             # ************************************************
             # NOE score filter

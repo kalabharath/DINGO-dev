@@ -3,7 +3,7 @@ Clustering based on RMSD with a cluster radius of user defined RMSD
 
 """
 from filters.rmsd.clusterRMSD import clusterRMSD
-
+import copy
 
 def getSeq(smotif_def, aa_seq):
 
@@ -186,7 +186,7 @@ def clusterSmotifs2(all_entries, rmsd_cutoff):
             else:
                 counter += 1
                 pass
-        all_entries = non_redundant[:]
+        all_entries = copy.deepcopy(non_redundant)
         total_entries = len(all_entries)
         if pos >= len(all_entries)-1:
             break

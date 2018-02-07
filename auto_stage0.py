@@ -158,6 +158,15 @@ if 'rmsd_cutoff' in datatypes:
 else:
     pass
 
+
+if 'cluster_rmsd_cutoff' in datatypes:
+    cluster_rmsd_cutoff = data['rmsd_cutoff']
+    cluster_rmsd_cutoff = cluster_rmsd_cutoff.split()
+    cluster_rmsd_cutoff = [float(i) for i in cluster_rmsd_cutoff]
+    data_dict['cluster_rmsd_cutoff'] = cluster_rmsd_cutoff
+else:
+    pass
+
 if 'refine_rmsd_cutoff' in datatypes:
     refine_rmsd_cutoff = data['refine_rmsd_cutoff']
     refine_rmsd_cutoff = refine_rmsd_cutoff.split()

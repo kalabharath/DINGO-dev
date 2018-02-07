@@ -214,7 +214,7 @@ def rank_assembly_with_clustering(dump_log, num_hits):
     # Rank based on NOE energy
 
     reduced_dump_log = []
-
+    cluster_rmsd_cutoff = hit[4][-1]
     for i in range(len(keys)):
         entries = new_dict[keys[i]]
         if len(entries) == 1:
@@ -239,7 +239,7 @@ def rank_assembly_with_clustering(dump_log, num_hits):
         print ("Reducing the entries to 4 times the top hits", len(reduced_dump_log))
         reduced_dump_log = reduced_dump_log[:(4*num_hits)]
 
-    reduced_dump_log, counter = cluster.clusterSmotifs2(reduced_dump_log, rmsd_cutoff=0.5)
+    reduced_dump_log, counter = cluster.clusterSmotifs2(reduced_dump_log, cluster_rmsd_cutoff)
     print "From entries :", initial_entries, " Removed: ", counter
     if len(reduced_dump_log) >= num_hits:
         reduced_dump_log = reduced_dump_log[0:num_hits]
