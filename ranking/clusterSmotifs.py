@@ -162,7 +162,6 @@ def clusterSmotifs2(all_entries, rmsd_cutoff):
     pos = 0
     total_entries = len(all_entries)
     counter = 0
-
     while pos < total_entries:
         non_redundant = []
         smotif_1 = all_entries[pos]

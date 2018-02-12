@@ -208,13 +208,12 @@ def rank_assembly_with_clustering(dump_log, num_hits):
         noe_energy = hit[5][3]
         noe_energy = round(noe_energy, 3)
         new_dict[noe_energy].append(hit)
+        cluster_rmsd_cutoff = hit[4][-1]
 
     keys = new_dict.keys()
     keys.sort()
     # Rank based on NOE energy
-
     reduced_dump_log = []
-    cluster_rmsd_cutoff = hit[4][-1]
     for i in range(len(keys)):
         entries = new_dict[keys[i]]
         if len(entries) == 1:
@@ -238,7 +237,7 @@ def rank_assembly_with_clustering(dump_log, num_hits):
     if len(reduced_dump_log) > (4* num_hits):
         print ("Reducing the entries to 4 times the top hits", len(reduced_dump_log))
         reduced_dump_log = reduced_dump_log[:(4*num_hits)]
-
+    print "The Cluster RMSD cutoff is :", cluster_rmsd_cutoff
     reduced_dump_log, counter = cluster.clusterSmotifs2(reduced_dump_log, cluster_rmsd_cutoff)
     print "From entries :", initial_entries, " Removed: ", counter
     if len(reduced_dump_log) >= num_hits:
@@ -308,6 +307,7 @@ def rank_assembly_with_clustering_and_seq(dump_log, aa_seq, num_hits):
         print "could only extract ", len(reduced_dump_log)
 
     return reduced_dump_log
+
 
 def rank_assembly_noparents(dump_log, num_hits):
 

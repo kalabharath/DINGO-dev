@@ -129,10 +129,12 @@ def perform_alt_search(job, pair):
             # ************************************************
 
             # concat current to previous seq
-            #seq, seq_id = alt.getSeq(transformed_coors, sse_ordered, exp_data['aa_seq'])
+            # seq, seq_id = alt.getSeq(transformed_coors, sse_ordered, exp_data['aa_seq'])
+
             seq = 'SeqAnchor'
             seq_id = 30.0
-            tlog.append(['seq_filter', seq, seq_id])
+            rmsd_cutoff = 1.0
+            tlog.append(['seq_filter', seq, seq_id,exp_data['cluster_rmsd_cutoff']])
 
             # ************************************************
             # NOE score filter
@@ -226,7 +228,7 @@ def altSmotifSearch(job):
     all_log = []
     task = (job[0])[:]
     refine_pair = task[8][1]
-    
+
     for pair in refine_pair:
         tdump_log = perform_alt_search(job, pair)
         if tdump_log:
@@ -234,5 +236,3 @@ def altSmotifSearch(job):
                 all_log.append(t)
 
     return all_log
-
-

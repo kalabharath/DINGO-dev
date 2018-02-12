@@ -17,7 +17,6 @@ def readInputDataFiles(filename):
     for line in lines:
         if line[0] != '#' and line != '\n':
             data_type, data_file = line.split('=')
-            #print data_type.strip(), data_file.strip()
             data_dict[data_type.strip()] = data_file.strip()
     if len(data_dict.keys()) == 1:
         return data_dict
@@ -26,11 +25,7 @@ def readInputDataFiles(filename):
 
 
 def readFile(filename):
-    """
-	read file and return the lines as an array
-	:param filename:
-	:return:
-	"""
+
     if os.path.isfile(filename):
         with open(filename, 'r') as fin:
             return fin.readlines()
@@ -40,12 +35,7 @@ def readFile(filename):
 
 
 def writeFile(array_of_lines, filename):
-    """
-	write output to a file
-	:param array_of_lines:
-	:param filename:
-	:return:
-	"""
+
     fout = open(filename, 'w')
     for line in array_of_lines:
         fout.write(line)
@@ -55,12 +45,7 @@ def writeFile(array_of_lines, filename):
 
 
 def dumpPickle(filename, data):
-    """
-    dump data as a pickle object, usually arrays
-    :param filename:
-    :param data:
-    :return:
-    """
+
     with open(filename, 'w') as f:
         pickle.dump(data, f)
     return True

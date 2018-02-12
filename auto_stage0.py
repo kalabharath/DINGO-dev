@@ -160,10 +160,10 @@ else:
 
 
 if 'cluster_rmsd_cutoff' in datatypes:
-    cluster_rmsd_cutoff = data['rmsd_cutoff']
+    cluster_rmsd_cutoff = data['cluster_rmsd_cutoff']
     cluster_rmsd_cutoff = cluster_rmsd_cutoff.split()
     cluster_rmsd_cutoff = [float(i) for i in cluster_rmsd_cutoff]
-    data_dict['cluster_rmsd_cutoff'] = cluster_rmsd_cutoff
+    data_dict['cluster_rmsd_cutoff'] = cluster_rmsd_cutoff[0]
 else:
     pass
 
