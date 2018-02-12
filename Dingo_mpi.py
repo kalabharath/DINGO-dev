@@ -140,8 +140,10 @@ if rank == 0:
         elif tag == tags.EXIT:
             closed_workers += 1
 
+    # consolidate top_hits and dump files here
+    if args.stage == 0:
+        exit()
 
-    #consolidate top_hits and dump files here
     print "Total number of hits  found are : ",len(total_data)
     # ranked_data = rank_assembly(total_data, args.numhits)
     ranked_data = rank_assembly_with_clustering(total_data, args.numhits)
