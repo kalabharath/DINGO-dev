@@ -172,7 +172,6 @@ def clusterSmotifs2(all_entries, rmsd_cutoff, numhits):
             sse_ordered2 = smotif_2[1][1]
             eq1, eq2 = get_equivalent_array(sse_ordered1, sse_ordered2)
             if eq1 and eq2:
-                print smotif_1[2]
                 coors1 = smotif_1[2][1]
                 coors2 = smotif_2[2][1]
                 rmsd = clusterRMSD(coors1, coors2, eq1, eq2)
