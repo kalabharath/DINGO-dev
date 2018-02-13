@@ -187,9 +187,10 @@ def clusterSmotifs2(all_entries, rmsd_cutoff, numhits):
                 pass
         all_entries = copy.deepcopy(non_redundant)
         total_entries = len(all_entries)
-        if pos >= len(all_entries)-1:
+        if pos >= total_entries - 1:
             break
-        elif pos >= numhits:
+        elif pos > numhits:
+            print "Is this really working! Pos: ", pos, numhits
             break
         else:
             pos += 1
