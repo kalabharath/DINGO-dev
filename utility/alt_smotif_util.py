@@ -53,7 +53,7 @@ def getSmotifDB(sse_ordered, ss_profile, alt_smotif_log, pair, cutoff):
         sse_ordered[-1] = ss_profile
     else:
         sse_ordered[0] = ss_profile
-        return getfromDB(pair, sse_ordered, cutoff)
+    return getfromDB(pair, sse_ordered, cutoff)
 
 
 def delete_last_sse(sse_coors, alt_smotif_log):
