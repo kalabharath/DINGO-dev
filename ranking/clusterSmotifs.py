@@ -158,7 +158,7 @@ def get_equivalent_array(order1, order2):
     return False, False
 
 
-def clusterSmotifs2(all_entries, rmsd_cutoff):
+def clusterSmotifs2(all_entries, rmsd_cutoff, numhits):
     pos = 0
     total_entries = len(all_entries)
     counter = 0
@@ -189,6 +189,8 @@ def clusterSmotifs2(all_entries, rmsd_cutoff):
         all_entries = copy.deepcopy(non_redundant)
         total_entries = len(all_entries)
         if pos >= len(all_entries)-1:
+            break
+        elif pos >= numhits:
             break
         else:
             pos += 1
