@@ -206,7 +206,7 @@ def rank_assembly_with_clustering(dump_log, num_hits):
         # thread_data contains data from each search and filter thread.
         # initialize total score array
         noe_energy = hit[5][3]
-        noe_energy = round(noe_energy, 3)
+        noe_energy = round(noe_energy, 2)
         new_dict[noe_energy].append(hit)
         cluster_rmsd_cutoff = hit[4][-1]
 
@@ -232,11 +232,10 @@ def rank_assembly_with_clustering(dump_log, num_hits):
                     reduced_dump_log.append(hit)
                     print "final sele", keys[i], rdc_score_bins[k]
 
-    initial_entries = len(reduced_dump_log)
-
     if len(reduced_dump_log) > (4* num_hits):
         print ("Reducing the entries to 4 times the top hits", len(reduced_dump_log))
         reduced_dump_log = reduced_dump_log[:(4*num_hits)]
+        initial_entries = len(reduced_dump_log)
     print "The Cluster RMSD cutoff is :", cluster_rmsd_cutoff
     reduced_dump_log, counter = cluster.clusterSmotifs2(reduced_dump_log, cluster_rmsd_cutoff, num_hits)
     print "From entries :", initial_entries, " Removed: ", counter
