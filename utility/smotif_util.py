@@ -56,6 +56,7 @@ def readSmotifDatabase(smotif, *database_cutoff):
     try:
         smotif_data = io.readTarPickle(fin)
         print "Reading in smotif database: ", fin
+
         return smotif_data
     except:
         print "Error in reading smotif database: ", fin

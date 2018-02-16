@@ -103,6 +103,7 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'ilva_noes' in exp_data_types:
+
             noe_probability, no_of_noes, noe_energy, noe_data, cluster_protons, cluster_sidechains = noepdf.s1ILVApdf(
                 s1_def, s2_def, smotif_data[i], exp_data, stage)
 
