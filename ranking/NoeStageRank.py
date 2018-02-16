@@ -17,8 +17,8 @@ def limitParents(current_parent, smotif_parents):
     return True
 
 def rank_assemblyOLD(dump_log, num_hits):
-    """
 
+    """
     :param dump_log:
     :param num_hits:
     :return:
@@ -231,7 +231,7 @@ def rank_assembly_with_clustering(dump_log, num_hits):
                 for hit in hits:
                     reduced_dump_log.append(hit)
                     print "final sele", keys[i], rdc_score_bins[k]
-
+    initial_entries = len(reduced_dump_log)
     if len(reduced_dump_log) > (4* num_hits):
         print ("Reducing the entries to 4 times the top hits", len(reduced_dump_log))
         reduced_dump_log = reduced_dump_log[:(4*num_hits)]

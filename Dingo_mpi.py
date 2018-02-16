@@ -80,6 +80,7 @@ if rank == 0:
                 tasks, sse_index = util.start_top_hits(args.numhits, args.stage)
             except:
                 # Assemble top hits from the previously generated hits
+                print "XXX:", args.numhits, args.stage
                 tasks, sse_index = srank.getRunSeq(args.numhits, args.stage)
         except:
             # print what went wrong and terminate the slave processes
@@ -141,7 +142,7 @@ if rank == 0:
             closed_workers += 1
 
     # consolidate top_hits and dump files here
-    if args.stage == 0:
+    if args.stage == 1:
         exit()
 
     print "Total number of hits  found are : ",len(total_data)
