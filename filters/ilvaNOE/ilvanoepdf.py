@@ -522,11 +522,15 @@ def refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy):
     total_noes = len(satisfied_noes) + len(impossible_noes)
 
     coorH_matrix = {}
-    for i in range(0, len(sse_coors)):
-        tcoor = getSxCoorMatrix(sse_coors[i], sse_ordered[i])
-        coorH_matrix.update(tcoor)
+    try:
+        for i in range(0, len(sse_coors)):
+            tcoor = getSxCoorMatrix(sse_coors[i], sse_ordered[i])
+            coorH_matrix.update(tcoor)
 
-    resi = coorH_matrix.keys()
+        resi = coorH_matrix.keys()
+
+    except IndexError:
+        return 0.001, noes_found, 0.00, [satisfied_noes, unsatisfied_noes], cluster_protons, cluster_sidechains
 
     bb_matrix = {}
     for i in range(0, len(sse_coors)):
