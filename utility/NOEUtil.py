@@ -1,32 +1,5 @@
-from numpy import zeros
-
 import io_util as io
 import methyl_noe_parser
-
-def getNOEData(noe_files, ss_seq):
-    """
-    Depreciated
-    :param noe_files:
-    :param ss_seq:
-    :return:
-    """
-    print noe_files
-
-    noe_lines = io.readFile(noe_files)
-    noe_matrix = zeros((len(ss_seq) + 1, len(ss_seq) + 1))
-    total_noe_count = 0
-    for noel in noe_lines:
-
-        if len(noel) <= 1:
-            pass
-        else:
-            res1, atm1, res2, atom2, noe = noel.split()
-            total_noe_count += 1
-            noe_matrix[int(res1), int(res2)] = float(noe)
-            noe_matrix[int(res2), int(res1)] = float(noe)
-
-    return noe_matrix, total_noe_count
-
 
 def parseNOEData(noe_files):
     """
