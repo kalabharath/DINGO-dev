@@ -178,6 +178,8 @@ def clusterSmotifs2(all_entries, rmsd_cutoff, numhits):
                 rmsd = round(rmsd, 2)
             else:
                 continue
+            if rmsd >= 888.888:
+                continue
             if i == pos:
                 non_redundant.append(all_entries[i])
             elif rmsd >= rmsd_cutoff:

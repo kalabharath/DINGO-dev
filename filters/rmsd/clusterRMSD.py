@@ -48,7 +48,10 @@ def parseCAequivalent(coor1, coor2, eq1, eq2):
 
 def clusterRMSD(coor1, coor2, eq1, eq2):
 
-    frag_aca, frag_bca = parseCAequivalent(coor1, coor2, eq1, eq2)
+    try:
+        frag_aca, frag_bca = parseCAequivalent(coor1, coor2, eq1, eq2)
+    except IndexError:
+        return 999.999
 
     fraglen = len(frag_aca[0])
     xyz1 = qcprot.MakeDMatrix(3, fraglen)
