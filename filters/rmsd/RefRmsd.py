@@ -25,6 +25,7 @@ def concatArrays(frag_aca, frag_bca):
     zz = frag_aca[2] + frag_bca[2]
     return [xx, yy, zz]
 
+
 def calcRefRMSD(ref_ca, s1_def, s2_def, smotif, rmsd_cutoff):
     # print 'ref_ca', ref_ca
     # print  'S1_def', s1_def
@@ -34,18 +35,13 @@ def calcRefRMSD(ref_ca, s1_def, s2_def, smotif, rmsd_cutoff):
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)
 
-
     smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
     smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
 
-    # print ss1_list, ss2_list
-    #print smotif_ss1, smotif_ss2
 
     ref_coo = getRefCA(ref_ca, ss1_list, ss2_list)
 
     ref_coo, ref_coo_cen = qcp.centerCoo(ref_coo)
-
-
 
     frag_a = qcp.getcoo(smotif[1])
     frag_b = qcp.getcoo(smotif[2])
