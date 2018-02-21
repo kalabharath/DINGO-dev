@@ -104,7 +104,8 @@ def perform_alt_search(job, pair):
         if rmsd <= rmsd_cutoff:
 
             # Loop constraint restricts the overlapping smotifs is not drifted far away.
-            loop_constraint = llc.loopConstraintAlt(transformed_coors, sse_ordered, direction)
+            # loop_constraint = llc.loopConstraintAlt(transformed_coors, sse_ordered, direction)
+            loop_constraint = True
             if loop_constraint:
                 # Check whether the SSEs with in the assembled smotifs are clashing to one another
                 no_clashes = qcp.kClahsesAltSmotif(transformed_coors, sse_ordered, pair, alt_smotif_log)
