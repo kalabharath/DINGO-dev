@@ -27,17 +27,12 @@ def concatArrays(frag_aca, frag_bca):
 
 
 def calcRefRMSD(ref_ca, s1_def, s2_def, smotif, rmsd_cutoff):
-    # print 'ref_ca', ref_ca
-    # print  'S1_def', s1_def
-    # print  'S2_def', s2_def
-    # print  'Smotif_data', smotif
 
     ss1_list = range(s1_def[4], s1_def[5] + 1)
     ss2_list = range(s2_def[4], s2_def[5] + 1)
 
     smotif_ss1 = range(int(smotif[0][1]), int(smotif[0][2]) + 1)
     smotif_ss2 = range(int(smotif[0][3]), int(smotif[0][4]) + 1)
-
 
     ref_coo = getRefCA(ref_ca, ss1_list, ss2_list)
 
@@ -79,6 +74,7 @@ def calcRefRMSD(ref_ca, s1_def, s2_def, smotif, rmsd_cutoff):
     else:
         return False
 
+
 def getRefCA2(ref_ca, sse_ordered):
     x, y, z = [], [], []
     for sse in sse_ordered:
@@ -100,13 +96,12 @@ def calcRefRMSD2(ref_ca, sse_ordered, transformed_coos):
 
     smotif_coo = [[],[],[]]
     for sse in sse_coors:
-        #frag, a_cen = qcp.centerCoo(sse)
+        # frag, a_cen = qcp.centerCoo(sse)
         frag_ca = qcp.getCAcoo(sse)
         smotif_coo = concatArrays(smotif_coo, frag_ca)
 
     smotif_coo, xx_cen = qcp.centerCoo(smotif_coo)
     # print len(smotif_coo[0]), len(ref_coo[0])
-
 
     fraglen = len(smotif_coo[0])
     xyz1 = qcprot.MakeDMatrix(3, fraglen)
