@@ -51,9 +51,7 @@ def perform_alt_search(job, pair):
     if 'rmsd_cutoff' in exp_data_types:
         rmsd_cutoff = exp_data['rmsd_cutoff'][stage - 1]
     else:
-        print "smotif_def", smotif_def
         rmsd_cutoff = alt.altRMSDcutoff(smotif_def)
-        print "RMSD cutoff", rmsd_cutoff
 
     if not csmotif_data:
         # If the smotif library doesn't exist.
@@ -67,6 +65,9 @@ def perform_alt_search(job, pair):
     # ************************************************************************************************
 
     for i in range(0, len(csmotif_data)):
+
+        if len(dump_log) > 100:
+            continue
 
         # ************************************************
         # Applying different filters for the Smotif assembly
