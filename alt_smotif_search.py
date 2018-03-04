@@ -237,7 +237,7 @@ def altSmotifSearch(job):
 
     # Dump data to the disk
     if all_log:
-        io.dumpGzipPickle("rtx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", all_log)
+        io.dumpGzipPickle("rtx_" + str(index_array) + ".gzip", all_log)
         return True
     else:
         return False
