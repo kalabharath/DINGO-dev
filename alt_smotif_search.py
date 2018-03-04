@@ -227,7 +227,7 @@ def altSmotifSearch(job):
     all_log = []
     task = (job[0])[:]
     refine_pair = task[8][1]
-    index_array = task[3]
+    index_array = job[0]
     print index_array
     for pair in refine_pair:
         tdump_log = perform_alt_search(job, pair)
@@ -236,5 +236,8 @@ def altSmotifSearch(job):
                 all_log.append(t)
 
     # Dump data to the disk
-    io.dumpGzipPickle("rtx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
-    return all_log
+    if all_log:
+        io.dumpGzipPickle("rtx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", all_log)
+        return True
+    else:
+        return False
