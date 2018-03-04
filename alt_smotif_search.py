@@ -228,7 +228,7 @@ def altSmotifSearch(job):
     task = (job[0])[:]
     refine_pair = task[8][1]
     index_array = task[3]
-    print index_array
+    print "task_index", index_array
     for pair in refine_pair:
         tdump_log = perform_alt_search(job, pair)
         if tdump_log:
