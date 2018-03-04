@@ -2,12 +2,9 @@
 
 """
 
-Project_Name: main, File_name: master_mpi
+Project_Name: main, File_name: master_alt_mpi
 Aufthor: kalabharath, Email: kalabharath@gmail.com
-Date: 13/04/15 , Time:10:05 AM
-
-One master mpi and one master_search to eliminate redundancy across four files
-should be called as a part of the sequence of smotif assembly files
+Date: 3/03/18 , Time:10:05 AM
 
 """
 
@@ -33,6 +30,7 @@ status = MPI.Status()
 
 
 def killall(processes):
+
     """
     Kill all the subprocess when requested
     :param processes:
@@ -101,7 +99,6 @@ if rank == 0:
     total_data = []
     for entry in tasks:
         total_data.append(entry)
-
     try:
         lowest_noe_energy = altutil.get_lowest_noe_energy(tasks)
 
@@ -144,10 +141,11 @@ if rank == 0:
     # consolidate top_hits and dump files here
     print "Total number of hits  found are : ",len(total_data)
     # ranked_data = rank_assembly(total_data, args.numhits)
-
+    """
     ranked_data = rank_assembly_with_clustering(total_data, args.numhits)
     print len(ranked_data)
     io.dumpGzipPickle(str(args.infile) + "_refined_tophits.gzip", ranked_data)
+    """
     print "All Done, Master exiting"
     exit()
 

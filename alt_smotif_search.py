@@ -66,9 +66,6 @@ def perform_alt_search(job, pair):
 
     for i in range(0, len(csmotif_data)):
 
-        if len(dump_log) > 100:
-            continue
-
         # ************************************************
         # Applying different filters for the Smotif assembly
         # ************************************************
@@ -225,16 +222,19 @@ def perform_alt_search(job, pair):
 
 
 def altSmotifSearch(job):
-    # send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
 
+    # send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
     all_log = []
     task = (job[0])[:]
     refine_pair = task[8][1]
-
+    index_array = task[3]
+    print index_array
     for pair in refine_pair:
         tdump_log = perform_alt_search(job, pair)
         if tdump_log:
             for t in tdump_log:
                 all_log.append(t)
 
+    # Dump data to the disk
+    io.dumpGzipPickle("rtx_" + str(index_array[0]) + "_" + str(index_array[1]) + ".gzip", dump_log)
     return all_log
