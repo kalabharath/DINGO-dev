@@ -14,7 +14,7 @@ import utility.io_util as io
 
 def get_top_hits_file():
 
-    start = 0
+    start = 1
     while True:
         tfile = str(start)+"_refined_tophits.gzip "
         if os.path.isfile(tfile):
