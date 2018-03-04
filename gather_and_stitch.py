@@ -11,9 +11,7 @@ import  os, glob, argparse
 import utility.io_util as io
 
 
-
 def get_top_hits_file():
-
     start = 1
     while True:
         tfile = str(start)+"_refined_tophits.gzip"
