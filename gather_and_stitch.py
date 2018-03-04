@@ -16,7 +16,7 @@ def get_top_hits_file():
 
     start = 1
     while True:
-        tfile = str(start)+"_refined_tophits.gzip "
+        tfile = str(start)+"_refined_tophits.gzip"
         if os.path.isfile(tfile):
             start +=1
         else:
