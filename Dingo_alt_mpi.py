@@ -127,7 +127,7 @@ if rank == 0:
                 # everything is done, send exit signal
                 comm.send(None, dest=source, tag=tags.EXIT)
         elif tag == tags.DONE:
-            
+
             # take the result from the worker
             if data:
                 for hit in data:
