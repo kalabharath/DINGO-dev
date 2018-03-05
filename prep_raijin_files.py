@@ -30,13 +30,12 @@ for i in range(count):
         fout.write(job1)
         job2 = "python inter_rmsd " + str(i) + " >" + str(i) + ".log \n"
         fout.write(job2)
-        job3 = "mpirun -np 128 python.. /..a/ main / Dingo_alt_mpi.py - -infile 1 - -stage 2 - -numhits 127\n"
+        job3 = "mpirun -np 128 python../../main/Dingo_alt_mpi.py --infile 1 --stage 2 --numhits 127\n"
         fout.write(job3)
         fgather = "gsub_" + str(i) + ".sh"
         qsub = "qsub " + fgather
         fout.write(qsub)
         fout.close()
-
 
         fout = open(fgather, 'w')
         fout.write(run3)
@@ -57,7 +56,7 @@ for i in range(count):
         fout.write(job1)
         job2 = "python inter_rmsd " + str(i) + " >" + str(i) + ".log \n"
         fout.write(job2)
-        job3 = "mpirun - np 128 python.. /..a/ main / Dingo_alt_mpi.py - -infile"+str(i)+" - -stage 2 - -numhits 127\n"
+        job3 = "mpirun -np 128 python.. /../main/Dingo_alt_mpi.py --infile"+str(i)+" --stage 3 --numhits 127\n"
         fout.write(job3)
         fgather = "gsub_" + str(i) + ".sh"
         qsub = "qsub " + fgather
