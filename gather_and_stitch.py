@@ -30,6 +30,7 @@ def combine_data():
     else:
         return False
     for f in file_list:
+        print "reading file..", f
         t_hits = io.readGzipPickle(f)
         for t_hit in t_hits:
             hits.append(t_hit)
@@ -42,6 +43,7 @@ def gather_and_stitch(seq, tfile):
     in_file  = str(seq)+"_tophits.gzip"
 
     if os.path.isfile(in_file):
+        print "Extracting data from non_refined file:", in_file
         tasks = io.readGzipPickle(in_file)
         for entry in tasks:
             total_data.append(entry)
@@ -59,7 +61,7 @@ def gather_and_stitch(seq, tfile):
     ranked_data = rank_assembly_with_clustering(total_data, args.numhits)
     io.dumpGzipPickle(str(tfile), ranked_data)
     # delete files
-    rm_files = "rm rtx_*.gzip"
+    # rm_files = "rm rtx_*.gzip"
     os.system(rm_files)
     return True
 
