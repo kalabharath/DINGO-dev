@@ -120,10 +120,10 @@ def getRMSDcutoff(smotif_def):
     if ( 6 < s1_len < 16) or (6 < s2_len < 16):
         rmsd_cutoff = 2.0
     if (s1_len > 15) or (s2_len > 15):
-        rmsd_cutoff = 3.0
+        rmsd_cutoff = 2.5
     if (s1_len > 20) or (s2_len > 20):
-        rmsd_cutoff = 5.0
+        rmsd_cutoff = 3.0
     if (s1_len > 30) or (s2_len > 30):
-        rmsd_cutoff = 7.0
+        rmsd_cutoff = 3.5
 
     return rmsd_cutoff
