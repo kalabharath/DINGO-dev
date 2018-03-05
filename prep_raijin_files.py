@@ -1,19 +1,18 @@
 import sys, os, glob
 
-run1 = "#!/bin/bash \n #PBS -P xc4 \n #PBS -q normal \n #PBS -l walltime=5:00:00 \n #PBS -l mem=256GB \n #PBS -l ncpus=128 \n #PBS -l wd \n"
+run1 = "#!/bin/bash \n#PBS -P xc4 \n#PBS -q normal \n#PBS -l walltime=5:00:00 \n#PBS -l mem=256GB \n#PBS -l ncpus=128 \n#PBS -l wd \n"
 
-run2 = "#!/bin/bash \n #PBS -P xc4 \n #PBS -q normal \n #PBS -l walltime=5:00:00 \n #PBS -l mem=256GB \n #PBS -l ncpus=128 \n #PBS -l wd \n"
+run2 = "#!/bin/bash \n#PBS -P xc4 \n#PBS -q normal \n#PBS -l walltime=5:00:00 \n#PBS -l mem=256GB \n#PBS -l ncpus=128 \n#PBS -l wd \n"
 
-run3 = "#!/bin/bash \n #PBS -P xc4 \n #PBS -q normal \n #PBS -l walltime=5:00:00 \n #PBS -l mem=32GB \n #PBS -l ncpus=1 \n #PBS -l wd \n"
+run3 = "#!/bin/bash \n#PBS -P xc4 \n#PBS -q normal \n#PBS -l walltime=5:00:00 \n#PBS -l mem=32GB \n#PBS -l ncpus=1 \n#PBS -l wd \n"
 
 with open("run.sh") as fin:
     lines = fin.readlines()
 
 count = 0
-for line in lines():
+for line in lines:
     if "alt" in line:
         count += 1
-
 
 for i in range(count):
 
@@ -31,7 +30,7 @@ for i in range(count):
         fout.write(job1)
         job2 = "python inter_rmsd " + str(i) + " >" + str(i) + ".log \n"
         fout.write(job2)
-        job3 = "mpirun - np 128 python.. /..a/ main / Dingo_alt_mpi.py - -infile 1 - -stage 2 - -numhits 127\n"
+        job3 = "mpirun -np 128 python.. /..a/ main / Dingo_alt_mpi.py - -infile 1 - -stage 2 - -numhits 127\n"
         fout.write(job3)
         fgather = "gsub_" + str(i) + ".sh"
         qsub = "qsub " + fgather
@@ -62,6 +61,7 @@ for i in range(count):
         fout.write(job3)
         fgather = "gsub_" + str(i) + ".sh"
         qsub = "qsub " + fgather
+        fout.write(qsub)
         fout.close()
 
         fout = open(fgather, 'w')
