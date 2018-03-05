@@ -14,7 +14,7 @@ for line in lines:
     if "alt" in line:
         count += 1
 
-for i in range(count):
+for i in range(count+1):
 
     if i == 0:
         file_name = "sub_" + str(i) + ".sh"
