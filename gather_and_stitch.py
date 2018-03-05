@@ -61,9 +61,13 @@ def gather_and_stitch(seq, tfile):
     ranked_data = rank_assembly_with_clustering(total_data, args.numhits)
     io.dumpGzipPickle(str(tfile), ranked_data)
     # delete files
-    print "Deleting old rtx_* files!"
-    rm_files = "rm rtx_*.gzip"
-    os.system(rm_files)
+
+    try:
+        print "Deleting old rtx_* files!"
+        rm_files = "rm rtx_*.gzip"
+        os.system(rm_files)
+    except NameError:
+        print "No rtx_* files exist!"
     return True
 
 
