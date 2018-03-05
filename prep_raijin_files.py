@@ -71,7 +71,7 @@ for i in range(count+1):
         fout = open(fgather, 'w')
         fout.write(run3)
         fout.write(load_modules)
-        jobf = "python ../../main/gather_and_stitch.py --infile" + str(i) + " --numhits 127\n"
+        jobf = "python ../../main/gather_and_stitch.py --infile " + str(i) + " --numhits 127\n"
         fout.write(jobf)
         job2 = "python inter_rmsd.py " + str(i) + " > " + str(i) + ".refined_log \n"
         fout.write(job2)
