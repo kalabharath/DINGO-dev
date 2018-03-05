@@ -6,6 +6,8 @@ run2 = "#!/bin/bash \n#PBS -P xc4 \n#PBS -q normal \n#PBS -l walltime=5:00:00 \n
 
 run3 = "#!/bin/bash \n#PBS -P xc4 \n#PBS -q normal \n#PBS -l walltime=5:00:00 \n#PBS -l mem=32GB \n#PBS -l ncpus=1 \n#PBS -l wd \n"
 
+load_modules = "module load openmpi/1.6.3\n module load python/2.7.5\n module load mpi4py/1.3.1\n\n"
+
 with open("run.sh") as fin:
     lines = fin.readlines()
 
@@ -20,6 +22,7 @@ for i in range(count+1):
         file_name = "sub_" + str(i) + ".sh"
         fout = open(file_name, 'w')
         fout.write(run1)
+        fout.write(load_modules)
         job1 = "mpirun -np 128 python ../../main/Dingo_mpi.py --stage 1  --numhits 127 \n"
         fout.write(job1)
         job2 = "python inter_rmsd " + str(i) + " > " + str(i) + ".log \n"
@@ -39,6 +42,7 @@ for i in range(count+1):
 
         fout = open(fgather, 'w')
         fout.write(run3)
+        fout.write(load_modules)
         jobf = "python ../../main/gather_and_stitch.py --infile " + str(i) + " --numhits 127\n"
         fout.write(jobf)
         job2 = "python inter_rmsd " + str(i) + " > " + str(i) + ".refined_log \n"
@@ -52,6 +56,7 @@ for i in range(count+1):
         file_name = "sub_" + str(i) + ".sh"
         fout = open(file_name, 'w')
         fout.write(run1)
+        fout.write(load_modules)
         job1 = "mpirun -np 128 python ../../main/Dingo_mpi.py --stage 3  --numhits 127 \n"
         fout.write(job1)
         job2 = "python inter_rmsd " + str(i) + " > " + str(i) + ".log \n"
@@ -65,6 +70,7 @@ for i in range(count+1):
 
         fout = open(fgather, 'w')
         fout.write(run3)
+        fout.write(load_modules)
         jobf = "python ../../main/gather_and_stitch.py --infile" + str(i) + " --numhits 127\n"
         fout.write(jobf)
         job2 = "python inter_rmsd " + str(i) + " > " + str(i) + ".refined_log \n"
