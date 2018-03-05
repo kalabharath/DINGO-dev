@@ -76,8 +76,8 @@ if __name__ == "__main__":
 
     # *********************   Define cmd line argument parser *********************
     print "Gather and stitching fragmented data! This May take a long time \n"
-    seq = int(args.infile)
-    tfile = args.infile+"_refined_tophits.gzip"
+    seq = args.infile
+    tfile = str(args.infile)+"_refined_tophits.gzip"
     #tfile, seq = get_top_hits_file()
     gather_and_stitch(seq, tfile)
 
