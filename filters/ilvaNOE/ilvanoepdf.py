@@ -507,7 +507,8 @@ def noe_in_pair(tsse_ordered, exp_data, pair):
 
 def refineILVA(transformed_coors, sse_ordered, exp_data, old_noe_energy):
 
-    sse_coors = copy.deepcopy(transformed_coors)
+    #sse_coors = copy.deepcopy(transformed_coors)
+    sse_coors = transformed_coors[:]
     cluster_protons = {}
     cluster_sidechains = {}
     satisfied_noes = []

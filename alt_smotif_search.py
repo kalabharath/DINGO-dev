@@ -16,6 +16,7 @@ import utility.alt_smotif_util as alt
 
 
 def perform_alt_search(job, pair):
+
     # send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
 
     dump_log = []
@@ -225,7 +226,7 @@ def altSmotifSearch(job):
 
     # send_job = [tasks[t_job[0]], alt_sse_profile[t_job[1]], args.stage, task_index, lowest_noe_energy]
     all_log = []
-    task = (job[0])[:]
+    task = (job[0])
     refine_pair = task[8][1]
     index_array = job[3]
     print "task_index", index_array

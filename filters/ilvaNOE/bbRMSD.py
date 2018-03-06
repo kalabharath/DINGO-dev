@@ -142,9 +142,9 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             if count == 2:
                 return all_spin_coors, all_cluster_coors
 
-        #qcprot.FreeDMatrix(xyz1)
-        #qcprot.FreeDMatrix(xyz2)
-        #qcprot.FreeDArray(rot)
+        qcprot.FreeDMatrix(xyz1)
+        qcprot.FreeDMatrix(xyz2)
+        qcprot.FreeDArray(rot)
 
     return all_spin_coors, all_cluster_coors
 
