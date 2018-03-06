@@ -79,8 +79,8 @@ def extend_array(extended, temp):
         extended[i] = extended[i]+ temp[i]
     return extended
 
-def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
 
+def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
 
     fraga, a_cen = centerCoo(copy.deepcopy(bbc))
     fraglen = 5
@@ -141,10 +141,12 @@ def bbrmsd(bbc, rotamer_cluster, rmsd_cutoff, spin, res_type):
             count += 1
             if count == 2:
                 return all_spin_coors, all_cluster_coors
+            else:
+                pass
+        else:
 
-        qcprot.FreeDMatrix(xyz1)
-        qcprot.FreeDMatrix(xyz2)
-        qcprot.FreeDArray(rot)
+            qcprot.FreeDMatrix(xyz1)
+            qcprot.FreeDMatrix(xyz2)
+            qcprot.FreeDArray(rot)
 
     return all_spin_coors, all_cluster_coors
-
