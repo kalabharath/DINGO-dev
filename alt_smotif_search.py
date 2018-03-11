@@ -36,6 +36,12 @@ def perform_alt_search(job, pair):
     exp_data = io.getExpData()
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
+    noe_energy_cutoff = exp_data['noe_energy_cutoff']
+
+    if old_noe_energy > noe_energy_cutoff:
+        old_noe_energy = noe_energy_cutoff
+        print "Changing old_noe_enrgy_cutoff to Userspecified cutoff"
+
     # Check whether there are any noes for this pair
     print "Checking whether NOEs exist in this pair:", pair,
     if noepdf.noe_in_pair(sse_ordered, exp_data, pair):
