@@ -36,7 +36,7 @@ def perform_alt_search(job, pair):
     exp_data = io.getExpData()
     exp_data_types = exp_data.keys()  # ['ss_seq', 'pcs_data', 'aa_seq', 'contacts']
 
-    noe_energy_cutoff = exp_data['noe_energy_cutoff']
+    noe_energy_cutoff = exp_data['noe_energy_cutoff'][0]
 
     print noe_energy_cutoff, old_noe_energy
 
