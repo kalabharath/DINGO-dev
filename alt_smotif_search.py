@@ -38,12 +38,9 @@ def perform_alt_search(job, pair):
 
     noe_energy_cutoff = exp_data['noe_energy_cutoff'][0]
 
-    print noe_energy_cutoff, old_noe_energy
-
     if old_noe_energy > noe_energy_cutoff:
         old_noe_energy = noe_energy_cutoff
         print "Changing old_noe_enrgy_cutoff to Userspecified cutoff"
-    print noe_energy_cutoff, old_noe_energy
 
     # Check whether there are any noes for this pair
     print "Checking whether NOEs exist in this pair:", pair,
