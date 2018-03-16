@@ -165,6 +165,13 @@ def perform_alt_search(job, pair):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
+                tlog.append(['RDC_filter', [[12.01057627061838,
+                                             [-28.126012227692243, -17.592836919730352, 13.23487946175726,
+                                              76.55106096893024, 171.11280856232668]]], -0.0, 12.011])
+                rdc_energy = 12.011
+
+            """
+            if 'rdc_data' in exp_data_types:
                 rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit2(transformed_coors, sse_ordered,
                                                                                   exp_data, stage)
 
@@ -172,6 +179,7 @@ def perform_alt_search(job, pair):
                     continue
                 else:
                     tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
+            """
 
             # ************************************************
             # Calc RMSD of the reference structure.

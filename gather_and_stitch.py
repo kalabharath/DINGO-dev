@@ -7,18 +7,8 @@ Aufthor: kalabharath, Email: kalabharath@gmail.com
 Date: 4/03/18 , Time:11:00 AM
 
 """
-import  os, glob, argparse
+import os, glob, argparse
 import utility.io_util as io
-
-
-def get_top_hits_file():
-    start = 1
-    while True:
-        tfile = str(start)+"_refined_tophits.gzip"
-        if os.path.isfile(tfile):
-            start +=1
-        else:
-            return tfile, start
 
 
 def combine_data():
@@ -60,6 +50,7 @@ def gather_and_stitch(seq, tfile):
     from ranking.NoeStageRank import rank_assembly_with_clustering
     ranked_data = rank_assembly_with_clustering(total_data, args.numhits)
     io.dumpGzipPickle(str(tfile), ranked_data)
+
     # delete files
 
     try:
@@ -85,5 +76,4 @@ if __name__ == "__main__":
     print "Gather and stitching fragmented data! This May take a long time \n"
     seq = args.infile
     tfile = str(args.infile)+"_refined_tophits.gzip"
-    #tfile, seq = get_top_hits_file()
     gather_and_stitch(seq, tfile)
