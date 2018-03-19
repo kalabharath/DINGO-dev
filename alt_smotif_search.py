@@ -163,7 +163,7 @@ def perform_alt_search(job, pair):
             # uses experimental RDC data to filter Smotifs
             # scoring based on normalised chisqr
             # ************************************************
-
+            """
             if 'rdc_data' in exp_data_types:
                 tlog.append(['RDC_filter', [[12.01057627061838,
                                              [-28.126012227692243, -17.592836919730352, 13.23487946175726,
@@ -179,7 +179,6 @@ def perform_alt_search(job, pair):
                     continue
                 else:
                     tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
-            """
 
             # ************************************************
             # Calc RMSD of the reference structure.

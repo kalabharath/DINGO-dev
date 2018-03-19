@@ -120,17 +120,11 @@ def S1SmotifSearch(task):
         # ************************************************
 
         if 'rdc_data' in exp_data_types:
-            tlog.append(['RDC_filter', [[12.01057627061838,
-                                         [-28.126012227692243, -17.592836919730352, 13.23487946175726,
-                                          76.55106096893024, 171.11280856232668]]], -0.0, 12.011])
-        """
-        if 'rdc_data' in exp_data_types:
             rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit(s1_def, s2_def, smotif_data[i], exp_data)
             if rdc_tensor_fits:
                 tlog.append(['RDC_filter', rdc_tensor_fits, log_likelihood, rdc_energy])
             else:
                 continue
-        """
 
         # ************************************************
         # Pseudocontact Shift filter
@@ -332,11 +326,6 @@ def sXSmotifSearch(task):
             # ************************************************
 
             if 'rdc_data' in exp_data_types:
-                tlog.append(['RDC_filter', [[12.01057627061838,
-                                             [-28.126012227692243, -17.592836919730352, 13.23487946175726,
-                                              76.55106096893024, 171.11280856232668]]], -0.0, 12.011])
-            """
-            if 'rdc_data' in exp_data_types:
                 rdc_tensor_fits, log_likelihood, rdc_energy = Rfilter.RDCAxRhFit2(transformed_coos, sse_ordered,
                                                                                   exp_data, stage)
                 if rdc_tensor_fits:
@@ -344,7 +333,6 @@ def sXSmotifSearch(task):
                 else:
                     # Do not execute any further
                     continue
-            """
 
             # ************************************************
             # Pseudocontact Shift filter
