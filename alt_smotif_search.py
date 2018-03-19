@@ -96,7 +96,7 @@ def perform_alt_search(job, pair):
                 continue
             else:
                 pass
-
+ 
         # ************************************************
         # RMSD filter using QCP method
         # quickly filters non-overlapping smotifs
